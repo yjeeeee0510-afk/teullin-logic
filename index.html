@@ -2295,10 +2295,9 @@ function openProfile(){
     <p class="lead">${RANK.enabled?(acc?`아이디 <b>${esc(acc)}</b>`:'로그인 없이 하는 중'):'이 기기에 저장 중'} · ${ZONES[zoneOf(P.unlocked)].lvl} 단계</p></div></div>
     <dl class="pf-stats"><div><dt>별</dt><dd>★ ${myStars().toLocaleString()}</dd></div><div><dt>지금 라운드</dt><dd>${P.unlocked}</dd></div>
     <div><dt>깬 라운드</dt><dd>${cleared}</dd></div><div><dt>총점</dt><dd>${total.toLocaleString()}</dd></div></dl>
-    <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button><button class="btn" type="button" id="pfRank">랭킹 보기</button>`:''}
+    <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button>`:''}
     <button class="btn primary" type="button" id="pfClose">닫기</button></div>`);
   const nb=sh.querySelector('#pfNick');if(nb)nb.addEventListener('click',()=>openNick(!RANK.nick()));
-  const rb=sh.querySelector('#pfRank');if(rb)rb.addEventListener('click',()=>{closeSheet();openRank()});
   sh.querySelector('#pfClose').addEventListener('click',closeSheet);
 }
 function openSettings(){
