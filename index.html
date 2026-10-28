@@ -843,6 +843,29 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 @keyframes seaBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-5px) rotate(4deg)}}
 @keyframes fishJump{0%,55%,100%{transform:translateY(0) scale(.95)}70%{transform:translateY(-26px) rotate(-12deg)}85%{transform:translateY(-6px) rotate(8deg)}}
 @media (prefers-reduced-motion:reduce){.map .sea-deco img{animation:none}}
+
+/* 한 지역 지도: 땅은 꽉 차게, 위·아래 끝 바닷가와 선착장 */
+.map .zone .shore{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.map .zone .shore .sh1{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;opacity:.9}
+.map .zone .shore .sh2{fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;opacity:.45;stroke-dasharray:10 14}
+.map .dock-go{position:absolute;left:50%;width:150px;margin-left:-75px;height:150px;border:0;padding:0;background:none;cursor:pointer;z-index:7;-webkit-tap-highlight-color:transparent}
+.map .dock-go .dk-dock{position:absolute;left:50%;width:72px;height:128px;margin-left:-36px;top:0;object-fit:fill;filter:drop-shadow(0 6px 0 rgba(0,40,80,.2))}
+.map .dock-go.down .dk-dock{transform:scaleY(-1)}
+.map .dock-go .dk-boat{position:absolute;width:74px;height:auto;filter:drop-shadow(0 6px 4px rgba(0,30,70,.25));animation:bob 2.6s ease-in-out infinite}
+.map .dock-go.up .dk-boat{left:calc(50% + 30px);top:-8px}
+.map .dock-go.down .dk-boat{left:calc(50% - 104px);top:56px}
+.map .dock-go .dk-tag{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;display:inline-flex;align-items:center;gap:4px;
+  font:inherit;font-weight:800;font-size:14px;padding:7px 13px;border-radius:999px;background:#fff;color:#1b2742;box-shadow:0 3px 0 rgba(0,0,0,.18),0 6px 14px rgba(0,0,0,.18)}
+.map .dock-go .dk-tag svg{width:13px;height:13px}
+.map .dock-go.up .dk-tag{top:-46px}
+.map .dock-go.down .dk-tag{top:138px}
+.map .dock-go.can.up .dk-tag{background:#ffd43b;color:#5a3a00}
+.map .dock-go.locked .dk-tag{background:rgba(255,255,255,.85);color:#5d6a84}
+.map .dock-go.locked .dk-boat{filter:grayscale(.4) drop-shadow(0 6px 4px rgba(0,30,70,.25))}
+.map .dock-go.first .dk-tag{animation:dkPulse 1.2s ease-in-out infinite}
+.map .dock-go:active .dk-tag{transform:translateX(-50%) translateY(2px)}
+@keyframes dkPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.map .dock-go .dk-boat,.map .dock-go.first .dk-tag{animation:none}}
 </style>
 </head>
 <body>
@@ -1782,10 +1805,12 @@ function clearStage(){
     saveP();RANK.submitQuiet();
     extra=`<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}+${CLEAR_COIN}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&round%ZSIZE===0?`<dt>안개가 걷혔어요</dt><dd>${round+1}–${round+ZSIZE}라운드</dd>`:''}`;
     S=null;save();
-    pendingNext=round<MAXR?round+1:0;
+    const toDock=round<MAXR&&round%ZSIZE===0&&!isAdmin()&&P.revealed<zoneOf(round+1);
+    pendingNext=round<MAXR&&!toDock?round+1:0;
+    if(toDock){store.set('sekan-viewz',zoneOf(round));dockFocus=true}
     $('#mEyebrow').textContent=`라운드 ${round} · ${STAGES[stageNo].name}`;
     $('#mTitle').textContent=round===MAXR?'360라운드 완주!':'라운드 클리어!';
-    $('#mNext').textContent=round<MAXR?`라운드 ${round+1} 도전 · ${STAGES[typeOf(round+1)].name}`:'라운드 선택으로';
+    $('#mNext').textContent=toDock?`선착장으로 가기 · ${ZONES[zoneOf(round+1)].name}`:round<MAXR?`라운드 ${round+1} 도전 · ${STAGES[typeOf(round+1)].name}`:'라운드 선택으로';
   }else{
     S.stage++;save();
     $('#mEyebrow').textContent=`라운드 ${round} · ${S.stage}단계`;
@@ -1816,6 +1841,7 @@ $('#mMenu').addEventListener('click',()=>{pendingNext=0;showMenu()});
 
 /* ---------- round select ---------- */
 function startRound(n){
+  if(zoneOf(n)<=P.revealed||isAdmin())store.set('sekan-viewz',zoneOf(n));
   shownScore=0;
   S={round:n,stage:typeOf(n),score:0,stars:[],seed:Math.floor(Math.random()*1e9)};save();startStage();
 }
@@ -1950,9 +1976,12 @@ const STAR_P='<svg viewBox="-26 -26 52 52"><path d="M0-24 7-8 24-7 11 4 15 22 0 
 const MAP={STEP:80,GAP:0,PAD:120,SEA:480,ISL:110};
 const TYPE_ICON=['<svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12.5 12.5 L17 17" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>','<svg viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" fill="currentColor"/><rect x="11" y="3" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="11" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="11" y="11" width="6" height="6" fill="currentColor"/></svg>','<svg viewBox="0 0 20 20"><path d="M3 6h4a2.2 2.2 0 1 1 4 0h4v4a2.2 2.2 0 1 0 0 4v3H3z" fill="currentColor"/></svg>'];
 const TYPE_SHORT=['틀린그림','로직','퍼즐'];
-const mapY=n=>MAP.PAD+(MAXR-n)*MAP.STEP+(ZONES.length-1-zoneOf(n))*MAP.SEA;
+// 지도는 한 번에 한 지역(VIEWZ)만. 위쪽 바다(선착장)·땅·아래쪽 바다(돌아가는 선착장)
+let VIEWZ=0,arriveZ=-1,dockFocus=false;
+const MAP_TOP=z=>z<ZONES.length-1?300:24, MAP_BOT=z=>z>0?250:0;
+const mapY=n=>MAP_TOP(VIEWZ)+MAP.PAD+((VIEWZ+1)*ZSIZE-n)*MAP.STEP;
 // 섬(지역) 위·아래 끝, 선착장 길이
-const islTop=z=>z>=ZONES.length-1?0:mapY((z+1)*ZSIZE)-MAP.ISL, islBot=z=>z===0?mapY(1)+MAP.PAD:mapY(z*ZSIZE+1)+MAP.ISL;
+const islTop=z=>MAP_TOP(z), islBot=z=>MAP_TOP(z)+MAP.PAD*2+(ZSIZE-1)*MAP.STEP;
 const PIER=86;
 const mapX=n=>50-32*Math.cos(n*Math.PI/2)+4*Math.sin(n*1.7);
 function curvePath(pts){
@@ -1981,48 +2010,45 @@ function showMenu(){
   inGame=false;paused=false;stageToken++;running=false;elapsedFrozen=0;spot=null;document.body.classList.remove('game-mode');
   $('#veil').hidden=true;$('#track').hidden=true;$('#menuBtn').hidden=true;
   $('#pTitle').textContent='라운드 선택';
-  $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 90라운드마다 난이도가 한 단계씩 올라가요(아주 쉬움 → 쉬움 → 보통 → 어려움). 한 단계를 다 깨면 다음 지역의 안개가 걷힙니다.';
+  $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 90라운드마다 난이도가 한 단계씩 올라가요(아주 쉬움 → 쉬움 → 보통 → 어려움). 지역의 마지막 라운드를 깨면 선착장에서 배를 타고 다음 지역으로 갈 수 있어요.';
   const starsTotal=Object.values(P.rounds).reduce((a,x)=>a+(x.stars||1),0);
   $('#pTools').innerHTML='';
   MG.inject();document.body.classList.add('menu-mode');
-  const H=mapY(1)+MAP.PAD;
+  {const mv=isAdmin()?ZONES.length-1:Math.min(P.revealed,zoneOf(openMax()));let v=store.get('sekan-viewz',null);if(v==null)v=mv;VIEWZ=Math.max(0,Math.min(mv,v|0))}
+  const H=islBot(VIEWZ)+MAP_BOT(VIEWZ);
   let h='';
   const TROPHY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.4A6 6 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A6 6 0 0 1 7.4 12H7a4 4 0 0 1-4-4V5h3zm0 4H5v1a2 2 0 0 0 1 1.7zm12 0v2.7A2 2 0 0 0 19 8V7z" fill="currentColor"/></svg>';
   const GEAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm9 3.5-2.1-.6a7 7 0 0 0-.7-1.7l1-1.9-1.9-1.9-1.9 1a7 7 0 0 0-1.7-.7L13.1 3h-2.2l-.6 2.1a7 7 0 0 0-1.7.7l-1.9-1-1.9 1.9 1 1.9a7 7 0 0 0-.7 1.7L3 10.9v2.2l2.1.6c.2.6.4 1.2.7 1.7l-1 1.9 1.9 1.9 1.9-1c.5.3 1.1.5 1.7.7l.6 2.1h2.2l.6-2.1c.6-.2 1.2-.4 1.7-.7l1.9 1 1.9-1.9-1-1.9c.3-.5.5-1.1.7-1.7l2.1-.6z" fill="currentColor"/></svg>';
-  h+=`<div class="map-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px">`;
-  // 90라운드(난이도 단계)마다 바뀌는 풍경 (아래에서 위로: 언덕 → 바다 → 산 → 밤하늘)
-  const openZone=zoneOf(openMax());let lifting=isAdmin()?-1:(openZone>P.revealed?openZone:-1);
-  if(adminLiftZ>=0){lifting=adminLiftZ;adminLiftZ=-1}
-  let fogs='';
-  h+='<div class="zones">';
-  for(let z=0;z<ZONES.length;z++){
-    const lo=z*ZSIZE+1,hi=z*ZSIZE+ZSIZE,Z=ZONES[z];
-    const top=islTop(z), bottom=islBot(z);
-    h+=`<div class="zone ${Z.cls}" style="top:${top}px;height:${bottom-top}px;z-index:${ZONES.length-z}">${zoneArt(z,bottom-top)}</div>`;
-    if(z>openZone||z===lifting)fogs+=`<div class="fog${z===lifting?' lifting':''}" data-z="${z}" style="top:${top-70}px;height:${bottom-top+70+(z>0?PIER+60:0)}px"><div class="fog-msg" style="top:${bottom-top-90}px"><b>${lo}–${hi}라운드 · ${Z.name}</b><span>${z===openZone+1?`${lo-1}라운드를 깨면 안개가 걷혀요`:'아직 짙은 안개에 싸여 있어요'}</span></div></div>`;
-  }
-  h+='</div>';
-  for(let g=0;g<MAXR/10;g++){
-    const lo=g*10+1,hi=g*10+10;if(zoneOf(lo)>openZone)continue;
+  h+=`<div class="map-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px;background:radial-gradient(ellipse 14px 3px at 50% 50%,rgba(255,255,255,.55),transparent 70%) 0 0/36px 42px,linear-gradient(${VOY.sea[VIEWZ][0]},${VOY.sea[VIEWZ][1]})">`;
+  // 보고 있는 지역 하나: 땅은 화면 너비를 꽉 채우고, 위·아래 끝에만 바다와 선착장
+  const openZone=VIEWZ,Z=ZONES[VIEWZ],landTop=islTop(VIEWZ),landBot=islBot(VIEWZ);
+  h+=`<div class="zones"><div class="zone ${Z.cls}" style="top:${landTop}px;height:${landBot-landTop}px">${landHTML(VIEWZ,landBot-landTop)}</div></div>`;
+  for(let g=VIEWZ*ZSIZE/10;g<(VIEWZ+1)*ZSIZE/10;g++){
+    const lo=g*10+1,hi=g*10+10;
     const top_=hi%ZSIZE===0,y=top_?mapY(hi)-MAP.STEP*0.75:(mapY(hi)+mapY(hi+1))/2;
     const ax=top_?mapX(hi):(mapX(hi)+mapX(hi+1))/2;
-    h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo%ZSIZE===1?`<small>${ZONES[zoneOf(lo)].lvl} · ${ZONES[zoneOf(lo)].name}</small>`:''}</div>`;
+    h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo%ZSIZE===1?`<small>${Z.lvl} · ${Z.name}</small>`:''}</div>`;
   }
-  // 길 대신 조약돌 (깬 라운드에서 다음 라운드까지)
+  // 조약돌 (깬 라운드에서 다음 라운드, 마지막 라운드에서 선착장까지)
   const PB=pebblesHTML(openZone,Math.max(320,$('#board').clientWidth||innerWidth));h+=PB.html;
-  // 섬 사이 바다: 선착장 두 개와 배 한 척
-  for(let z=0;z<ZONES.length-1;z++){
-    const yLow=islTop(z),yUp=islBot(z+1),arrived=openZone>z&&z+1!==lifting;
-    const dock=`<img src="${embedded(sprPath('dock'))}" alt="">`;
-    h+=`<div class="pier" style="top:${yLow-PIER}px;height:${PIER+24}px">${dock}</div><div class="pier flip" style="top:${yUp-24}px;height:${PIER+24}px">${dock}</div>`;
-    h+=`<div class="boat${arrived?' at-up':''}" data-z="${z}" style="--yl:${yLow-PIER-70}px;--yu:${yUp+PIER-18}px"><img src="${embedded(sprPath(MAP_BOATS[z]))}" alt=""></div>`;
-    // 바다 장식: 바위·부표·뛰어오르는 물고기 (선착장 길은 비워 둠)
-    const mid=(yLow+yUp)/2,gap=yLow-yUp;
-    SEA_DECO[z].forEach(([n,x,dy,w,cls])=>{h+=`<div class="sea-deco ${cls||''}" style="left:${x}%;top:${(mid+dy*gap/2).toFixed(0)}px;width:${w}px"><img src="${embedded(sprPath(n))}" alt=""></div>`});
+  // 위쪽 선착장: 다음 지역으로
+  if(VIEWZ<ZONES.length-1){
+    const nz=VIEWZ+1,ready=openMax()>=nz*ZSIZE+1,first=ready&&P.revealed<nz;
+    h+=`<button type="button" class="dock-go up${ready?' can':' locked'}${first?' first':''}" id="dockUp" style="top:${landTop-118}px" aria-label="${ready?`${ZONES[nz].name}로 배 타고 가기`:'아직 잠긴 선착장'}">
+      <span class="dk-tag">${ready?`⛵ ${roName(ZONES[nz].name)} 출발`:`${LOCK} ${nz*ZSIZE}라운드를 깨면 출발`}</span>
+      <img class="dk-dock" src="${embedded(sprPath('dock'))}" alt=""><img class="dk-boat" src="${embedded(sprPath(MAP_BOATS[VIEWZ]))}" alt=""></button>`;
+    h+=`<div class="sea-deco" style="left:14%;top:${landTop-150}px;width:62px"><img src="${embedded(sprPath('rockSmall'))}" alt=""></div><div class="sea-deco" style="left:86%;top:${landTop-120}px;width:44px"><img src="${embedded(sprPath('buoy'))}" alt=""></div>`;
+  }
+  // 아래쪽 선착장: 앞 지역으로 돌아가기
+  if(VIEWZ>0){
+    const pz=VIEWZ-1;
+    h+=`<button type="button" class="dock-go down can" id="dockDown" style="top:${landBot-8}px" aria-label="${ZONES[pz].name}로 돌아가기">
+      <img class="dk-dock" src="${embedded(sprPath('dock'))}" alt=""><img class="dk-boat" src="${embedded(sprPath(MAP_BOATS[pz]))}" alt="">
+      <span class="dk-tag">◀ ${roName(ZONES[pz].name)} 돌아가기</span></button>`;
+    h+=`<div class="sea-deco" style="left:82%;top:${landBot+150}px;width:70px"><img src="${embedded(sprPath('rockMid'))}" alt=""></div><div class="sea-deco" style="left:15%;top:${landBot+170}px;width:52px"><img src="${embedded(sprPath('fish'))}" alt=""></div>`;
   }
   // 라운드 칸
-  for(let n=MAXR;n>=1;n--){
-    if(zoneOf(n)>openZone)continue;
+  for(let n=(VIEWZ+1)*ZSIZE;n>VIEWZ*ZSIZE;n--){
     const rec=P.rounds[n],open=n<=openMax();
     const cls=rec?'clear':n===P.unlocked||(n<P.unlocked&&!isAdmin())?'next':open?'adm':'lock';
     const stars=rec?starRow(rec.stars||1):'';
@@ -2031,7 +2057,6 @@ function showMenu(){
       <button type="button" class="nd" data-r="${n}" ${open?'':'disabled'} aria-label="${label} (${ZODIAC.NAMES[ZODIAC.idx(n)]})">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span><i class="ty t${typeOf(n)}" title="${STAGES[typeOf(n)].name}">${TYPE_ICON[typeOf(n)]}</i>${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
       ${cls==='next'?`<span class="tag">도전 · ${TYPE_SHORT[typeOf(n)]}</span>`:n===MAXR&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
   }
-  h+=fogs;
   h+=`</div></div><div class="map-hint"><button type="button" id="toCur">↓ 지금 라운드로</button></div>
     <div class="map-foot"><button type="button" class="mb-chip hint-chip" id="hintChip" aria-label="보유 힌트">${ICON.bulb}<b data-hints>${W().hints}</b><small>/${HINT_MAX}</small><em data-hint-next></em></button><span class="mb-sp"></span>
     <button type="button" class="mb-btn shop" id="shopBtn">${ICON.cart}<span>상점</span></button><button type="button" class="mb-btn" id="rankBtn">${TROPHY}<span>랭킹</span></button></div></div>`;
@@ -2048,27 +2073,25 @@ function showMenu(){
     setTimeout(()=>{if(!pb.isConnected)return;const q=pb.getBoundingClientRect();if(q.bottom<0||q.top>innerHeight)return;FX.burst(q.left+q.width/2,q.top+q.height/2,{count:7,speed:3,ringR:16});NATIVE.buzz('tick')},d*1000+300)});
   if(!RANK.nick()&&!RANK.account()&&!store.get('sekan-nick-skip',false))setTimeout(()=>{if(!inGame&&!$('#sheet'))openNick(true)},700);else if(RANK.enabled&&RANK.pending())RANK.submitQuiet()
   const map=$('#map');
-  const toCur=()=>{map.scrollTop=Math.max(0,mapY(P.unlocked)-map.clientHeight*0.62)};
-  $('#toCur').addEventListener('click',()=>{map.scrollTo({top:Math.max(0,mapY(P.unlocked)-map.clientHeight*0.62),behavior:FX.RM?'auto':'smooth'})});
+  // 지금 라운드가 이 지역보다 뒤면 위쪽 선착장으로
+  const curY=()=>zoneOf(P.unlocked)>VIEWZ&&VIEWZ<ZONES.length-1?islTop(VIEWZ)-40:zoneOf(P.unlocked)<VIEWZ?islBot(VIEWZ)-MAP.PAD:mapY(P.unlocked);
+  const toCur=()=>{map.scrollTop=Math.max(0,curY()-map.clientHeight*(dockFocus?0.35:0.62))};
+  $('#toCur').addEventListener('click',()=>{map.scrollTo({top:Math.max(0,curY()-map.clientHeight*0.62),behavior:FX.RM?'auto':'smooth'})});
   const hint=$('#toCur');
-  const upd=()=>{const y=mapY(P.unlocked);hint.hidden=y>map.scrollTop&&y<map.scrollTop+map.clientHeight};
+  hint.textContent=zoneOf(P.unlocked)>VIEWZ?'↑ 선착장으로':'↓ 지금 라운드로';
+  const upd=()=>{const y=curY();hint.hidden=y>map.scrollTop&&y<map.scrollTop+map.clientHeight};
   map.addEventListener('scroll',upd,{passive:true});
-  toCur();upd();requestAnimationFrame(()=>{toCur();upd()});
-  // 새 지역이 열렸으면 안개가 걷히는 장면을 보여 준다
-  const lf=map.querySelector('.fog.lifting');
-  if(lf){
-    const z=+lf.dataset.z;
-    map.scrollTop=Math.max(0,islBot(z)+PIER+120-map.clientHeight*0.75);
-    playVoyage(z-1,z,()=>{
-      const bt=map.querySelector(`.boat[data-z="${z-1}"]`);if(bt){bt.style.transition='none';bt.classList.add('at-up')}
-      setTimeout(()=>{
-        lf.classList.add('go');NATIVE.buzz('win');
-        const r=map.getBoundingClientRect();FX.confetti(70);
-        FX.text(`${ZONES[z].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
-        setTimeout(()=>{lf.remove();toCur();upd()},3400);
-      },350);
-    });
-    if(z>P.revealed){P.revealed=z;saveP()}
+  toCur();upd();requestAnimationFrame(()=>{toCur();upd();dockFocus=false});
+  const du=$('#dockUp'),dd=$('#dockDown');
+  if(du)du.addEventListener('click',()=>{
+    if(du.classList.contains('locked')){NATIVE.buzz('tick');const q=du.getBoundingClientRect();FX.text(`${(VIEWZ+1)*ZSIZE}라운드를 깨면 출발할 수 있어요`,q.left+q.width/2,q.top,{size:18,color:'#ffffff'});return}
+    NATIVE.buzz('ok');travel(VIEWZ,VIEWZ+1)});
+  if(dd)dd.addEventListener('click',()=>{NATIVE.buzz('ok');travel(VIEWZ,VIEWZ-1)});
+  // 새 지역에 처음 도착했을 때
+  if(arriveZ===VIEWZ){
+    arriveZ=-1;
+    setTimeout(()=>{const r=map.getBoundingClientRect();FX.confetti(70);NATIVE.buzz('win');
+      FX.text(`${ZONES[VIEWZ].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'})},250);
   }
   renderStats();
 }
@@ -2109,7 +2132,7 @@ function pebblesHTML(openZone,W){
   const prev=store.get('sekan-peb',null),from=prev==null?P.unlocked:Math.min(prev,P.unlocked);
   const fresh=[];for(let s=Math.max(from,P.unlocked-3);s<P.unlocked;s++)fresh.push(s);  // 최근 깬 라운드 최대 3개만 모션
   let h='',k=0,pi=0;
-  for(let z=0;z<=Math.min(openZone,ZONES.length-1);z++){
+  for(let z=openZone;z<=openZone;z++){
     const C=PEB_COL[z],r=rng(7700+z*13);
     for(const p of pebbleSpots(z,W)){
       const sz=(.85+r()*.35).toFixed(2),rot=Math.round(r()*60-30);
@@ -2123,6 +2146,25 @@ function pebblesHTML(openZone,W){
   }
   store.set('sekan-peb',P.unlocked);
   return {html:h,count:k};
+}
+// 선착장에서 배를 타고 다른 지역으로
+function travel(from,to){
+  playVoyage(from,to,()=>{
+    store.set('sekan-viewz',to);
+    if(to>P.revealed){P.revealed=to;saveP();arriveZ=to}
+    showMenu();
+  });
+}
+// 지역 땅: 화면 너비를 꽉 채우고 위·아래 끝만 물결 모양 바닷가
+function landHTML(z,H){
+  const waveT=z<ZONES.length-1,waveB=z>0,pts=[];for(let x=0;x<=100;x+=2)pts.push(x);
+  const yt=x=>waveT?20+6*Math.sin(x/8+z)+3*Math.sin(x/3.1+1):0, yb=x=>waveB?H-20-6*Math.sin(x/7+z*2)-3*Math.sin(x/2.7):H;
+  const top=pts.map((x,i)=>`${i?'L':'M'}${x} ${yt(x).toFixed(1)}`).join(' '),bot=pts.slice().reverse().map(x=>`L${x} ${yb(x).toFixed(1)}`).join(' ');
+  const d=`${top} ${bot}Z`;
+  const m=`url('data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 ${H}' preserveAspectRatio='none'><path d='${d}' fill='#000'/></svg>`).replace(/'/g,'%27')}')`;
+  const edge=f=>pts.map((x,i)=>`${i?'L':'M'}${x} ${f(x).toFixed(1)}`).join(' ');
+  return `<div class="ground" style="background-image:url('${embedded(`img/map/zone${z}.jpg`)}');background-position:0 ${-(z*137)%400}px;-webkit-mask-image:${m};mask-image:${m}"></div>
+    <svg class="shore" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true">${waveT?`<path d="${edge(yt)}" class="sh1" vector-effect="non-scaling-stroke"/><path d="${edge(x=>yt(x)-5)}" class="sh2" vector-effect="non-scaling-stroke"/>`:''}${waveB?`<path d="${edge(yb)}" class="sh1" vector-effect="non-scaling-stroke"/><path d="${edge(x=>yb(x)+5)}" class="sh2" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
 }
 function playVoyage(from,to,done){
   if(FX.RM){done();return}
@@ -2665,8 +2707,8 @@ function openAdmin(){
     if(a==='rank'){closeSheet();openRank();return}
     if(a==='round'){openRoundSheet(Math.max(1,P.unlocked));return}
     if(a.startsWith('play')){closeSheet();startRound(+a.slice(4));return}
-    if(a.startsWith('fog')){closeSheet();adminLiftZ=+a.slice(3);showMenu();return}
-    if(a.startsWith('go')){closeSheet();const n=+a.slice(2);if(inGame)showMenu();const m=$('#map');if(m)m.scrollTo({top:Math.max(0,mapY(n)-m.clientHeight*0.62),behavior:'smooth'});return}
+    if(a.startsWith('fog')){closeSheet();const z=+a.slice(3);store.set('sekan-viewz',z-1);showMenu();travel(z-1,z);return}
+    if(a.startsWith('go')){closeSheet();const n=+a.slice(2);store.set('sekan-viewz',zoneOf(n));showMenu();const m=$('#map');if(m)m.scrollTop=Math.max(0,mapY(n)-m.clientHeight*0.62);return}
   }));
 }
 function openSettings(){
