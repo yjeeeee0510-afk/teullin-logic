@@ -185,7 +185,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .rlist .st{font-family:var(--f-mono);font-size:12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .rank-note{margin:0;font-size:12px;color:var(--muted)}
 .rank-empty{padding:20px 4px;text-align:center;color:var(--muted)}
-/* 라운드 지도: 1라운드가 맨 아래, 위로 올라갈수록 300라운드 */
+/* 라운드 지도: 1라운드가 맨 아래, 위로 올라갈수록 360라운드 */
 .map{position:relative;height:min(72vh,660px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:14px;border:1.5px solid var(--ink);
   background:var(--map-bg);scroll-behavior:auto}
 .map-inner{position:relative;width:100%}
@@ -719,7 +719,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
   <header class="top">
     <div class="brand">
       <h1>틀린<span>로직</span>맞추기</h1>
-      <p>틀린그림 찾기 → 네모네모 로직 → 퍼즐 맞추기가 라운드마다 번갈아 나와요. 한 라운드를 깨면 다음 라운드가 열리고, 300라운드까지 점점 어려워집니다.</p>
+      <p>틀린그림 찾기 → 네모네모 로직 → 퍼즐 맞추기가 라운드마다 번갈아 나와요. 한 라운드를 깨면 다음 라운드가 열리고, 아주 쉬움부터 어려움까지 4단계, 360라운드예요.</p>
     </div>
     <div class="stats">
       <div class="stat"><small>라운드</small><b id="sRound">–</b></div>
@@ -817,22 +817,29 @@ const STAGES=[
   {name:'네모네모 로직',desc:'줄 옆 숫자는 연속해서 칠할 칸의 길이입니다. 숫자 순서대로, 덩어리 사이엔 한 칸 이상 비워 두세요.'},
   {name:'퍼즐 맞추기',desc:'그림이 조각났어요. 조각 두 개를 차례로 누르면 자리가 바뀝니다.'}
 ];
-const MAXR=300,ZSIZE=60;
+const MAXR=360,ZSIZE=90,TSIZE=30;
 const typeOf=n=>(n-1)%3;
 const zoneOf=n=>Math.floor((Math.max(1,n)-1)/ZSIZE);
-// 60라운드(지역)마다 난이도가 한 단계씩 올라감
+// 난이도 4단계(90라운드씩), 각 단계 안에서 30라운드마다 조금씩 어려워짐
 // spot: 틀린 곳 개수, logic: 로직 칸 수(가로=세로), jig: 퍼즐 조각(가로=세로), dd: 틀린 곳이 얼마나 티 안 나는지(0 쉬움 ~ 1 어려움)
 const ZONE_DIFF=[
-  {spot:5, logic:5,  jig:3, dd:0.00},  // 1–60   꽃 언덕
-  {spot:6, logic:7,  jig:4, dd:0.25},  // 61–120  푸른 바다
-  {spot:7, logic:8,  jig:5, dd:0.45},  // 121–180 초록 숲
-  {spot:8, logic:10, jig:6, dd:0.65},  // 181–240 눈 덮인 산
-  {spot:10,logic:12, jig:7, dd:0.85}   // 241–300 별빛 하늘
+  {spot:4, logic:5,  jig:3, dd:0.00},  // 1–30    아주 쉬움
+  {spot:5, logic:5,  jig:3, dd:0.05},  // 31–60
+  {spot:5, logic:6,  jig:3, dd:0.10},  // 61–90
+  {spot:6, logic:7,  jig:4, dd:0.20},  // 91–120  쉬움
+  {spot:6, logic:7,  jig:4, dd:0.27},  // 121–150
+  {spot:7, logic:8,  jig:4, dd:0.34},  // 151–180
+  {spot:7, logic:8,  jig:5, dd:0.45},  // 181–210 보통
+  {spot:8, logic:10, jig:5, dd:0.52},  // 211–240
+  {spot:8, logic:10, jig:6, dd:0.60},  // 241–270
+  {spot:9, logic:10, jig:6, dd:0.70},  // 271–300 어려움
+  {spot:10,logic:12, jig:7, dd:0.80},  // 301–330
+  {spot:10,logic:12, jig:7, dd:0.90}   // 331–360
 ];
-const ZD=r=>ZONE_DIFF[Math.min(ZONE_DIFF.length-1,zoneOf(r))];
+const ZD=r=>ZONE_DIFF[Math.min(ZONE_DIFF.length-1,Math.floor((Math.max(1,r)-1)/TSIZE))];
 const SIZE={spot:r=>ZD(r).spot,logic:r=>ZD(r).logic,jig:r=>ZD(r).jig};
 // 같은 지역 안에서는 틀린 곳이 조금씩만 더 미묘해짐
-const DIFF=r=>Math.min(1,ZD(r).dd+((Math.max(1,r)-1)%ZSIZE)/(ZSIZE-1)*0.12);
+const DIFF=r=>Math.min(1,ZD(r).dd+((Math.max(1,r)-1)%TSIZE)/(TSIZE-1)*0.06);
 const lerp=(a,b,t)=>a+(b-a)*t;
 
 let P=store.get('sekan-progress',null);
@@ -841,6 +848,7 @@ let S=store.get('sekan-run',null);
 if(S&&!(S.round>=1&&S.round<=P.unlocked))S=null;
 if(S)S.stage=typeOf(S.round);
 if(typeof P.revealed!=='number')P.revealed=zoneOf(P.unlocked);
+P.revealed=Math.min(P.revealed,zoneOf(P.unlocked));
 let inGame=false,pendingNext=0,combo=0,lastHit=0,comboPts=0,shownScore=0;
 const saveP=()=>{store.set('sekan-progress',P);if(window.__syncLater)window.__syncLater()};
 let t0=performance.now(),running=true,elapsedFrozen=0;
@@ -1508,7 +1516,7 @@ function startStage(){
   const st=STAGES[S.stage];
   const sz=S.stage===0?`틀린 곳 ${SIZE.spot(S.round)}개`:S.stage===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
   $('#pTitle').textContent=`라운드 ${S.round} · ${st.name} (${sz})`;
-  $('#ghTitle').textContent=`라운드 ${S.round} · ${st.name}`;
+  $('#ghTitle').textContent=`${ZONES[zoneOf(S.round)].lvl} · 라운드 ${S.round} · ${st.name}`;
   $('#pDesc').textContent=st.desc;
   renderTrack();renderStats();
   const tools=$('#pTools'),board=$('#board');
@@ -1566,7 +1574,7 @@ function clearStage(){
     S=null;save();
     pendingNext=round<MAXR?round+1:0;
     $('#mEyebrow').textContent=`라운드 ${round} · ${STAGES[stageNo].name}`;
-    $('#mTitle').textContent=round===MAXR?'300라운드 완주!':'라운드 클리어!';
+    $('#mTitle').textContent=round===MAXR?'360라운드 완주!':'라운드 클리어!';
     $('#mNext').textContent=round<MAXR?`라운드 ${round+1} 도전 · ${STAGES[typeOf(round+1)].name}`:'라운드 선택으로';
   }else{
     S.stage++;save();
@@ -1610,15 +1618,13 @@ function tierText(a,b){
 
 /* ---------- 라운드 지도 풍경 ---------- */
 const ZONES=[
-  {name:'꽃 언덕',cls:'z-hill',land:['#8fdc5e','#5fb83e'],patch:'#a6e872',cliff:['#c9643f','#8e3a22'],road:['#7a4a2c','#b27a4e','#d9a77a'],
+  {name:'꽃 언덕',lvl:'아주 쉬움',cls:'z-hill',land:['#8fdc5e','#5fb83e'],patch:'#a6e872',cliff:['#c9643f','#8e3a22'],road:['#7a4a2c','#b27a4e','#d9a77a'],
    big:['house','tree','lolli','house2','tree','hay','house','lolli','tree','stump'],small:['flowers','bush','stump','flowers','rock','lolli2']},
-  {name:'푸른 바다',cls:'z-sea',land:['#fbe7a8','#efcc78'],patch:'#fff3cc',cliff:['#d9a25a','#a8702e'],road:['#8a5a34','#c08a58','#e6b886'],
+  {name:'푸른 바다',lvl:'쉬움',cls:'z-sea',land:['#fbe7a8','#efcc78'],patch:'#fff3cc',cliff:['#d9a25a','#a8702e'],road:['#8a5a34','#c08a58','#e6b886'],
    big:['palm','umbrella','castleS','palm','pond','palm','umbrella','pond','castleS','palm'],small:['shell','starfish','shell','bush','starfish','rock']},
-  {name:'초록 숲',cls:'z-forest',land:['#5cbf4a','#36903a'],patch:'#74cf5c',cliff:['#8a5430','#5a321a'],road:['#5e3a20','#93623a','#b98a5e'],
-   big:['pine','pine2','tent','mush','pine','log','pine2','mush','pine','tent'],small:['mush2','bush','mush2','rock','flowers','bush']},
-  {name:'눈 덮인 산',cls:'z-mount',land:['#ffffff','#dce8f8'],patch:'#ffffff',cliff:['#a8bcdc','#7088b0'],road:['#6a7fa6','#9fb3d6','#c8d6ee'],
+  {name:'눈 덮인 산',lvl:'보통',cls:'z-mount',land:['#ffffff','#dce8f8'],patch:'#ffffff',cliff:['#a8bcdc','#7088b0'],road:['#6a7fa6','#9fb3d6','#c8d6ee'],
    big:['spine','snowman','igloo','spine','spine2','snowman','igloo','spine2','spine','snowman'],small:['ice','spine3','ice','spine3','rock','ice']},
-  {name:'별빛 하늘',cls:'z-night',land:['#f3efff','#c9bdf6'],patch:'#ffffff',cliff:['#9a8ae0','#6a5ac0'],road:['#c08a10','#f2c14a','#fff0a8'],
+  {name:'별빛 하늘',lvl:'어려움',cls:'z-night',land:['#f3efff','#c9bdf6'],patch:'#ffffff',cliff:['#9a8ae0','#6a5ac0'],road:['#c08a10','#f2c14a','#fff0a8'],
    big:['castle','lamp','planet','castle','moon','lamp','planet','castle','lamp','moon'],small:['crystal','starS','crystal','starS','cloudS','crystal']}
 ];
 /* 지도 장식 (직접 그린 SVG) */
@@ -1733,7 +1739,7 @@ function showMenu(){
   inGame=false;paused=false;stageToken++;running=false;elapsedFrozen=0;spot=null;document.body.classList.remove('game-mode');
   $('#veil').hidden=true;$('#track').hidden=true;$('#menuBtn').hidden=true;
   $('#pTitle').textContent='라운드 선택';
-  $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 60라운드를 모두 깨면 다음 지역의 안개가 걷힙니다.';
+  $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 90라운드마다 난이도가 한 단계씩 올라가요(아주 쉬움 → 쉬움 → 보통 → 어려움). 한 단계를 다 깨면 다음 지역의 안개가 걷힙니다.';
   const starsTotal=Object.values(P.rounds).reduce((a,x)=>a+(x.stars||1),0);
   $('#pTools').innerHTML='';
   MG.inject();document.body.classList.add('menu-mode');
@@ -1742,7 +1748,7 @@ function showMenu(){
   const TROPHY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.4A6 6 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A6 6 0 0 1 7.4 12H7a4 4 0 0 1-4-4V5h3zm0 4H5v1a2 2 0 0 0 1 1.7zm12 0v2.7A2 2 0 0 0 19 8V7z" fill="currentColor"/></svg>';
   const GEAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm9 3.5-2.1-.6a7 7 0 0 0-.7-1.7l1-1.9-1.9-1.9-1.9 1a7 7 0 0 0-1.7-.7L13.1 3h-2.2l-.6 2.1a7 7 0 0 0-1.7.7l-1.9-1-1.9 1.9 1 1.9a7 7 0 0 0-.7 1.7L3 10.9v2.2l2.1.6c.2.6.4 1.2.7 1.7l-1 1.9 1.9 1.9 1.9-1c.5.3 1.1.5 1.7.7l.6 2.1h2.2l.6-2.1c.6-.2 1.2-.4 1.7-.7l1.9 1 1.9-1.9-1-1.9c.3-.5.5-1.1.7-1.7l2.1-.6z" fill="currentColor"/></svg>';
   h+=`<div class="map-wrap"><div class="map-bar"><span class="mb-chip"><b>★</b> ${starsTotal}<small>/${MAXR*3}</small></span><span class="mb-chip">라운드 <b>${P.unlocked}</b><small>/${MAXR}</small></span><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px">`;
-  // 60라운드마다 바뀌는 풍경 (아래에서 위로: 언덕 → 바다 → 숲 → 산 → 밤하늘)
+  // 90라운드(난이도 단계)마다 바뀌는 풍경 (아래에서 위로: 언덕 → 바다 → 산 → 밤하늘)
   const openZone=zoneOf(P.unlocked),lifting=openZone>P.revealed?openZone:-1;
   let fogs='';
   h+='<div class="zones">';
@@ -1757,7 +1763,7 @@ function showMenu(){
     const lo=g*10+1,hi=g*10+10;if(zoneOf(lo)>openZone)continue;
     const top_=hi>=MAXR,y=top_?mapY(hi)-MAP.STEP*0.9:(mapY(hi)+mapY(hi+1))/2;
     const ax=top_?mapX(hi):(mapX(hi)+mapX(hi+1))/2;
-    h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo%ZSIZE===1?`<small>${ZONES[zoneOf(lo)].name}</small>`:''}</div>`;
+    h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo%ZSIZE===1?`<small>${ZONES[zoneOf(lo)].lvl} · ${ZONES[zoneOf(lo)].name}</small>`:''}</div>`;
   }
   // 길 (지역마다 흙길 색이 다름)
   h+=`<svg class="road" viewBox="0 0 100 ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">`;
@@ -1804,7 +1810,7 @@ function showMenu(){
       setTimeout(()=>{
         lf.classList.add('go');NATIVE.buzz('win');
         const r=map.getBoundingClientRect();FX.confetti(70);
-        FX.text(`${ZONES[z].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
+        FX.text(`${ZONES[z].lvl} 단계 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
         setTimeout(()=>{lf.remove();toCur();upd()},3400);
       },900);
     });
@@ -1838,7 +1844,7 @@ function openPause(){
   if(!inGame||!S)return;
   NATIVE.buzz('tick');pauseGame();
   const st=STAGES[S.stage];
-  const sh=openSheet(`<div class="eyebrow">일시정지 · 라운드 ${S.round}</div><h3>${st.name}</h3>
+  const sh=openSheet(`<div class="eyebrow">일시정지 · ${ZONES[zoneOf(S.round)].lvl} · 라운드 ${S.round}</div><h3>${st.name}</h3>
     <p class="pause-how">${esc(st.desc)}</p>
     <div class="pause-btns">
       <button class="btn primary" type="button" id="pzGo">계속하기</button>
@@ -1917,7 +1923,10 @@ const RANK=(function(){
     const send=b=>api('/rest/v1/leaderboard?on_conflict=id',{method:'POST',headers:Object.assign(bearer(s),{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(b)});
     try{await send(row)}catch(e){
       // 서버에 새 칸(clears, avg_time)이 아직 없으면 예전 방식으로 다시 보냄
-      if(e&&(e.code==='PGRST204'||/clears|avg_time|column/i.test(e.message||''))){delete row.clears;delete row.avg_time;await send(row)}else throw e}
+      if(e&&(e.code==='PGRST204'||/clears|avg_time|column/i.test(e.message||''))){delete row.clears;delete row.avg_time;await send(row)}
+      // 서버 제한이 아직 예전(300라운드·별 900개)이면 그 안으로 맞춰서 다시 보냄
+      else if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))){row.best_round=Math.min(300,row.best_round);row.stars=Math.min(900,row.stars);await send(row)}
+      else throw e}
     store.set('sekan-rank-pending',false);
   }
   const fix=s=>{if(!s.expires_at)s.expires_at=Date.now()/1000+(s.expires_in||3600);return s};
@@ -2236,7 +2245,7 @@ function openRoundSheet(n){
   const sh=openSheet(`<div class="rs">
     <div class="rs-face" style="--c:${ZODIAC.COLORS[z]}">${ZODIAC.face(z,'rs-img')}</div>
     <div class="rs-stars">${[0,1,2].map(i=>`<span class="s${i+1} ${i<stars?'on':'off'}">${STAR_P}</span>`).join('')}</div>
-    <div class="eyebrow">${ZONES[zoneOf(n)].name} · ${ZODIAC.NAMES[z]}</div>
+    <div class="eyebrow">${ZONES[zoneOf(n)].lvl} · ${ZONES[zoneOf(n)].name} · ${ZODIAC.NAMES[z]}</div>
     <h3>라운드 ${n}</h3>
     <div class="rs-type"><i class="ty t${t}">${TYPE_ICON[t]}</i><span>${STAGES[t].name}</span><em>${sz}</em></div>
     ${recHtml}
