@@ -1,5 +1,5 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v21';
+const CACHE='sekan-v22';
 const CORE=[
   './',
   'index.html',
@@ -8,6 +8,10 @@ const CORE=[
   'icons/apple-touch-icon.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  'img/bg/zone0-flowerhill.jpg',
+  'img/bg/zone1-sea.jpg',
+  'img/bg/zone2-snow.jpg',
+  'img/bg/zone3-night.jpg',
   'img/scenes/beach.png',
   'img/scenes/desert.png',
   'img/scenes/empty.png',

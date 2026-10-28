@@ -740,6 +740,19 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 .adm-row{display:flex;flex-wrap:wrap;gap:6px}
 .adm-row .btn{font-size:13px;padding:6px 10px;border-radius:10px}
 .node.adm .nd{filter:saturate(.85)}
+
+/* 인게임 지역 배경 사진 */
+:root{--hud-bg:rgba(255,255,255,.88)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--hud-bg:rgba(23,32,54,.88)}}
+:root[data-theme="dark"]{--hud-bg:rgba(23,32,54,.88)}
+body.game-mode{background-color:#9fd4ff;background-image:var(--gbg,none);background-size:cover;background-position:center;background-repeat:no-repeat}
+body.game-mode[data-zone="3"]{background-color:#2a1f5c}
+body.game-mode .ghud{background:var(--hud-bg);border-radius:16px;padding:6px 6px 6px 12px;box-shadow:0 4px 14px rgba(20,30,60,.18);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+body.game-mode .gh-info .chip{background:var(--soft)}
+body.game-mode .gm-menu{box-shadow:0 2px 0 var(--ink)}
+body.game-mode .nono-wrap{width:auto;max-width:100%;background:var(--hud-bg);border-radius:14px;padding:8px;box-shadow:0 4px 14px rgba(20,30,60,.2)}
+body.game-mode .pic canvas.frame,body.game-mode .jig{box-shadow:0 6px 18px rgba(20,30,60,.28)}
+body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px 20px}
 </style>
 </head>
 <body>
@@ -1598,7 +1611,7 @@ function buildJig(){
 function startStage(){
   if(pendingNext){const n=pendingNext;pendingNext=0;startRound(n);return}
   if(!S){showMenu();return}
-  paused=false;inGame=true;$('#track').hidden=true;$('#menuBtn').hidden=false;document.body.classList.remove('menu-mode');document.body.classList.add('game-mode');closeSheet();
+  paused=false;inGame=true;$('#track').hidden=true;$('#menuBtn').hidden=false;document.body.classList.remove('menu-mode');document.body.classList.add('game-mode');setGameBg(S.round);closeSheet();
   $('#ghInfo').querySelectorAll('.mv').forEach(e=>e.remove());
   misses=0;hints=0;combo=0;lastHit=0;comboPts=0;running=false;elapsedFrozen=0;
   $('#veil').hidden=true;
@@ -1911,6 +1924,8 @@ function showMenu(){
 }
 /* ---------- 인게임 화면: 위 상태줄 + 우측 상단 메뉴 + 우측 하단 버튼 ---------- */
 $('#gdock').appendChild($('#pTools'));
+const GAME_BG=['img/bg/zone0-flowerhill.jpg','img/bg/zone1-sea.jpg','img/bg/zone2-snow.jpg','img/bg/zone3-night.jpg'];
+function setGameBg(r){const z=Math.min(GAME_BG.length-1,zoneOf(r));document.body.dataset.zone=z;document.body.style.setProperty('--gbg',`url("${embedded(GAME_BG[z])}")`)}
 function gameDock(){
   const info=$('#ghInfo'),time=$('#ghTime');
   info.querySelectorAll('.mv').forEach(e=>e.remove());
