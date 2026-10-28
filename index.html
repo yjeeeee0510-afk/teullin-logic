@@ -753,6 +753,19 @@ body.game-mode .gm-menu{box-shadow:0 2px 0 var(--ink)}
 body.game-mode .nono-wrap{width:auto;max-width:100%;background:var(--hud-bg);border-radius:14px;padding:8px;box-shadow:0 4px 14px rgba(20,30,60,.2)}
 body.game-mode .pic canvas.frame,body.game-mode .jig{box-shadow:0 6px 18px rgba(20,30,60,.28)}
 body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px 20px}
+
+/* 섬과 섬 사이 바다·선착장·배 */
+.map-inner{background:radial-gradient(ellipse 14px 3px at 50% 50%,rgba(255,255,255,.55),transparent 70%) 0 0/36px 42px,linear-gradient(0deg,#5fd0f4 0%,#3cc0f0 40%,#4fa8ec 62%,#4a6fd8 78%,#2e3388 90%,#1d1f5e 100%)}
+.map .zone{background:none!important}
+.map .zone .zart.isl{-webkit-mask:none;mask:none;overflow:visible;filter:drop-shadow(0 10px 8px rgba(0,30,70,.22))}
+.map .pier{position:absolute;left:50%;width:44px;transform:translateX(-50%);z-index:1;pointer-events:none;filter:drop-shadow(0 6px 0 rgba(0,40,80,.2))}
+.map .pier svg{width:100%;height:100%;display:block}
+.map .boat{position:absolute;left:50%;top:var(--yl);width:66px;height:74px;margin-left:-33px;z-index:3;pointer-events:none;
+  animation:bob 2.6s ease-in-out infinite;transition:top 2s cubic-bezier(.45,.05,.4,1)}
+.map .boat svg{width:100%;height:100%;display:block}
+.map .boat.at-up,.map .boat.sail{top:var(--yu)}
+@keyframes bob{0%,100%{transform:rotate(-4deg)}50%{transform:translateY(-4px) rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.map .boat{animation:none;transition:none}}
 </style>
 </head>
 <body>
@@ -1796,18 +1809,24 @@ function landEdge(y,z,side){
   return side<0?7.5+3*Math.sin(y/110+z)+2*Math.sin(y/47+1.3):92.5-3*Math.sin(y/130+z*2)-2*Math.sin(y/53+.4);
 }
 function zoneArt(z,h){
-  const Z=ZONES[z],H=h+ZEXT,r=rng(5100+z*31);
-  const ys=[];for(let y=0;y<=H;y+=30)ys.push(y);if(ys[ys.length-1]!==H)ys.push(H);
-  const poly=(off,dy)=>{let d=`M${(landEdge(0,z,-1)-off).toFixed(2)} 0`;ys.forEach(y=>d+=` L${(landEdge(y,z,-1)-off).toFixed(2)} ${y+dy}`);
-    for(let k=ys.length-1;k>=0;k--){const y=ys[k];d+=` L${(landEdge(y,z,1)+off).toFixed(2)} ${y+dy}`}return d+'Z'};
+  // 섬: 위아래 끝이 둥글고, 아래쪽으로 절벽이 보임
+  const Z=ZONES[z],H=h,r=rng(5100+z*31),R=150,PADY=40;
+  const ys=[];for(let y=0;y<=H;y+=10)ys.push(y);if(ys[ys.length-1]!==H)ys.push(H);
+  const f=y=>{const d=Math.min(y,H-y);if(d>=R)return 1;const t=1-Math.max(0,d)/R;return Math.sqrt(Math.max(0,1-t*t))};
+  const X=(y,side,off)=>50+(landEdge(y,z,side)+side*off-50)*f(y);
+  const poly=(off,dy,grow)=>{
+    const yy=y=>(y<R?y-grow*(1-f(y)):y>H-R?y+grow*(1-f(y)):y)+dy;
+    let d='';ys.forEach((y,i)=>{d+=`${i?' L':'M'}${X(y,-1,off).toFixed(2)} ${yy(y).toFixed(1)}`});
+    for(let k=ys.length-1;k>=0;k--){const y=ys[k];d+=` L${X(y,1,off).toFixed(2)} ${yy(y).toFixed(1)}`}
+    return d+'Z'};
   let patches='';
-  for(let k=0;k<Math.round(H/70);k++){const y=r()*H,x=14+r()*72;patches+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(0)}" rx="${(4+r()*7).toFixed(1)}" ry="${(14+r()*20).toFixed(0)}" fill="${Z.patch}" opacity="${(.35+r()*.3).toFixed(2)}"/>`}
-  return `<svg class="zart" viewBox="0 0 100 ${H}" preserveAspectRatio="none" style="top:${-ZEXT}px;height:${H}px" aria-hidden="true">
+  for(let k=0;k<Math.round(H/70);k++){const y=R*.7+r()*(H-R*1.4),x=20+r()*60;patches+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(0)}" rx="${(4+r()*7).toFixed(1)}" ry="${(14+r()*20).toFixed(0)}" fill="${Z.patch}" opacity="${(.35+r()*.3).toFixed(2)}"/>`}
+  return `<svg class="zart isl" viewBox="0 ${-PADY} 100 ${H+PADY*2}" preserveAspectRatio="none" style="top:${-PADY}px;height:${H+PADY*2}px" aria-hidden="true">
     <defs><linearGradient id="zl${z}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${Z.land[0]}"/><stop offset="1" stop-color="${Z.land[1]}"/></linearGradient>
     <linearGradient id="zc${z}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${Z.cliff[1]}"/><stop offset=".5" stop-color="${Z.cliff[0]}"/><stop offset="1" stop-color="${Z.cliff[1]}"/></linearGradient></defs>
-    <path d="${poly(3.6,0)}" fill="none" stroke="#fff" stroke-width="5" opacity=".45" vector-effect="non-scaling-stroke"/>
-    <path d="${poly(2.6,0)}" fill="url(#zc${z})"/>
-    <path d="${poly(0,0)}" fill="url(#zl${z})"/>${patches}</svg>`;
+    <path d="${poly(3.4,12,14)}" fill="#fff" opacity=".5"/>
+    <path d="${poly(1.6,20,2)}" fill="url(#zc${z})"/>
+    <path d="${poly(0,0,0)}" fill="url(#zl${z})"/>${patches}</svg>`;
 }
 function zoneDecor(z,height,top){
   const Z=ZONES[z],lo=z*ZSIZE+1,hi=lo+ZSIZE-1;let out='',bi=0,si=0;
@@ -1819,15 +1838,18 @@ function zoneDecor(z,height,top){
   }
   return out;
 }
+const PIER_SVG=`<svg viewBox="0 0 60 110" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="0" width="7" height="110" rx="3" fill="#6a3e22"/><rect x="47" y="0" width="7" height="110" rx="3" fill="#6a3e22"/>${[0,1,2,3,4,5,6,7].map(i=>`<rect x="2" y="${3+i*13.4}" width="56" height="11" rx="3" fill="${i%2?'#c98b55':'#dba06a'}"/><rect x="2" y="${11+i*13.4}" width="56" height="3" fill="#a8693e" opacity=".55"/>`).join('')}</svg>`;
+const BOAT_SVG=`<svg viewBox="0 0 90 100" aria-hidden="true"><ellipse cx="45" cy="93" rx="40" ry="6" fill="#fff" opacity=".6"/><path d="M47 10 V70" stroke="#7a4a2c" stroke-width="4" stroke-linecap="round"/><path d="M50 12 Q80 40 75 64 L50 64Z" fill="#fff"/><path d="M50 12 Q63 40 61 64 L50 64Z" fill="#e3eaf5"/><path d="M44 18 Q23 44 25 64 L44 64Z" fill="#ff6b6b"/><path d="M47 6 l14 5 l-14 5z" fill="#ffd43b"/><path d="M7 66 H83 Q79 89 60 91 H30 Q11 89 7 66Z" fill="#ffb44a"/><path d="M45 66 H83 Q79 89 60 91 H45Z" fill="#e8962e"/><path d="M7 66 H83" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="27" cy="77" r="4" fill="#fff"/><circle cx="63" cy="77" r="4" fill="#fff"/></svg>`;
 const STAR_P='<svg viewBox="-26 -26 52 52"><path d="M0-24 7-8 24-7 11 4 15 22 0 12-15 22-11 4-24-7-7-8Z"/></svg>';
-const MAP={STEP:80,GAP:0,PAD:120};
+const MAP={STEP:80,GAP:0,PAD:120,SEA:480,ISL:110};
 const TYPE_ICON=['<svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12.5 12.5 L17 17" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>','<svg viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" fill="currentColor"/><rect x="11" y="3" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="11" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="11" y="11" width="6" height="6" fill="currentColor"/></svg>','<svg viewBox="0 0 20 20"><path d="M3 6h4a2.2 2.2 0 1 1 4 0h4v4a2.2 2.2 0 1 0 0 4v3H3z" fill="currentColor"/></svg>'];
 const TYPE_SHORT=['틀린그림','로직','퍼즐'];
-const mapY=n=>MAP.PAD+(MAXR-n)*MAP.STEP;
+const mapY=n=>MAP.PAD+(MAXR-n)*MAP.STEP+(ZONES.length-1-zoneOf(n))*MAP.SEA;
+// 섬(지역) 위·아래 끝, 선착장 길이
+const islTop=z=>z>=ZONES.length-1?0:mapY((z+1)*ZSIZE)-MAP.ISL, islBot=z=>z===0?mapY(1)+MAP.PAD:mapY(z*ZSIZE+1)+MAP.ISL;
+const PIER=86;
 const mapX=n=>50-32*Math.cos(n*Math.PI/2)+4*Math.sin(n*1.7);
-function roadPath(from,to){
-  // 라운드 순서대로 부드러운 곡선 (Catmull-Rom → 베지어), x는 0~100, y는 px
-  const pts=[];for(let n=from;n<=to;n++)pts.push([mapX(n),mapY(n)]);
+function curvePath(pts){
   if(pts.length<2)return'';
   let d=`M${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(1)}`;
   for(let i=0;i<pts.length-1;i++){
@@ -1837,6 +1859,17 @@ function roadPath(from,to){
   }
   return d;
 }
+function roadPath(from,to){const pts=[];for(let n=from;n<=to;n++)pts.push([mapX(n),mapY(n)]);return curvePath(pts)}
+// 한 섬의 길: (아래 선착장에서) → 라운드들 → (위 선착장까지). upto 라운드까지만
+function islandRoad(z,upto){
+  const lo=z*ZSIZE+1,hi=Math.min(z*ZSIZE+ZSIZE,upto);
+  const pts=[];
+  if(z>0)pts.push([50,islBot(z)+6],[50,islBot(z)-36]);
+  for(let n=lo;n<=hi;n++)pts.push([mapX(n),mapY(n)]);
+  if(hi===z*ZSIZE+ZSIZE&&z<ZONES.length-1&&upto>hi)pts.push([50,islTop(z)+36],[50,islTop(z)-6]);
+  return curvePath(pts);
+}
+
 function starRow(k){return `<span class="nstars" aria-hidden="true">${[0,1,2].map(i=>`<span class="s${i+1} ${i<k?'on':'off'}">${STAR_P}</span>`).join('')}</span>`}
 function showMenu(){
   inGame=false;paused=false;stageToken++;running=false;elapsedFrozen=0;spot=null;document.body.classList.remove('game-mode');
@@ -1858,22 +1891,29 @@ function showMenu(){
   h+='<div class="zones">';
   for(let z=0;z<ZONES.length;z++){
     const lo=z*ZSIZE+1,hi=z*ZSIZE+ZSIZE,Z=ZONES[z];
-    const top=hi>=MAXR?0:(mapY(hi)+mapY(hi+1))/2, bottom=z===0?H:(mapY(lo)+mapY(lo-1))/2;
+    const top=islTop(z), bottom=islBot(z);
     h+=`<div class="zone ${Z.cls}" style="top:${top}px;height:${bottom-top}px;z-index:${ZONES.length-z}">${zoneArt(z,bottom-top)}${z<=openZone?zoneDecor(z,bottom-top,top):''}</div>`;
-    if(z>openZone||z===lifting)fogs+=`<div class="fog${z===lifting?' lifting':''}" data-z="${z}" style="top:${top-40}px;height:${bottom-top+40}px"><div class="fog-msg" style="top:${bottom-top-150}px"><b>${lo}–${hi}라운드 · ${Z.name}</b><span>${z===openZone+1?`${lo-1}라운드를 깨면 안개가 걷혀요`:'아직 짙은 안개에 싸여 있어요'}</span></div></div>`;
+    if(z>openZone||z===lifting)fogs+=`<div class="fog${z===lifting?' lifting':''}" data-z="${z}" style="top:${top-70}px;height:${bottom-top+70+(z>0?PIER+60:0)}px"><div class="fog-msg" style="top:${bottom-top-90}px"><b>${lo}–${hi}라운드 · ${Z.name}</b><span>${z===openZone+1?`${lo-1}라운드를 깨면 안개가 걷혀요`:'아직 짙은 안개에 싸여 있어요'}</span></div></div>`;
   }
   h+='</div>';
   for(let g=0;g<MAXR/10;g++){
     const lo=g*10+1,hi=g*10+10;if(zoneOf(lo)>openZone)continue;
-    const top_=hi>=MAXR,y=top_?mapY(hi)-MAP.STEP*0.9:(mapY(hi)+mapY(hi+1))/2;
+    const top_=hi%ZSIZE===0,y=top_?mapY(hi)-MAP.STEP*0.75:(mapY(hi)+mapY(hi+1))/2;
     const ax=top_?mapX(hi):(mapX(hi)+mapX(hi+1))/2;
     h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo%ZSIZE===1?`<small>${ZONES[zoneOf(lo)].lvl} · ${ZONES[zoneOf(lo)].name}</small>`:''}</div>`;
   }
   // 길 (지역마다 흙길 색이 다름)
   h+=`<svg class="road" viewBox="0 0 100 ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">`;
-  for(let z=0;z<ZONES.length;z++){const R=ZONES[z].road,d=roadPath(Math.max(1,z*ZSIZE),Math.min(MAXR,z*ZSIZE+ZSIZE+1));
+  for(let z=0;z<ZONES.length;z++){const R=ZONES[z].road,d=islandRoad(z,MAXR+1);
     h+=`<path d="${d}" class="rd-edge" stroke="${R[0]}" vector-effect="non-scaling-stroke"/><path d="${d}" class="rd-mid" stroke="${R[1]}" vector-effect="non-scaling-stroke"/><path d="${d}" class="rd-peb" stroke="${R[2]}" vector-effect="non-scaling-stroke"/>`}
-  h+=`${P.unlocked>1?`<path class="dots done" d="${roadPath(1,P.unlocked)}" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
+  for(let z=0;z<ZONES.length;z++){if(P.unlocked<=z*ZSIZE+1&&!(z>0&&P.unlocked>z*ZSIZE))continue;const d=islandRoad(z,P.unlocked);if(d)h+=`<path class="dots done" d="${d}" vector-effect="non-scaling-stroke"/>`}
+  h+='</svg>';
+  // 섬 사이 바다: 선착장 두 개와 배 한 척
+  for(let z=0;z<ZONES.length-1;z++){
+    const yLow=islTop(z),yUp=islBot(z+1),arrived=openZone>z&&z+1!==lifting;
+    h+=`<div class="pier" style="top:${yLow-PIER}px;height:${PIER+24}px">${PIER_SVG}</div><div class="pier" style="top:${yUp-24}px;height:${PIER+24}px">${PIER_SVG}</div>`;
+    h+=`<div class="boat${arrived?' at-up':''}" data-z="${z}" style="--yl:${yLow-PIER-58}px;--yu:${yUp+PIER-20}px">${BOAT_SVG}</div>`;
+  }
   // 라운드 칸
   for(let n=MAXR;n>=1;n--){
     if(zoneOf(n)>openZone)continue;
@@ -1911,13 +1951,15 @@ function showMenu(){
   if(lf){
     const z=+lf.dataset.z;
     requestAnimationFrame(()=>{
-      map.scrollTop=Math.max(0,mapY(z*ZSIZE+1)-map.clientHeight*0.7);
+      map.scrollTop=Math.max(0,islBot(z)+PIER+120-map.clientHeight*0.75);
+      const bt=map.querySelector(`.boat[data-z="${z-1}"]`);
+      if(bt)setTimeout(()=>{bt.classList.add('sail');NATIVE.buzz('tick')},700);
       setTimeout(()=>{
         lf.classList.add('go');NATIVE.buzz('win');
         const r=map.getBoundingClientRect();FX.confetti(70);
         FX.text(`${ZONES[z].lvl} 단계 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
         setTimeout(()=>{lf.remove();toCur();upd()},3400);
-      },900);
+      },bt?2700:900);
     });
     if(z>P.revealed){P.revealed=z;saveP()}
   }
