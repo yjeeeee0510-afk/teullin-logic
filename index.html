@@ -1343,7 +1343,7 @@ function spriteH(n,r){
   return 80;
 }
 // 새로 자른 물건 그림은 WebP(부드러운 테두리), 예전 그림은 PNG
-const SPR_WEBP=new Set(["beachHutBlue", "beachHutMint", "beachHutPink", "beehive", "blossomPink", "blossomWhite", "blossomYellow", "bucketBlue", "bucketGreen", "bushNight", "butterfly", "cabinBrown", "cabinGreen", "cabinRed", "castleBlue", "castleLilac", "castlePink", "cloudNight", "cottageBlue", "cottagePurple", "cottageRed", "crab", "fenceWhite", "flowersBlue", "flowersPink", "flowersWhite", "flowersYellow", "gemBlue", "gemPink", "gemPurple", "glowMushBlue", "glowMushGreen", "glowMushPink", "gull", "hayBale", "iceBlue", "icePurple", "igloo", "kite", "lampBlue", "lampYellow", "lanternOrange", "lanternPink", "lighthouse", "moonCrescent", "moonFull", "mushroomRed", "observatory", "owlPost", "palmA", "palmB", "penguin", "pineSnowA", "pineSnowB", "pineSnowC", "planetRing", "planetSmall", "puffA", "puffB", "puffC", "sandcastle", "shellPink", "shellWhite", "skiSign", "sled", "snowBush", "snowballs", "snowmanBlue", "snowmanGreen", "snowmanRed", "starBig", "starWish", "starfishOrange", "starfishPink", "sun", "swimRing", "treeNightPurple", "treeNightTeal", "treeRound", "tulipPurple", "tulipRed", "tulipYellow", "umbrellaBlue", "umbrellaRed", "umbrellaYellow", "windmill"]);
+const SPR_WEBP=new Set(["beachHutBlue", "beachHutMint", "beachHutPink", "beehive", "blossomPink", "blossomWhite", "blossomYellow", "boatBlue", "boatOrange", "boatPurple", "bucketBlue", "bucketGreen", "buoy", "bushNight", "butterfly", "cabinBrown", "cabinGreen", "cabinRed", "castleBlue", "castleLilac", "castlePink", "cloudNight", "cottageBlue", "cottagePurple", "cottageRed", "crab", "dock", "fenceWhite", "fish", "flowersBlue", "flowersPink", "flowersWhite", "flowersYellow", "gemBlue", "gemPink", "gemPurple", "glowMushBlue", "glowMushGreen", "glowMushPink", "gull", "hayBale", "iceBlue", "icePurple", "igloo", "kite", "lampBlue", "lampYellow", "lanternOrange", "lanternPink", "lighthouse", "moonCrescent", "moonFull", "mushroomRed", "observatory", "owlPost", "palmA", "palmB", "penguin", "pineSnowA", "pineSnowB", "pineSnowC", "planetRing", "planetSmall", "puffA", "puffB", "puffC", "rockBig", "rockMid", "rockSmall", "sandcastle", "shellPink", "shellWhite", "skiSign", "sled", "snowBush", "snowballs", "snowmanBlue", "snowmanGreen", "snowmanRed", "starBig", "starWish", "starfishOrange", "starfishPink", "sun", "swimRing", "treeNightPurple", "treeNightTeal", "treeRound", "tulipPurple", "tulipRed", "tulipYellow", "umbrellaBlue", "umbrellaRed", "umbrellaYellow", "windmill"]);
 const sprPath=n=>`img/sprites/${n}.${SPR_WEBP.has(n)?'webp':'png'}`;
 const ART={bg:{},spr:{}};
 let artReady=null;
@@ -1940,9 +1940,9 @@ function zoneDecor(z,height,top){
 const MAP_BOATS=['boatOrange','boatBlue','boatPurple'];
 // [그림, 가로 위치 %, 세로 위치(-1 위 섬 쪽 ~ 1 아래 섬 쪽), 너비 px, 움직임]
 const SEA_DECO=[
-  [['rockBig',16,-.25,96],['rockSmall',84,.35,58],['buoy',80,-.45,48,'bob'],['fish',22,.45,58,'jump']],
-  [['rockMid',82,-.3,74],['rockSmall',14,.4,54],['buoy',18,-.5,46,'bob'],['fish',78,.5,56,'jump']],
-  [['rockBig',85,.25,92],['rockMid',15,-.35,70],['buoy',20,.5,46,'bob'],['fish',76,-.5,56,'jump']]
+  [['rockBig',16,-.25,96],['rockSmall',84,.35,58],['buoy',80,-.45,48],['fish',22,.45,58]],
+  [['rockMid',82,-.3,74],['rockSmall',14,.4,54],['buoy',18,-.5,46],['fish',78,.5,56]],
+  [['rockBig',85,.25,92],['rockMid',15,-.35,70],['buoy',20,.5,46],['fish',76,-.5,56]]
 ];
 const PIER_SVG=`<svg viewBox="0 0 60 110" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="0" width="7" height="110" rx="3" fill="#6a3e22"/><rect x="47" y="0" width="7" height="110" rx="3" fill="#6a3e22"/>${[0,1,2,3,4,5,6,7].map(i=>`<rect x="2" y="${3+i*13.4}" width="56" height="11" rx="3" fill="${i%2?'#c98b55':'#dba06a'}"/><rect x="2" y="${11+i*13.4}" width="56" height="3" fill="#a8693e" opacity=".55"/>`).join('')}</svg>`;
 const BOAT_SVG=`<svg viewBox="0 0 90 100" aria-hidden="true"><ellipse cx="45" cy="93" rx="40" ry="6" fill="#fff" opacity=".6"/><path d="M47 10 V70" stroke="#7a4a2c" stroke-width="4" stroke-linecap="round"/><path d="M50 12 Q80 40 75 64 L50 64Z" fill="#fff"/><path d="M50 12 Q63 40 61 64 L50 64Z" fill="#e3eaf5"/><path d="M44 18 Q23 44 25 64 L44 64Z" fill="#ff6b6b"/><path d="M47 6 l14 5 l-14 5z" fill="#ffd43b"/><path d="M7 66 H83 Q79 89 60 91 H30 Q11 89 7 66Z" fill="#ffb44a"/><path d="M45 66 H83 Q79 89 60 91 H45Z" fill="#e8962e"/><path d="M7 66 H83" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="27" cy="77" r="4" fill="#fff"/><circle cx="63" cy="77" r="4" fill="#fff"/></svg>`;
@@ -2013,7 +2013,7 @@ function showMenu(){
   // 섬 사이 바다: 선착장 두 개와 배 한 척
   for(let z=0;z<ZONES.length-1;z++){
     const yLow=islTop(z),yUp=islBot(z+1),arrived=openZone>z&&z+1!==lifting;
-    const dock=`<img src="${embedded('img/sprites/dock.png')}" alt="">`;
+    const dock=`<img src="${embedded(sprPath('dock'))}" alt="">`;
     h+=`<div class="pier" style="top:${yLow-PIER}px;height:${PIER+24}px">${dock}</div><div class="pier flip" style="top:${yUp-24}px;height:${PIER+24}px">${dock}</div>`;
     h+=`<div class="boat${arrived?' at-up':''}" data-z="${z}" style="--yl:${yLow-PIER-70}px;--yu:${yUp+PIER-18}px"><img src="${embedded(sprPath(MAP_BOATS[z]))}" alt=""></div>`;
     // 바다 장식: 바위·부표·뛰어오르는 물고기 (선착장 길은 비워 둠)
