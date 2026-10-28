@@ -767,48 +767,33 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 @keyframes bob{0%,100%{transform:rotate(-4deg)}50%{transform:translateY(-4px) rotate(4deg)}}
 @media (prefers-reduced-motion:reduce){.map .boat{animation:none;transition:none}}
 
-/* 지역 이동 장면: 화면보다 넓은 바다를 카메라가 배를 따라 오른쪽으로 흘러감 */
-.voyage{position:fixed;inset:0;z-index:40;overflow:hidden;opacity:0;transition:opacity .4s ease;--hz:62%;--boat:min(42vw,230px)}
+/* 지역 이동 장면: 옆에서 본 바다(사용자 그림)를 카메라가 배를 따라 오른쪽으로 */
+.voyage{position:fixed;inset:0;z-index:40;overflow:hidden;opacity:0;transition:opacity .4s ease;background:#2f9cf2;--boat:min(46vw,250px);--sea:74vh}
 .voyage.go{opacity:1}.voyage.out{opacity:0}
-.voyage .vy-sky,.voyage .vy-sea{position:absolute;left:0;right:0}
-.voyage .vy-sky{top:0;bottom:calc(100% - var(--hz))}
-.voyage .vy-sea{top:var(--hz);bottom:0}
-.voyage .b{opacity:0;transition:opacity 3.6s ease-in-out .4s}
-.voyage.go .b{opacity:1}
-.voyage .vy-light{position:absolute;right:8%;top:20%;width:min(20vw,100px);animation:vyPulse 3s ease-in-out infinite}
-.voyage .vy-light img,.voyage .vy-cloud img,.voyage .vy-props img{display:block;width:100%;height:auto}
-.voyage .vy-far{position:absolute;left:0;top:0;width:240vw;height:var(--hz);transform:translateX(-10vw);transition:transform 4.2s cubic-bezier(.5,0,.35,1) .2s}
-.voyage.go .vy-far{transform:translateX(-80vw)}
-.voyage .vy-cloud{position:absolute;width:min(30vw,170px);opacity:.95}
-.voyage .vy-world{position:absolute;left:0;top:0;bottom:0;width:350vw;transform:translateX(-58vw);transition:transform 4.2s cubic-bezier(.5,0,.35,1) .2s;pointer-events:none}
-.voyage.go .vy-world{transform:translateX(-192vw)}
-.voyage .vy-world.front{z-index:3}
-.voyage .vy-isl{position:absolute;bottom:calc(100% - var(--hz) - 4%);width:92vw;height:30%}
-.voyage .vy-isl::before{content:"";position:absolute;inset:auto 0 0 0;height:46%;border-radius:50% 50% 14% 14%/100% 100% 14% 14%;background:linear-gradient(var(--l0),var(--l1));box-shadow:0 12px 0 rgba(0,0,0,.12),0 0 0 6px rgba(255,255,255,.35)}
+.voyage .vy-pano{position:absolute;top:0;left:0;height:100%;width:300vh;background-size:auto 100%;background-repeat:repeat-x;transform:translateX(0);transition:transform 4.4s cubic-bezier(.5,0,.35,1) .2s;will-change:transform}
+.voyage.go .vy-pano{transform:translateX(-55vh)}
+.voyage .vy-tint{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply}
+.voyage .vy-tint.b{opacity:0;transition:opacity 3.8s ease-in-out .4s}
+.voyage.go .vy-tint.b{opacity:1}
+.voyage .vy-moon{position:absolute;left:10%;top:24%;width:min(22vw,110px);opacity:0;transition:opacity 2.6s ease 1.6s;filter:drop-shadow(0 0 18px rgba(255,240,180,.8))}
+.voyage.go .vy-moon{opacity:1}
+.voyage .vy-moon img{display:block;width:100%;height:auto}
+.voyage .vy-world{position:absolute;left:0;top:0;bottom:0;width:350vw;transform:translateX(-50vw);transition:transform 4.4s cubic-bezier(.5,0,.35,1) .2s;pointer-events:none;will-change:transform}
+.voyage.go .vy-world{transform:translateX(-200vw)}
+.voyage .vy-isl{position:absolute;top:calc(var(--sea) - 52vw - 4vh);width:96vw;height:auto;filter:drop-shadow(0 10px 10px rgba(0,30,70,.25))}
+@media (min-width:560px){.voyage .vy-isl{width:560px;top:calc(var(--sea) - 330px)}}
 .voyage .vy-isl.l{left:0}
-.voyage .vy-isl.l .vy-props{left:36%;right:4%}
-.voyage .vy-isl.r .vy-props{left:4%;right:36%}
-.voyage .vy-isl.r{left:252vw}
-.voyage .vy-props{position:absolute;bottom:30%;display:flex;align-items:flex-end;justify-content:space-around;gap:3%}
-.voyage .vy-props img{width:32%;max-height:min(22vh,180px);object-fit:contain;object-position:bottom}
-.voyage .vy-waves{position:absolute;left:0;right:0;pointer-events:none;
-  background:radial-gradient(ellipse 22px 5px at 50% 50%,rgba(255,255,255,.75),transparent 70%) 0 0/90px 46px;animation:vyWave 2.4s linear infinite}
-.voyage .w1{top:var(--hz);height:14%;opacity:.7}
-.voyage .w2{top:calc(var(--hz) + 15%);bottom:0;opacity:.85;background-size:120px 60px;animation-duration:1.8s}
-.voyage .vy-boat{position:absolute;top:calc(var(--hz) - var(--boat) * .66);left:calc(38vw - var(--boat) / 2);width:var(--boat);z-index:2;transition:left 4.2s cubic-bezier(.5,0,.35,1) .2s}
+.voyage .vy-isl.r{left:254vw;transform:scaleX(-1)}
+.voyage .vy-boat{position:absolute;top:calc(var(--sea) - var(--boat) * .82);left:calc(36vw - var(--boat) / 2);width:var(--boat);z-index:2;transition:left 4.4s cubic-bezier(.5,0,.35,1) .2s}
 .voyage.go .vy-boat{left:calc(50vw - var(--boat) / 2)}
-.voyage .vy-bob{animation:vyBob 1.6s ease-in-out infinite;transform-origin:50% 80%}
-.voyage .vy-bob svg{display:block;width:100%;height:auto}
-.voyage .vy-wake{position:absolute;right:72%;bottom:8%;width:90%;height:16px;border-radius:50%;background:radial-gradient(ellipse at right,rgba(255,255,255,.9),transparent 70%);opacity:0;transition:opacity .4s .3s}
-.voyage.go .vy-wake{opacity:1}.voyage.arrive .vy-wake{opacity:0}
-.voyage .vy-title{position:absolute;left:0;right:0;top:max(8%,calc(env(safe-area-inset-top,0px) + 34px));text-align:center;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25),0 4px 14px rgba(0,0,0,.28);display:flex;flex-direction:column;gap:4px;pointer-events:none;z-index:4}
+.voyage .vy-bob{animation:vyBob 1.6s ease-in-out infinite;transform-origin:50% 85%}
+.voyage .vy-bob img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 6px rgba(0,30,70,.22))}
+.voyage .vy-title{position:absolute;left:0;right:0;top:max(8%,calc(env(safe-area-inset-top,0px) + 34px));text-align:center;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25),0 4px 14px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:4px;pointer-events:none;z-index:4}
 .voyage .vy-title small{font-size:14px;font-weight:700;opacity:.95}
 .voyage .vy-title b{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,9vw,46px);line-height:1.1;animation:vyPop .5s ease both}
 .voyage.arrive .vy-title b{animation:vyPop .45s ease both;color:#ffe066}
-.voyage .vy-skip{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:max(18px,calc(env(safe-area-inset-bottom,0px) + 14px));border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;font-size:14px;background:rgba(255,255,255,.88);color:#1b2742;cursor:pointer;z-index:5}
-@keyframes vyBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(6px) rotate(3deg)}}
-@keyframes vyWave{from{background-position:0 0}to{background-position:-90px 0}}
-@keyframes vyPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.voyage .vy-skip{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:max(18px,calc(env(safe-area-inset-bottom,0px) + 14px));border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;font-size:14px;background:rgba(255,255,255,.9);color:#1b2742;cursor:pointer;z-index:5}
+@keyframes vyBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(7px) rotate(3deg)}}
 @keyframes vyPop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 
 /* 섬 바닥 그림, 조약돌 */
@@ -866,6 +851,10 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 .map .dock-go:active .dk-tag{transform:translateX(-50%) translateY(2px)}
 @keyframes dkPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}}
 @media (prefers-reduced-motion:reduce){.map .dock-go .dk-boat,.map .dock-go.first .dk-tag{animation:none}}
+
+/* 지도 위쪽 끝 바닷가 그림 */
+.map .shore-top{position:absolute;left:0;right:0;top:0;z-index:0;background-size:cover;background-position:center bottom;pointer-events:none;
+  -webkit-mask:linear-gradient(#000 calc(100% - 90px),transparent);mask:linear-gradient(#000 calc(100% - 90px),transparent)}
 </style>
 </head>
 <body>
@@ -2023,6 +2012,7 @@ function showMenu(){
   // 보고 있는 지역 하나: 땅은 화면 너비를 꽉 채우고, 위·아래 끝에만 바다와 선착장
   const openZone=VIEWZ,Z=ZONES[VIEWZ],landTop=islTop(VIEWZ),landBot=islBot(VIEWZ);
   h+=`<div class="zones"><div class="zone ${Z.cls}" style="top:${landTop}px;height:${landBot-landTop}px">${landHTML(VIEWZ,landBot-landTop)}</div></div>`;
+  if(SHORE_TOP[VIEWZ]&&VIEWZ<ZONES.length-1)h+=`<div class="shore-top" style="height:${landTop+150}px;background-image:url('${embedded(SHORE_TOP[VIEWZ])}')"></div>`;
   for(let g=VIEWZ*ZSIZE/10;g<(VIEWZ+1)*ZSIZE/10;g++){
     const lo=g*10+1,hi=g*10+10;
     const top_=hi%ZSIZE===0,y=top_?mapY(hi)-MAP.STEP*0.75:(mapY(hi)+mapY(hi+1))/2;
@@ -2147,6 +2137,8 @@ function pebblesHTML(openZone,W){
   store.set('sekan-peb',P.unlocked);
   return {html:h,count:k};
 }
+// 지역 위쪽 끝 바닷가 그림 (위에서 본 바다 → 땅). 없는 지역은 물결 선만
+const SHORE_TOP={0:'img/map/shore0.jpg'};
 // 선착장에서 배를 타고 다른 지역으로
 function travel(from,to){
   playVoyage(from,to,()=>{
@@ -2157,7 +2149,7 @@ function travel(from,to){
 }
 // 지역 땅: 화면 너비를 꽉 채우고 위·아래 끝만 물결 모양 바닷가
 function landHTML(z,H){
-  const waveT=z<ZONES.length-1,waveB=z>0,pts=[];for(let x=0;x<=100;x+=2)pts.push(x);
+  const waveT=z<ZONES.length-1&&!SHORE_TOP[z],waveB=z>0,pts=[];for(let x=0;x<=100;x+=2)pts.push(x);
   const yt=x=>waveT?20+6*Math.sin(x/8+z)+3*Math.sin(x/3.1+1):0, yb=x=>waveB?H-20-6*Math.sin(x/7+z*2)-3*Math.sin(x/2.7):H;
   const top=pts.map((x,i)=>`${i?'L':'M'}${x} ${yt(x).toFixed(1)}`).join(' '),bot=pts.slice().reverse().map(x=>`L${x} ${yb(x).toFixed(1)}`).join(' ');
   const d=`${top} ${bot}Z`;
@@ -2168,25 +2160,25 @@ function landHTML(z,H){
 }
 function playVoyage(from,to,done){
   if(FX.RM){done();return}
-  const sp=n=>`<img src="${embedded(sprPath(n))}" alt="">`;
-  const isl=(z,side)=>{const L=ZONES[z].land;return `<div class="vy-isl ${side}" style="--l0:${L[0]};--l1:${L[1]}"><div class="vy-props">${VOY.props[z].map(sp).join('')}</div></div>`};
+  const img=p=>`<img src="${embedded(p)}" alt="">`;
+  const ISL=['islFlower','islSea','islSnow','islNight'],BOAT=['vyBoatOrange','vyBoatBlue','vyBoatPurple'];
+  // 지역 분위기: 낮 → 낮 → 해 질 녘 → 밤 (바다 그림 위에 곱하기 색)
+  const TINT=['rgba(255,255,255,0)','rgba(255,255,255,0)','linear-gradient(#ffb7c9,#c9b6ff 55%,#ffd6c4)','linear-gradient(#3b3f9e,#4b3fa8 55%,#2a2a7a)'];
   const el=document.createElement('div');el.className='voyage';el.setAttribute('role','dialog');el.setAttribute('aria-label',`${ZONES[to].name}로 이동`);
-  const S0=VOY.sky[from],S1=VOY.sky[to],W0=VOY.sea[from],W1=VOY.sea[to];
-  el.innerHTML=`<div class="vy-sky a" style="background:linear-gradient(${S0[0]},${S0[1]})"></div><div class="vy-sky b" style="background:linear-gradient(${S1[0]},${S1[1]})"></div>
-    <div class="vy-light">${sp(VOY.light[to])}</div>
-    <div class="vy-far">${[from===3?'cloudNight':'puffA','puffB',to===3?'cloudNight':'puffC',to===3?'starWish':'puffA',to===3?'cloudNight':'puffB'].map((n,i)=>`<div class="vy-cloud" style="left:${8+i*42}vw;top:${26+(i%2)*12}%">${sp(n)}</div>`).join('')}</div>
-    <div class="vy-sea a" style="background:linear-gradient(${W0[0]},${W0[1]})"></div><div class="vy-sea b" style="background:linear-gradient(${W1[0]},${W1[1]})"></div>
-    <div class="vy-world">${isl(from,'l')}${isl(to,'r')}<div class="vy-waves w1"></div></div>
-    <div class="vy-boat"><div class="vy-bob">${VOY_BOAT}</div><div class="vy-wake"></div></div>
-    <div class="vy-world front"><div class="vy-waves w2"></div></div>
+  const boat=BOAT[Math.min(BOAT.length-1,Math.min(from,to))];
+  el.innerHTML=`<div class="vy-pano" style="background-image:url('${embedded('img/voyage/sea.jpg')}')"></div>
+    <div class="vy-tint a" style="background:${TINT[from]}"></div><div class="vy-tint b" style="background:${TINT[to]}"></div>
+    ${to===3?`<div class="vy-moon">${img(sprPath('moonFull'))}</div>`:''}
+    <div class="vy-world"><img class="vy-isl l" src="${embedded(`img/voyage/${ISL[from]}.webp`)}" alt=""><img class="vy-isl r" src="${embedded(`img/voyage/${ISL[to]}.webp`)}" alt=""></div>
+    <div class="vy-boat"><div class="vy-bob">${img(`img/voyage/${boat}.webp`)}</div></div>
     <div class="vy-title"><small>${ZONES[from].name} → ${ZONES[to].name}</small><b>${roName(ZONES[to].name)} 출발!</b></div>
     <button type="button" class="vy-skip">건너뛰기 ›</button>`;
   document.body.appendChild(el);
   let ended=false;const end=()=>{if(ended)return;ended=true;el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
   el.querySelector('.vy-skip').addEventListener('click',e=>{e.stopPropagation();NATIVE.buzz('tick');end()});
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
-  setTimeout(()=>{const t=el.querySelector('.vy-title b');if(t){t.textContent=`${ZONES[to].name} 도착!`;el.classList.add('arrive');NATIVE.buzz('win')}},3900);
-  setTimeout(end,5200);
+  setTimeout(()=>{const t=el.querySelector('.vy-title b');if(t){t.textContent=`${ZONES[to].name} 도착!`;el.classList.add('arrive');NATIVE.buzz('win')}},4100);
+  setTimeout(end,5400);
 }
 /* ---------- 인게임 화면: 위 상태줄 + 우측 상단 메뉴 + 우측 하단 버튼 ---------- */
 $('#gdock').appendChild($('#pTools'));
