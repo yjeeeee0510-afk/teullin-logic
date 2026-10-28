@@ -695,6 +695,29 @@ body.game-mode .nono-wrap{width:100%;max-height:100%;overflow:auto;align-items:c
 .pause-how{margin:0;font-size:14px;color:var(--muted);background:var(--soft);border-radius:10px;padding:10px 12px}
 .pause-btns{display:flex;flex-direction:column;gap:8px}
 .pause-btns .btn{min-height:48px;font-size:16px;border-radius:12px}
+
+/* 프로필 칸 */
+.mb-prof{display:flex;align-items:center;gap:8px;border:0;cursor:pointer;font:inherit;text-align:left;max-width:min(58vw,240px);min-width:0;flex:0 1 auto;
+  background:rgba(255,255,255,.94);border-radius:16px;padding:5px 12px 5px 5px;box-shadow:0 3px 0 rgba(0,0,0,.15),0 6px 14px rgba(0,0,0,.18);color:#3a2a10}
+.mb-prof:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.pf-av{flex:none;width:40px;height:40px;border-radius:12px;background:#fff3bf;border:2px solid #f5c84c;display:grid;place-items:center;overflow:hidden}
+.pf-av svg,.pf-av img{width:36px;height:36px;display:block}
+.pf-tx{display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.pf-nm{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-st{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:#8a7a60;white-space:nowrap}
+.pf-st b{color:#3a2a10;font-variant-numeric:tabular-nums}
+.pf-star{color:#f59f00;font-size:13px}
+.pf-dot{width:3px;height:3px;border-radius:50%;background:#c7b896;margin:0 3px}
+.pf-head{display:flex;align-items:center;gap:12px}
+.pf-big{flex:none;width:64px;height:64px;border-radius:18px;background:#fff3bf;border:2px solid #f5c84c;display:grid;place-items:center;overflow:hidden}
+.pf-big svg,.pf-big img{width:58px;height:58px;display:block}
+.pf-h{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .pf-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.card .pf-stats dd{text-align:left}
+.pf-stats div{background:var(--soft);border-radius:12px;padding:8px 12px}
+.pf-stats dt{font-size:12px;color:var(--muted)}
+.pf-stats dd{margin:0;font-family:var(--f-mono);font-weight:600;font-size:18px;font-variant-numeric:tabular-nums}
+@media (max-width:400px){.mb-prof{max-width:56vw}.pf-av{width:36px;height:36px}.pf-av svg,.pf-av img{width:32px;height:32px}}
 </style>
 </head>
 <body>
@@ -1746,7 +1769,7 @@ function showMenu(){
   let h='';
   const TROPHY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.4A6 6 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A6 6 0 0 1 7.4 12H7a4 4 0 0 1-4-4V5h3zm0 4H5v1a2 2 0 0 0 1 1.7zm12 0v2.7A2 2 0 0 0 19 8V7z" fill="currentColor"/></svg>';
   const GEAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm9 3.5-2.1-.6a7 7 0 0 0-.7-1.7l1-1.9-1.9-1.9-1.9 1a7 7 0 0 0-1.7-.7L13.1 3h-2.2l-.6 2.1a7 7 0 0 0-1.7.7l-1.9-1-1.9 1.9 1 1.9a7 7 0 0 0-.7 1.7L3 10.9v2.2l2.1.6c.2.6.4 1.2.7 1.7l-1 1.9 1.9 1.9 1.9-1c.5.3 1.1.5 1.7.7l.6 2.1h2.2l.6-2.1c.6-.2 1.2-.4 1.7-.7l1.9 1 1.9-1.9-1-1.9c.3-.5.5-1.1.7-1.7l2.1-.6z" fill="currentColor"/></svg>';
-  h+=`<div class="map-wrap"><div class="map-bar"><span class="mb-chip"><b>★</b> ${starsTotal}<small>/${MAXR*3}</small></span><span class="mb-chip">라운드 <b>${P.unlocked}</b><small>/${MAXR}</small></span><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px">`;
+  h+=`<div class="map-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px">`;
   // 90라운드(난이도 단계)마다 바뀌는 풍경 (아래에서 위로: 언덕 → 바다 → 산 → 밤하늘)
   const openZone=zoneOf(P.unlocked),lifting=openZone>P.revealed?openZone:-1;
   let fogs='';
@@ -1787,6 +1810,7 @@ function showMenu(){
   const board=$('#board');board.innerHTML=h;
   $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
   $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
+  $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
   $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   $('#hintChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   backpay();regenHints();updWalletUI();setTimeout(showBackpay,500);
@@ -1998,7 +2022,7 @@ function openNick(first,after){
   const save=async()=>{
     ok.disabled=true;ok.textContent='저장 중…';msg.textContent='';
     const r=await RANK.setNick(inp.value);
-    closeSheet();NATIVE.buzz('ok');
+    closeSheet();NATIVE.buzz('ok');profRefresh();
     const py=window.innerHeight*.3;FX.text(`${esc(r.name)} 님 반가워요!`,window.innerWidth/2,py,{size:26,color:'#ffd43b'});
     if(!r.synced&&r.reason==='error')setTimeout(()=>FX.text('랭킹 서버 연결은 나중에 다시 시도할게요',window.innerWidth/2,py+50,{size:16,color:'#ffffff'}),500);
     if(after&&r.synced)after()
@@ -2252,6 +2276,30 @@ function openRoundSheet(n){
   sh.classList.add('rsheet');
   sh.querySelector('#rsNo').addEventListener('click',()=>{NATIVE.buzz('tick');closeSheet()});
   sh.querySelector('#rsGo').addEventListener('click',()=>{NATIVE.buzz('ok');closeSheet();if(resumeHere)startStage();else startRound(n)});
+}
+
+/* ---------- 라운드 선택 화면 좌측 상단 프로필 ---------- */
+function myStars(){return Object.values(P.rounds).reduce((a,x)=>a+(x.stars||1),0)}
+function profFace(){const n=RANK.nick();return ZODIAC.face(n?nickHash(n):ZODIAC.idx(P.unlocked))}
+function profName(){return RANK.nick()||RANK.account()||'게스트'}
+function profInner(){
+  return `<span class="pf-av">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${esc(profName())}</span>`+
+    `<span class="pf-st"><span class="pf-star">★</span><b>${myStars().toLocaleString()}</b><span class="pf-dot"></span>라운드 <b>${P.unlocked}</b></span></span>`;
+}
+function profRefresh(){const b=$('#profBtn');if(b)b.innerHTML=profInner()}
+function openProfile(){
+  const acc=RANK.account(),cleared=Object.keys(P.rounds).length;
+  const total=Object.values(P.rounds).reduce((a,x)=>a+(x.best||0),0);
+  const sh=openSheet(`<div class="eyebrow">프로필</div>
+    <div class="pf-head"><span class="pf-big">${profFace()}</span><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>
+    <p class="lead">${RANK.enabled?(acc?`아이디 <b>${esc(acc)}</b>`:'로그인 없이 하는 중'):'이 기기에 저장 중'} · ${ZONES[zoneOf(P.unlocked)].lvl} 단계</p></div></div>
+    <dl class="pf-stats"><div><dt>별</dt><dd>★ ${myStars().toLocaleString()}</dd></div><div><dt>지금 라운드</dt><dd>${P.unlocked}</dd></div>
+    <div><dt>깬 라운드</dt><dd>${cleared}</dd></div><div><dt>총점</dt><dd>${total.toLocaleString()}</dd></div></dl>
+    <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button><button class="btn" type="button" id="pfRank">랭킹 보기</button>`:''}
+    <button class="btn primary" type="button" id="pfClose">닫기</button></div>`);
+  const nb=sh.querySelector('#pfNick');if(nb)nb.addEventListener('click',()=>openNick(!RANK.nick()));
+  const rb=sh.querySelector('#pfRank');if(rb)rb.addEventListener('click',()=>{closeSheet();openRank()});
+  sh.querySelector('#pfClose').addEventListener('click',closeSheet);
 }
 function openSettings(){
   const acc=RANK.account();
