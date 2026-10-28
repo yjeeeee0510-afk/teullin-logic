@@ -1,5 +1,5 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v29';
+const CACHE='sekan-v30';
 const CORE=[
   './',
   'index.html',
@@ -32,8 +32,12 @@ const CORE=[
   'img/sprites/blossomPink.png',
   'img/sprites/blossomWhite.png',
   'img/sprites/blossomYellow.png',
+  'img/sprites/boatBlue.png',
+  'img/sprites/boatOrange.png',
+  'img/sprites/boatPurple.png',
   'img/sprites/bucketBlue.png',
   'img/sprites/bucketGreen.png',
+  'img/sprites/buoy.png',
   'img/sprites/bush1.png',
   'img/sprites/bush2.png',
   'img/sprites/bush3.png',
@@ -72,9 +76,11 @@ const CORE=[
   'img/sprites/cottagePurple.png',
   'img/sprites/cottageRed.png',
   'img/sprites/crab.png',
+  'img/sprites/dock.png',
   'img/sprites/fence.png',
   'img/sprites/fenceIron.png',
   'img/sprites/fenceWhite.png',
+  'img/sprites/fish.png',
   'img/sprites/flowersBlue.png',
   'img/sprites/flowersPink.png',
   'img/sprites/flowersWhite.png',
@@ -123,6 +129,9 @@ const CORE=[
   'img/sprites/puffC.png',
   'img/sprites/pyramid.png',
   'img/sprites/pyramidMayan.png',
+  'img/sprites/rockBig.png',
+  'img/sprites/rockMid.png',
+  'img/sprites/rockSmall.png',
   'img/sprites/sandcastle.png',
   'img/sprites/shellPink.png',
   'img/sprites/shellWhite.png',
