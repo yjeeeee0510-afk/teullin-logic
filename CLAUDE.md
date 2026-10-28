@@ -16,6 +16,7 @@
 - `tools/art/` — 지역 그림을 직접 그린 SVG 원본(`art.cjs`)과 PNG로 뽑는 스크립트(`render.cjs`, playwright 필요).
 - `supabase/changes.sql` — 지금까지 서버에 실행한 SQL 기록.
 - `tools/ai_art/` — OpenAI 이미지 API로 게임 그림 90장(배경 4·물건·하늘 장식)을 새로 만드는 도구.
+- `tools/matting/` — 물건 모음 사진에서 누끼를 따는 도구와 12가지 바탕 검수표(`qa.py`). 물건 그림은 `img/sprites/*.webp`(목록 `SPR_WEBP`).
 
 ## OpenAI로 그림 바꾸기 (tools/ai_art)
 - API 키는 사용자의 PC 환경 변수 `OPENAI_API_KEY`에만 둔다. 파일·저장소·게임 코드·대화에 키를 적지 않는다. 키를 대화창에 붙여 넣으려 하면 말린다.
