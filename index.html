@@ -853,6 +853,8 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 @media (prefers-reduced-motion:reduce){.map .dock-go .dk-boat,.map .dock-go.first .dk-tag{animation:none}}
 
 /* 지도 위쪽 끝 바닷가 그림 */
+.map .shore-bot{position:absolute;left:0;right:0;z-index:0;background-size:cover;background-position:center bottom;pointer-events:none;transform:scaleY(-1);
+  -webkit-mask:linear-gradient(#000 calc(100% - 90px),transparent);mask:linear-gradient(#000 calc(100% - 90px),transparent)}
 .map .shore-top{position:absolute;left:0;right:0;top:0;z-index:0;background-size:cover;background-position:center bottom;pointer-events:none;
   -webkit-mask:linear-gradient(#000 calc(100% - 90px),transparent);mask:linear-gradient(#000 calc(100% - 90px),transparent)}
 </style>
@@ -2013,6 +2015,8 @@ function showMenu(){
   const openZone=VIEWZ,Z=ZONES[VIEWZ],landTop=islTop(VIEWZ),landBot=islBot(VIEWZ);
   h+=`<div class="zones"><div class="zone ${Z.cls}" style="top:${landTop}px;height:${landBot-landTop}px">${landHTML(VIEWZ,landBot-landTop)}</div></div>`;
   if(SHORE_TOP[VIEWZ]&&VIEWZ<ZONES.length-1)h+=`<div class="shore-top" style="height:${landTop+150}px;background-image:url('${embedded(SHORE_TOP[VIEWZ])}')"></div>`;
+  // 아래쪽 끝(돌아가는 선착장)은 같은 바닷가 그림을 위아래로 뒤집어서
+  if(SHORE_TOP[VIEWZ]&&VIEWZ>0)h+=`<div class="shore-bot" style="top:${landBot-150}px;height:${MAP_BOT(VIEWZ)+150}px;background-image:url('${embedded(SHORE_TOP[VIEWZ])}')"></div>`;
   for(let g=VIEWZ*ZSIZE/10;g<(VIEWZ+1)*ZSIZE/10;g++){
     const lo=g*10+1,hi=g*10+10;
     const top_=hi%ZSIZE===0,y=top_?mapY(hi)-MAP.STEP*0.75:(mapY(hi)+mapY(hi+1))/2;
@@ -2138,7 +2142,7 @@ function pebblesHTML(openZone,W){
   return {html:h,count:k};
 }
 // 지역 위쪽 끝 바닷가 그림 (위에서 본 바다 → 땅). 없는 지역은 물결 선만
-const SHORE_TOP={0:'img/map/shore0.jpg'};
+const SHORE_TOP={0:'img/map/shore0.jpg',1:'img/map/shore1.jpg',2:'img/map/shore2.jpg',3:'img/map/shore3.jpg'};
 // 선착장에서 배를 타고 다른 지역으로
 function travel(from,to){
   playVoyage(from,to,()=>{
@@ -2149,7 +2153,7 @@ function travel(from,to){
 }
 // 지역 땅: 화면 너비를 꽉 채우고 위·아래 끝만 물결 모양 바닷가
 function landHTML(z,H){
-  const waveT=z<ZONES.length-1&&!SHORE_TOP[z],waveB=z>0,pts=[];for(let x=0;x<=100;x+=2)pts.push(x);
+  const waveT=z<ZONES.length-1&&!SHORE_TOP[z],waveB=z>0&&!SHORE_TOP[z],pts=[];for(let x=0;x<=100;x+=2)pts.push(x);
   const yt=x=>waveT?20+6*Math.sin(x/8+z)+3*Math.sin(x/3.1+1):0, yb=x=>waveB?H-20-6*Math.sin(x/7+z*2)-3*Math.sin(x/2.7):H;
   const top=pts.map((x,i)=>`${i?'L':'M'}${x} ${yt(x).toFixed(1)}`).join(' '),bot=pts.slice().reverse().map(x=>`L${x} ${yb(x).toFixed(1)}`).join(' ');
   const d=`${top} ${bot}Z`;
