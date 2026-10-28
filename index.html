@@ -161,7 +161,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* 닉네임·랭킹 창 */
 .sheet{position:fixed;inset:0;z-index:26;background:rgba(10,18,35,.55);display:grid;place-items:center;
   padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.sheet .card{width:min(440px,100%);max-height:100%;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+.sheet .card{width:min(440px,100%);max-height:100%;overflow:hidden auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:12px}
 .sheet .card h3{font-size:30px}
 .sheet .lead{margin:0;color:var(--muted);font-size:14px}
 .sheet .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -658,6 +658,44 @@ body.menu-mode,body.menu-mode .wrap,body.menu-mode .panel,body.menu-mode #board,
 .bp-amt{display:flex;align-items:center;gap:6px;font-size:30px;font-weight:900;color:#c07a00}
 .bp-amt .ico{width:30px;height:30px}
 .bp .row{width:100%}
+
+/* ===== 인게임: 휴대폰 한 화면에 게임판만 ===== */
+.ghud,.gdock{display:none}
+body.game-mode{padding:0;overflow:hidden;overscroll-behavior:none}
+body.game-mode .top,body.game-mode .track,body.game-mode .phead,body.game-mode .foot{display:none!important}
+body.game-mode .wrap{max-width:none;gap:0}
+body.game-mode .panel{position:fixed;inset:0;border:0;border-radius:0;box-shadow:none;background:transparent;gap:8px;
+  padding:max(8px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column}
+body.game-mode .ghud{display:flex;align-items:center;gap:10px;flex:none;min-height:46px}
+.gh-l{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.gh-t{font-family:var(--f-display);font-size:19px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gh-info{display:flex;gap:5px;flex-wrap:nowrap;overflow:hidden}
+.gh-info .chip{font-size:12px;padding:3px 9px;display:inline-flex;align-items:center;gap:3px;flex:none}
+.gh-info .chip .ico{width:14px;height:14px}
+.gh-info .chip:empty{display:none}
+.gm-menu{flex:none;width:46px;height:46px;border-radius:12px;border:1.5px solid var(--ink);background:var(--card);display:grid;place-items:center;padding:0;box-shadow:0 3px 0 var(--ink)}
+.gm-menu svg{width:24px;height:24px}
+.gm-menu:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+body.game-mode #board{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+body.game-mode .gdock{display:flex;justify-content:flex-end;flex:none}
+body.game-mode #pTools{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px}
+body.game-mode #pTools .btn{min-height:48px;padding:8px 16px;border-radius:12px;font-size:15px;box-shadow:0 3px 0 var(--ink)}
+body.game-mode #pTools .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+body.game-mode #pTools .seg{border-radius:12px;box-shadow:0 3px 0 var(--ink)}
+body.game-mode #pTools .seg button{min-height:45px;padding:8px 14px;font-size:15px}
+body.game-mode #pTools .hint-btn .ico{width:20px;height:20px}
+body.game-mode .pics{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%}
+body.game-mode .pics.side{flex-direction:row}
+body.game-mode .pic{position:relative;flex:none}
+body.game-mode .pic figcaption{position:absolute;left:6px;top:6px;z-index:2;background:rgba(27,39,66,.78);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px;letter-spacing:.02em;pointer-events:none}
+body.game-mode .pic canvas.frame{width:var(--picw,100%)}
+body.game-mode .jig-area{width:100%;height:100%;align-items:center}
+body.game-mode .jig{width:var(--jigw,100%)}
+body.game-mode .nono-wrap{width:100%;max-height:100%;overflow:auto;align-items:center}
+.pause-how{margin:0;font-size:14px;color:var(--muted);background:var(--soft);border-radius:10px;padding:10px 12px}
+.pause-btns{display:flex;flex-direction:column;gap:8px}
+.pause-btns .btn{min-height:48px;font-size:16px;border-radius:12px}
 </style>
 </head>
 <body>
@@ -694,11 +732,16 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
   <nav class="track" id="track" aria-label="단계 진행"></nav>
 
   <main class="panel" id="panel">
+    <div class="ghud" id="ghud">
+      <div class="gh-l"><div class="gh-t" id="ghTitle"></div><div class="gh-info" id="ghInfo"><span class="chip gh-time" id="ghTime">0:00</span><span class="chip gh-score" id="ghScore">0점</span></div></div>
+      <button class="gm-menu" id="gmMenu" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
+    </div>
     <div class="phead">
       <div><h2 id="pTitle"></h2><p id="pDesc"></p></div>
       <div class="tools" id="pTools"></div>
     </div>
     <div id="board"></div>
+    <div class="gdock" id="gdock"></div>
   </main>
 
   <div class="foot">
@@ -763,6 +806,7 @@ window.NATIVE=(function(){
 <script>
 (function(){
 const $=s=>document.querySelector(s);
+let paused=false;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function rng(seed){let a=seed>>>0;return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const pick=(r,a)=>a[Math.floor(r()*a.length)];
@@ -1272,7 +1316,13 @@ function renderLogic(){
   const maxR=Math.max(...rows.map(c=>Math.max(1,c.length))),maxC=Math.max(...cols.map(c=>Math.max(1,c.length)));
   const rcw=maxR*(n>=12?13:15)+12;
   const avail=Math.max(200,$('#board').clientWidth);
-  const cell=Math.max(n>=12?17:22,Math.min(40,Math.floor((avail-rcw-4)/n)));
+  let cell=Math.min(40,Math.floor((avail-rcw-4)/n));
+  if(document.body.classList.contains('game-mode')){
+    const bh=$('#board').clientHeight;
+    cell=Math.min(60,Math.floor((avail-rcw-4)/n));
+    if(bh>120)cell=Math.min(cell,Math.floor((bh-(maxC*16+8)-6)/n));
+  }
+  cell=Math.max(n>=12?17:22,cell);
   el.style.setProperty('--cell',cell+'px');
   el.style.gridTemplateColumns=`${rcw}px repeat(${n},${cell}px)`;
   el.style.gridTemplateRows=`${maxC*16+8}px repeat(${n},${cell}px)`;
@@ -1411,12 +1461,13 @@ function renderTrack(){
   }).join('');
 }
 let rollT=0;
+function setScoreTxt(t){$('#sScore').textContent=t;const g=$('#ghScore');if(g)g.textContent=t+'점'}
 function rollScore(to){
-  const el=$('#sScore'),from=shownScore;shownScore=to;cancelAnimationFrame(rollT);
+  const el={set textContent(t){setScoreTxt(t)}},from=shownScore;shownScore=to;cancelAnimationFrame(rollT);
   if(to<=from||FX.RM){el.textContent=to.toLocaleString();return}
   const t0r=performance.now(),dur=700;
   const step=t=>{const k=Math.min(1,(t-t0r)/dur),e=1-Math.pow(1-k,3);el.textContent=Math.round(from+(to-from)*e).toLocaleString();if(k<1)rollT=requestAnimationFrame(step)};
-  rollT=requestAnimationFrame(step);FX.bump(el);
+  rollT=requestAnimationFrame(step);FX.bump($('#sScore'));
 }
 function renderStats(){
   const cleared=Object.keys(P.rounds).length;
@@ -1434,7 +1485,7 @@ function buildSpot(){
     $('#picL').addEventListener('click',e=>spotClick(e,'L'));
     $('#picR').addEventListener('click',e=>spotClick(e,'R'));
     $('#hintBtn').addEventListener('click',spotHint);
-    renderSpot();
+    renderSpot();gameDock();
 }
 function buildJig(){
   const tools=$('#pTools'),board=$('#board');
@@ -1445,17 +1496,19 @@ function buildJig(){
     $('#peekBtn').addEventListener('click',()=>{
       if(!jig.peek&&!jig.paid){if(!useHint()){noHint();return}jig.paid=true;hints++}
       jig.peek=!jig.peek;jig.sel=-1;renderJig()});
-    renderJig();
+    renderJig();gameDock();
 }
 function startStage(){
   if(pendingNext){const n=pendingNext;pendingNext=0;startRound(n);return}
   if(!S){showMenu();return}
-  inGame=true;$('#track').hidden=true;$('#menuBtn').hidden=false;document.body.classList.remove('menu-mode');closeSheet();
+  paused=false;inGame=true;$('#track').hidden=true;$('#menuBtn').hidden=false;document.body.classList.remove('menu-mode');document.body.classList.add('game-mode');closeSheet();
+  $('#ghInfo').querySelectorAll('.mv').forEach(e=>e.remove());
   misses=0;hints=0;combo=0;lastHit=0;comboPts=0;running=false;elapsedFrozen=0;
   $('#veil').hidden=true;
   const st=STAGES[S.stage];
   const sz=S.stage===0?`틀린 곳 ${SIZE.spot(S.round)}개`:S.stage===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
   $('#pTitle').textContent=`라운드 ${S.round} · ${st.name} (${sz})`;
+  $('#ghTitle').textContent=`라운드 ${S.round} · ${st.name}`;
   $('#pDesc').textContent=st.desc;
   renderTrack();renderStats();
   const tools=$('#pTools'),board=$('#board');
@@ -1475,7 +1528,7 @@ function startStage(){
     $('#mX').addEventListener('click',()=>setMode(2));
     $('#clrBtn').addEventListener('click',()=>{logic.g=logic.g.map(r=>r.map(()=>0));renderLogic()});
     $('#lgHintBtn').addEventListener('click',logicHint);
-    bindLogic();renderLogic();
+    gameDock();bindLogic();renderLogic();
     goTime(token);
   }
 }
@@ -1485,7 +1538,7 @@ function goTime(token){
 }
 function elapsed(){return running?performance.now()-t0:elapsedFrozen}
 function fmt(ms){const s=Math.floor(ms/1000);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
-setInterval(()=>{$('#sTime').textContent=fmt(elapsed())},250);
+setInterval(()=>{const t=fmt(elapsed());$('#sTime').textContent=t;const g=$('#ghTime');if(g)g.textContent=t},250);
 
 function clearStage(){
   if(!running)return;
@@ -1677,7 +1730,7 @@ function roadPath(from,to){
 }
 function starRow(k){return `<span class="nstars" aria-hidden="true">${[0,1,2].map(i=>`<span class="s${i+1} ${i<k?'on':'off'}">${STAR_P}</span>`).join('')}</span>`}
 function showMenu(){
-  inGame=false;stageToken++;running=false;elapsedFrozen=0;spot=null;
+  inGame=false;paused=false;stageToken++;running=false;elapsedFrozen=0;spot=null;document.body.classList.remove('game-mode');
   $('#veil').hidden=true;$('#track').hidden=true;$('#menuBtn').hidden=true;
   $('#pTitle').textContent='라운드 선택';
   $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 60라운드를 모두 깨면 다음 지역의 안개가 걷힙니다.';
@@ -1759,6 +1812,47 @@ function showMenu(){
   }
   renderStats();
 }
+/* ---------- 인게임 화면: 위 상태줄 + 우측 상단 메뉴 + 우측 하단 버튼 ---------- */
+$('#gdock').appendChild($('#pTools'));
+function gameDock(){
+  const info=$('#ghInfo'),time=$('#ghTime');
+  info.querySelectorAll('.mv').forEach(e=>e.remove());
+  $('#pTools').querySelectorAll('.chip').forEach(c=>{c.classList.add('mv');info.insertBefore(c,time)});
+  fitBoard();
+}
+function fitBoard(){
+  if(!document.body.classList.contains('game-mode'))return;
+  const b=$('#board'),W=b.clientWidth,H=b.clientHeight;if(!W||!H)return;
+  const pics=b.querySelector('.pics');
+  if(pics){
+    const side=W>H*1.25;pics.classList.toggle('side',side);
+    const w=side?Math.min((W-8)/2,H*4/3):Math.min(W,(H-8)/2*4/3);
+    pics.style.setProperty('--picw',Math.floor(w)+'px');
+  }
+  const jg=b.querySelector('.jig');
+  if(jg)jg.style.setProperty('--jigw',Math.floor(Math.min(W,H*4/3,760))+'px');
+}
+function pauseGame(){if(inGame&&running){elapsedFrozen=performance.now()-t0;running=false;paused=true}}
+function resumeGame(){if(!paused)return;paused=false;if(!inGame||!S)return;t0=performance.now()-elapsedFrozen;running=true}
+function openPause(){
+  if(!inGame||!S)return;
+  NATIVE.buzz('tick');pauseGame();
+  const st=STAGES[S.stage];
+  const sh=openSheet(`<div class="eyebrow">일시정지 · 라운드 ${S.round}</div><h3>${st.name}</h3>
+    <p class="pause-how">${esc(st.desc)}</p>
+    <div class="pause-btns">
+      <button class="btn primary" type="button" id="pzGo">계속하기</button>
+      <button class="btn" type="button" id="pzRe">처음부터 다시</button>
+      <button class="btn" type="button" id="pzMap">라운드 선택으로</button>
+      <button class="btn" type="button" id="pzSet">설정</button>
+    </div>`);
+  sh.querySelector('#pzGo').addEventListener('click',()=>closeSheet());
+  sh.querySelector('#pzRe').addEventListener('click',()=>{paused=false;closeSheet();startRound(S.round)});
+  sh.querySelector('#pzMap').addEventListener('click',()=>{paused=false;closeSheet();showMenu()});
+  sh.querySelector('#pzSet').addEventListener('click',()=>openSettings());
+}
+$('#gmMenu').addEventListener('click',openPause);
+
 $('#menuBtn').addEventListener('click',showMenu);
 window.__sekanBack=()=>{if($('#sheet')){closeSheet();return true}if(inGame){showMenu();return true}return false};
 
@@ -1768,7 +1862,7 @@ $('#resetBtn').addEventListener('click',()=>{
   armed=false;$('#resetBtn').textContent='기록 초기화';
   P={unlocked:1,rounds:{}};saveP();S=null;save();showMenu();
 });
-let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(inGame&&S&&S.stage===1&&logic&&$('#nono'))renderLogic()},120)});
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{fitBoard();if(inGame&&S&&S.stage===1&&logic&&$('#nono'))renderLogic()},120)});
 
 
 
@@ -1876,7 +1970,7 @@ const RANK=(function(){
   };
 })();
 function nickHash(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h%12}
-function closeSheet(){const sh=$('#sheet');if(sh)sh.remove()}
+function closeSheet(){const sh=$('#sheet');if(sh)sh.remove();if(paused)setTimeout(()=>{if(paused&&!$('#sheet'))resumeGame()},0)}
 function openSheet(html){
   closeSheet();const sh=document.createElement('div');sh.className='sheet';sh.id='sheet';
   sh.innerHTML=`<div class="card" role="dialog" aria-modal="true">${html}</div>`;
@@ -2015,7 +2109,7 @@ function openShop(msg){
 
 /* ---------- 로그인 · 아이디 만들기 ---------- */
 function enterGame(){const el=$('#intro');closeSheet();el.classList.add('out');setTimeout(()=>{el.hidden=true},460);showMenu()}
-function backToIntro(){closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')}
+function backToIntro(){paused=false;closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')}
 const ID_RE=/^[a-z0-9_]{4,20}$/;
 function mergeP(a,b){
   a=a||{};b=b||{};const ra=a.rounds||{},rb=b.rounds||{};
