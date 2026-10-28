@@ -2000,7 +2000,7 @@ function showMenu(){
       setTimeout(()=>{
         lf.classList.add('go');NATIVE.buzz('win');
         const r=map.getBoundingClientRect();FX.confetti(70);
-        FX.text(`${ZONES[z].lvl} 단계 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
+        FX.text(`${ZONES[z].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
         setTimeout(()=>{lf.remove();toCur();upd()},3400);
       },350);
     });
@@ -2016,6 +2016,8 @@ const VOY={
   light:['sun','sun','sun','moonFull']
 };
 const VOY_BOAT=`<svg viewBox="0 0 160 130" aria-hidden="true"><path d="M78 8 V92" stroke="#7a4a2c" stroke-width="5" stroke-linecap="round"/><path d="M82 12 Q132 50 126 88 L82 88Z" fill="#fff"/><path d="M82 12 Q104 50 100 88 L82 88Z" fill="#e3eaf5"/><path d="M74 20 Q36 54 40 88 L74 88Z" fill="#ff6b6b"/><path d="M74 20 Q58 54 60 88 L74 88Z" fill="#e8484c"/><path d="M78 4 l20 6 l-20 6z" fill="#ffd43b"/><path d="M10 92 H150 Q140 120 112 122 H44 Q20 120 10 92Z" fill="#ffb44a"/><path d="M80 92 H150 Q140 120 112 122 H80Z" fill="#e8962e"/><path d="M10 92 H150" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${[42,78,114].map(x=>`<circle cx="${x}" cy="105" r="6" fill="#fff"/><circle cx="${x}" cy="105" r="3" fill="#7cc4ea"/>`).join('')}</svg>`;
+// '바다로', '산으로'처럼 받침에 맞춰 '로/으로'를 붙임 (ㄹ 받침은 '로')
+function roName(w){const c=w.charCodeAt(w.length-1)-0xAC00;if(c<0||c>11171)return w+'로';const j=c%28;return w+(j===0||j===8?'로':'으로')}
 function playVoyage(from,to,done){
   if(FX.RM){done();return}
   const sp=n=>`<img src="${embedded(`img/sprites/${n}.png`)}" alt="">`;
@@ -2029,7 +2031,7 @@ function playVoyage(from,to,done){
     <div class="vy-world">${isl(from,'l')}${isl(to,'r')}<div class="vy-waves w1"></div></div>
     <div class="vy-boat"><div class="vy-bob">${VOY_BOAT}</div><div class="vy-wake"></div></div>
     <div class="vy-world front"><div class="vy-waves w2"></div></div>
-    <div class="vy-title"><small>${ZONES[from].name} → ${ZONES[to].name}</small><b>${ZONES[to].lvl} 단계로 출발!</b></div>
+    <div class="vy-title"><small>${ZONES[from].name} → ${ZONES[to].name}</small><b>${roName(ZONES[to].name)} 출발!</b></div>
     <button type="button" class="vy-skip">건너뛰기 ›</button>`;
   document.body.appendChild(el);
   let ended=false;const end=()=>{if(ended)return;ended=true;el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
@@ -2537,7 +2539,7 @@ function openAdmin(){
       <b>단계별 마지막 라운드로 바로 시작</b>
       <div class="adm-row">${ZONES.map((Z,z)=>[2,1,0].map(t=>{const n=(z+1)*ZSIZE-t;return g('play'+n,`${Z.lvl} · ${n}라운드`)}).join('')).join('')}</div>
       <b>안개 걷히는 장면</b>
-      <div class="adm-row">${ZONES.slice(1).map((Z,i)=>g('fog'+(i+1),`${Z.lvl} 단계 오픈`)).join('')}</div>
+      <div class="adm-row">${ZONES.slice(1).map((Z,i)=>g('fog'+(i+1),`${Z.name} 오픈`)).join('')}</div>
       <b>지도 위치로 이동</b>
       <div class="adm-row">${ZONES.map((Z,z)=>g('go'+(z*ZSIZE+1),`${Z.lvl} (${z*ZSIZE+1}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
     </div>
