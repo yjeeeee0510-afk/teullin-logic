@@ -1,0 +1,103 @@
+// 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
+const CACHE='sekan-v14';
+const CORE=[
+  './',
+  'index.html',
+  'manifest.webmanifest',
+  'rank-config.js',
+  'icons/apple-touch-icon.png',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'img/scenes/desert.png',
+  'img/scenes/empty.png',
+  'img/scenes/fall.png',
+  'img/scenes/forest.png',
+  'img/scenes/grass.png',
+  'img/sprites/bush1.png',
+  'img/sprites/bush2.png',
+  'img/sprites/bush3.png',
+  'img/sprites/bush4.png',
+  'img/sprites/bushAlt1.png',
+  'img/sprites/bushAlt2.png',
+  'img/sprites/bushAlt3.png',
+  'img/sprites/bushAlt4.png',
+  'img/sprites/bushOrange1.png',
+  'img/sprites/bushOrange2.png',
+  'img/sprites/bushOrange3.png',
+  'img/sprites/bushOrange4.png',
+  'img/sprites/cactus1.png',
+  'img/sprites/cactus2.png',
+  'img/sprites/cactus3.png',
+  'img/sprites/castleSmall.png',
+  'img/sprites/castleSmallAlt.png',
+  'img/sprites/cloud1.png',
+  'img/sprites/cloud2.png',
+  'img/sprites/cloud3.png',
+  'img/sprites/cloud4.png',
+  'img/sprites/cloud5.png',
+  'img/sprites/cloud6.png',
+  'img/sprites/cloud7.png',
+  'img/sprites/cloud8.png',
+  'img/sprites/fence.png',
+  'img/sprites/fenceIron.png',
+  'img/sprites/house1.png',
+  'img/sprites/house2.png',
+  'img/sprites/houseAlt1.png',
+  'img/sprites/houseAlt2.png',
+  'img/sprites/houseSmall1.png',
+  'img/sprites/houseSmall2.png',
+  'img/sprites/houseSmallAlt1.png',
+  'img/sprites/houseSmallAlt2.png',
+  'img/sprites/moon.png',
+  'img/sprites/moonFull.png',
+  'img/sprites/pyramid.png',
+  'img/sprites/pyramidMayan.png',
+  'img/sprites/sun.png',
+  'img/sprites/tower.png',
+  'img/sprites/towerAlt.png',
+  'img/sprites/towerSmall.png',
+  'img/sprites/towerSmallAlt.png',
+  'img/sprites/tree.png',
+  'img/sprites/treeDead.png',
+  'img/sprites/treeFrozen.png',
+  'img/sprites/treeLong.png',
+  'img/sprites/treeLongFrozen.png',
+  'img/sprites/treeLongOrange.png',
+  'img/sprites/treeLongSnow.png',
+  'img/sprites/treeOrange.png',
+  'img/sprites/treePalm.png',
+  'img/sprites/treePine.png',
+  'img/sprites/treePineFrozen.png',
+  'img/sprites/treePineOrange.png',
+  'img/sprites/treePineSnow.png',
+  'img/sprites/treeSmall_green1.png',
+  'img/sprites/treeSmall_green2.png',
+  'img/sprites/treeSmall_green3.png',
+  'img/sprites/treeSmall_greenAlt1.png',
+  'img/sprites/treeSmall_greenAlt2.png',
+  'img/sprites/treeSmall_greenAlt3.png',
+  'img/sprites/treeSmall_orange1.png',
+  'img/sprites/treeSmall_orange2.png',
+  'img/sprites/treeSmall_orange3.png',
+  'img/sprites/treeSnow.png'
+];
+self.addEventListener('install',e=>{
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+});
+// 게임 파일은 네트워크 우선(업데이트 반영), 실패하면 캐시. 글꼴 등 나머지는 캐시 우선.
+self.addEventListener('fetch',e=>{
+  const req=e.request;if(req.method!=='GET')return;
+  const url=new URL(req.url);
+  const isPage=req.mode==='navigate'||url.pathname.endsWith('/index.html')||url.pathname.endsWith('/rank-config.js');
+  if(isPage){
+    e.respondWith(fetch(req).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp));return r}).catch(()=>caches.match(req).then(r=>r||caches.match('index.html'))));
+    return;
+  }
+  e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{
+    if(r.ok&&(url.origin===location.origin||url.host.endsWith('gstatic.com')||url.host.endsWith('googleapis.com'))){const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp))}
+    return r;
+  })));
+});

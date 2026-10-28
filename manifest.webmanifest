@@ -1,0 +1,17 @@
+{
+  "name": "틀린로직맞추기",
+  "short_name": "틀린로직맞추기",
+  "description": "틀린그림 찾기, 네모네모 로직, 퍼즐 맞추기를 반복하는 퍼즐 게임",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef2f7",
+  "theme_color": "#eef2f7",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
