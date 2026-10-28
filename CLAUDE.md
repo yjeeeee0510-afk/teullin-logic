@@ -15,6 +15,19 @@
 - `img/scenes/*.png` 배경(800×600), `img/sprites/*.png` 물건 그림, `img/bg/zone*.jpg` 인게임 지역 배경 사진(사용자가 준 그림).
 - `tools/art/` — 지역 그림을 직접 그린 SVG 원본(`art.cjs`)과 PNG로 뽑는 스크립트(`render.cjs`, playwright 필요).
 - `supabase/changes.sql` — 지금까지 서버에 실행한 SQL 기록.
+- `tools/ai_art/` — OpenAI 이미지 API로 게임 그림 90장(배경 4·물건·하늘 장식)을 새로 만드는 도구.
+
+## OpenAI로 그림 바꾸기 (tools/ai_art)
+- API 키는 사용자의 PC 환경 변수 `OPENAI_API_KEY`에만 둔다. 파일·저장소·게임 코드·대화에 키를 적지 않는다. 키를 대화창에 붙여 넣으려 하면 말린다.
+- 모델은 `OPENAI_IMAGE_MODEL`(기본 `gpt-image-1`). 실행 전에 OpenAI 요금표와 모델 이름을 확인하고, 사용자에게 장수와 대략적인 요금을 알린 뒤 진행한다.
+- 순서
+  1. `node tools/ai_art/generate.mjs --dry --zone "꽃 언덕"` 으로 요청 목록 확인 (요금 없음)
+  2. `node tools/ai_art/generate.mjs --zone "꽃 언덕"` → `tools/ai_art/out/raw/` (이미 만든 건 건너뜀, `--only 이름,이름`, `--force`, `--quality low|medium|high`)
+  3. `python3 tools/ai_art/process.py` → 크기 맞춰 `img/` 에 넣고 `sw.js` 캐시 버전을 올림, 원래 그림은 `out/backup/`
+  4. `tools/ai_art/out/preview.png`와 휴대폰 크기 게임 화면을 찍어 사용자에게 보여 주고, 좋다고 하면 커밋·푸시
+- 그림 목록·요청 문장은 `tools/ai_art/items.json` (지역 `zone`: 꽃 언덕·푸른 바다·눈 덮인 산·별빛 하늘·하늘). 색 변형(`variantOf`)은 바탕 그림을 편집해서 모양을 맞춘다.
+- 이름은 `index.html`의 `REGION_THEMES`·`GROUPS`·`ART_H` 이름과 같아야 게임에 쓰인다. 새 물건을 추가하면 그 세 곳에도 넣는다.
+- 그림이 바뀌면 `ART_FLIP`(좌우가 다른 그림)·`ART_NOCOLOR`(흰색이라 색 바꾸기가 티 안 나는 그림)도 새 그림 보고 다시 맞춘다.
 
 ## 게임 구조 (index.html 안)
 - 라운드: `MAXR=360`, `ZSIZE=90`(난이도 단계·지역), `TSIZE=30`(단계 안 세부 난이도). `typeOf(n)=(n-1)%3` → 0 틀린그림, 1 로직, 2 퍼즐.

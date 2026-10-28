@@ -1,0 +1,580 @@
+{
+ "style": "Cute rounded 3D clay style mobile game art, soft lighting from the upper left, bright clear colors, no outlines, no text, no letters, no numbers, no logos, no people.",
+ "sprite": "Exactly one object, centered, fully visible and not cropped, seen from the front and slightly above, only a faint soft shadow under it, transparent background.",
+ "scene": "A wide game background with only sky, distant scenery and ground. No houses, trees or other large objects. The horizon where the ground starts is at about 57% from the top. The lower ground area is fairly flat and empty so objects can be placed on it.",
+ "items": [
+  {
+   "name": "flowerhill",
+   "type": "scene",
+   "zone": "꽃 언덕",
+   "prompt": "clear sky with two or three fluffy clouds, distant light-green rolling hills, a wide green meadow with small scattered flowers, a dirt path in the middle"
+  },
+  {
+   "name": "beach",
+   "type": "scene",
+   "zone": "푸른 바다",
+   "prompt": "clear sky, calm blue sea in the upper part of the ground area with a small island and two sailboats far away, white foam line, wide flat sandy beach in front"
+  },
+  {
+   "name": "snowmount",
+   "type": "scene",
+   "zone": "눈 덮인 산",
+   "prompt": "pale blue sky with falling snowflakes, three or four distant mountains with snowy peaks, wide soft snowfield in front"
+  },
+  {
+   "name": "nightsky",
+   "type": "scene",
+   "zone": "별빛 하늘",
+   "prompt": "night sky from deep navy to purple full of small stars and a faint milky way, distant dark purple hills, flat purple meadow in front"
+  },
+  {
+   "name": "windmill",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a small windmill with a red roof, cream walls and four white sails"
+  },
+  {
+   "name": "cottageRed",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a small flower cottage with cream walls, a chimney and window flower boxes, red roof"
+  },
+  {
+   "name": "cottageBlue",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "cottageRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: blue roof."
+  },
+  {
+   "name": "cottagePurple",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "cottageRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: purple roof."
+  },
+  {
+   "name": "blossomPink",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a round fluffy tree completely covered in blossoms, pink blossoms"
+  },
+  {
+   "name": "blossomWhite",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "blossomPink",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: white blossoms."
+  },
+  {
+   "name": "blossomYellow",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "blossomPink",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: yellow blossoms."
+  },
+  {
+   "name": "treeRound",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a round green tree with a few red fruits"
+  },
+  {
+   "name": "flowersPink",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a low cluster of small flowers on green leaves, pink flowers"
+  },
+  {
+   "name": "flowersYellow",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "flowersPink",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: yellow flowers."
+  },
+  {
+   "name": "flowersBlue",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "flowersPink",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: blue flowers."
+  },
+  {
+   "name": "flowersWhite",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "flowersPink",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: white flowers."
+  },
+  {
+   "name": "tulipRed",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "three tulips on green stems, red tulips"
+  },
+  {
+   "name": "tulipYellow",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "tulipRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: yellow tulips."
+  },
+  {
+   "name": "tulipPurple",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "variantOf": "tulipRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: purple tulips."
+  },
+  {
+   "name": "mushroomRed",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "two red mushrooms with white dots"
+  },
+  {
+   "name": "fenceWhite",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "one short section of a low white wooden fence"
+  },
+  {
+   "name": "beehive",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a yellow beehive on a wooden post"
+  },
+  {
+   "name": "hayBale",
+   "type": "sprite",
+   "zone": "꽃 언덕",
+   "prompt": "a rectangular hay bale tied with string"
+  },
+  {
+   "name": "butterfly",
+   "type": "sky",
+   "zone": "꽃 언덕",
+   "prompt": "a pink butterfly with open wings"
+  },
+  {
+   "name": "kite",
+   "type": "sky",
+   "zone": "꽃 언덕",
+   "prompt": "a yellow, orange and red diamond kite with a ribbon tail"
+  },
+  {
+   "name": "lighthouse",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a red and white striped lighthouse with a glowing yellow lamp on top"
+  },
+  {
+   "name": "beachHutBlue",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a small beach hut on wooden stilts with a straw roof, sky-blue walls"
+  },
+  {
+   "name": "beachHutPink",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "beachHutBlue",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: pink walls."
+  },
+  {
+   "name": "beachHutMint",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "beachHutBlue",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: mint walls."
+  },
+  {
+   "name": "palmA",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a palm tree with coconuts, trunk curving to the right"
+  },
+  {
+   "name": "palmB",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "palmA",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: trunk curving to the left."
+  },
+  {
+   "name": "umbrellaRed",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a striped beach umbrella standing upright, red and white stripes"
+  },
+  {
+   "name": "umbrellaBlue",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "umbrellaRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: blue and white stripes."
+  },
+  {
+   "name": "umbrellaYellow",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "umbrellaRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: yellow and orange stripes."
+  },
+  {
+   "name": "sandcastle",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a small sandcastle with a little red flag"
+  },
+  {
+   "name": "shellPink",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a fan-shaped seashell, pink"
+  },
+  {
+   "name": "shellWhite",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "shellPink",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: white."
+  },
+  {
+   "name": "starfishOrange",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a starfish, orange"
+  },
+  {
+   "name": "starfishPink",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "starfishOrange",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: pink."
+  },
+  {
+   "name": "crab",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a smiling red crab raising its claws"
+  },
+  {
+   "name": "bucketBlue",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a sand bucket with a yellow shovel, blue bucket"
+  },
+  {
+   "name": "bucketGreen",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "variantOf": "bucketBlue",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: green bucket."
+  },
+  {
+   "name": "swimRing",
+   "type": "sprite",
+   "zone": "푸른 바다",
+   "prompt": "a red and white swim ring lying flat"
+  },
+  {
+   "name": "gull",
+   "type": "sky",
+   "zone": "푸른 바다",
+   "prompt": "a white seagull flying with wings spread"
+  },
+  {
+   "name": "cabinRed",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a log cabin with snow on the roof, warm lit windows and a chimney, red walls"
+  },
+  {
+   "name": "cabinBrown",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "cabinRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: brown walls."
+  },
+  {
+   "name": "cabinGreen",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "cabinRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: green walls."
+  },
+  {
+   "name": "igloo",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "an igloo made of ice blocks with a small entrance"
+  },
+  {
+   "name": "pineSnowA",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a pine tree with snow on every branch, dark green"
+  },
+  {
+   "name": "pineSnowB",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "pineSnowA",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: light green."
+  },
+  {
+   "name": "pineSnowC",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "pineSnowA",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: bluish green."
+  },
+  {
+   "name": "snowmanRed",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a snowman with a top hat, a scarf, a carrot nose and stick arms, red scarf"
+  },
+  {
+   "name": "snowmanBlue",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "snowmanRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: blue scarf."
+  },
+  {
+   "name": "snowmanGreen",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "snowmanRed",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: green scarf."
+  },
+  {
+   "name": "penguin",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a cute standing penguin"
+  },
+  {
+   "name": "sled",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a red wooden sled"
+  },
+  {
+   "name": "snowBush",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a green bush with fluffy snow on top"
+  },
+  {
+   "name": "iceBlue",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a cluster of pointy ice crystals, light blue"
+  },
+  {
+   "name": "icePurple",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "variantOf": "iceBlue",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: light purple."
+  },
+  {
+   "name": "snowballs",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "a small pile of three or four snowballs"
+  },
+  {
+   "name": "skiSign",
+   "type": "sprite",
+   "zone": "눈 덮인 산",
+   "prompt": "an orange ski resort signpost with a white arrow"
+  },
+  {
+   "name": "castleLilac",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "a fairy-tale castle with three pointy towers and warm yellow lit windows, purple roofs"
+  },
+  {
+   "name": "castleBlue",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "castleLilac",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: blue roofs."
+  },
+  {
+   "name": "castlePink",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "castleLilac",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: pink roofs."
+  },
+  {
+   "name": "observatory",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "a small observatory with a round dome and a telescope sticking out"
+  },
+  {
+   "name": "lampYellow",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "an old-fashioned street lamp that is lit, warm yellow light"
+  },
+  {
+   "name": "lampBlue",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "lampYellow",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: sky-blue light."
+  },
+  {
+   "name": "treeNightPurple",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "a round tree with small glowing fruits, purple leaves"
+  },
+  {
+   "name": "treeNightTeal",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "treeNightPurple",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: teal leaves."
+  },
+  {
+   "name": "glowMushBlue",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "two softly glowing mushrooms, blue"
+  },
+  {
+   "name": "glowMushPink",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "glowMushBlue",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: pink."
+  },
+  {
+   "name": "glowMushGreen",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "glowMushBlue",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: green."
+  },
+  {
+   "name": "gemPurple",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "a cluster of pointy crystals, purple"
+  },
+  {
+   "name": "gemBlue",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "gemPurple",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: blue."
+  },
+  {
+   "name": "gemPink",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "gemPurple",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: pink."
+  },
+  {
+   "name": "lanternOrange",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "a lit round paper lantern, orange"
+  },
+  {
+   "name": "lanternPink",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "variantOf": "lanternOrange",
+   "prompt": "Keep the exact same object, shape, size, angle and lighting. Only change the color: pink."
+  },
+  {
+   "name": "bushNight",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "a purple bush with tiny twinkling lights"
+  },
+  {
+   "name": "owlPost",
+   "type": "sprite",
+   "zone": "별빛 하늘",
+   "prompt": "an owl sitting on a wooden post"
+  },
+  {
+   "name": "puffA",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a fluffy white cloud, wide"
+  },
+  {
+   "name": "puffB",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a fluffy white cloud, small and round"
+  },
+  {
+   "name": "puffC",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a fluffy white cloud, long"
+  },
+  {
+   "name": "sun",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a softly glowing sun"
+  },
+  {
+   "name": "moonFull",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a full moon with soft craters"
+  },
+  {
+   "name": "moonCrescent",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a yellow crescent moon"
+  },
+  {
+   "name": "starBig",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a yellow star with a cute smiling face"
+  },
+  {
+   "name": "starWish",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a sparkling four-pointed star"
+  },
+  {
+   "name": "planetRing",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "an orange planet with a ring"
+  },
+  {
+   "name": "planetSmall",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a small mint-colored planet"
+  },
+  {
+   "name": "cloudNight",
+   "type": "sky",
+   "zone": "하늘",
+   "prompt": "a soft purple night cloud"
+  }
+ ]
+}
