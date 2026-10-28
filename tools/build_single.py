@@ -12,8 +12,8 @@ os.chdir(ROOT)
 
 html = open('index.html', encoding='utf-8').read()
 embed = {}
-for f in sorted(glob.glob('img/*/*.png') + glob.glob('img/*/*.jpg')):
-    mime = 'image/png' if f.endswith('.png') else 'image/jpeg'
+for f in sorted(glob.glob('img/*/*.png') + glob.glob('img/*/*.jpg') + glob.glob('img/*/*.webp')):
+    mime = {'png': 'image/png', 'webp': 'image/webp'}.get(f.rsplit('.', 1)[-1], 'image/jpeg')
     embed[f] = f'data:{mime};base64,' + base64.b64encode(open(f, 'rb').read()).decode()
 
 tag = '<script src="rank-config.js"></script>'

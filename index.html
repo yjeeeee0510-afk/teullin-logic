@@ -1342,6 +1342,9 @@ function spriteH(n,r){
   if(/^cloud/.test(n))return j(58,82);
   return 80;
 }
+// 새로 자른 물건 그림은 WebP(부드러운 테두리), 예전 그림은 PNG
+const SPR_WEBP=new Set(["beachHutBlue", "beachHutMint", "beachHutPink", "beehive", "blossomPink", "blossomWhite", "blossomYellow", "bucketBlue", "bucketGreen", "bushNight", "butterfly", "cabinBrown", "cabinGreen", "cabinRed", "castleBlue", "castleLilac", "castlePink", "cloudNight", "cottageBlue", "cottagePurple", "cottageRed", "crab", "fenceWhite", "flowersBlue", "flowersPink", "flowersWhite", "flowersYellow", "gemBlue", "gemPink", "gemPurple", "glowMushBlue", "glowMushGreen", "glowMushPink", "gull", "hayBale", "iceBlue", "icePurple", "igloo", "kite", "lampBlue", "lampYellow", "lanternOrange", "lanternPink", "lighthouse", "moonCrescent", "moonFull", "mushroomRed", "observatory", "owlPost", "palmA", "palmB", "penguin", "pineSnowA", "pineSnowB", "pineSnowC", "planetRing", "planetSmall", "puffA", "puffB", "puffC", "sandcastle", "shellPink", "shellWhite", "skiSign", "sled", "snowBush", "snowballs", "snowmanBlue", "snowmanGreen", "snowmanRed", "starBig", "starWish", "starfishOrange", "starfishPink", "sun", "swimRing", "treeNightPurple", "treeNightTeal", "treeRound", "tulipPurple", "tulipRed", "tulipYellow", "umbrellaBlue", "umbrellaRed", "umbrellaYellow", "windmill"]);
+const sprPath=n=>`img/sprites/${n}.${SPR_WEBP.has(n)?'webp':'png'}`;
 const ART={bg:{},spr:{}};
 let artReady=null;
 const embedded=src=>(window.SEKAN_EMBED&&window.SEKAN_EMBED[src])||src;
@@ -1351,7 +1354,7 @@ function ensureArt(){
   const names=new Set();GROUPS.forEach(g=>g.forEach(n=>names.add(n)));THEMES.forEach(t=>[...t.back,...t.front,...t.lights].forEach(n=>names.add(n)));
   const jobs=[...new Set(THEMES.map(t=>t.bg))].map(b=>loadImg(`img/scenes/${b}.${BG_JPG.has(b)?'jpg':'png'}`).then(im=>ART.bg[b]=im));
   REGION_THEMES.forEach(t=>t.sky.forEach(n=>names.add(n)));
-  names.forEach(n=>jobs.push(loadImg(`img/sprites/${n}.png`).then(im=>ART.spr[n]=im)));
+  names.forEach(n=>jobs.push(loadImg(sprPath(n)).then(im=>ART.spr[n]=im)));
   artReady=Promise.all(jobs);
   artReady.catch(()=>{artReady=null});
   return artReady;
@@ -1361,7 +1364,8 @@ function makeScene(seed){
   const add=(spr,x,y,row)=>o.push({id:id++,spr,x,y,h:spriteH(spr,r),row,k:1,flip:r()<0.3&&(/^cloud|^bush|^cactus|^house/.test(spr)||ART_FLIP.has(spr)),hue:0,gone:false});
   // 하늘: 해/달 하나 + 구름 셋
   const sky=shuffle(r,[pick(r,theme.lights),'c','c','c']);
-  sky.forEach((t,i)=>{const x=100+i*200+(r()*60-30);
+  sky.forEach((t,i)=>{let x=100+i*200+(r()*60-30);
+    if(theme.bg==='nightsky'&&x<300)x+=180;  // 배경의 보름달(왼쪽 위)과 겹치지 않게
     if(t==='c')add(theme.sky?pick(r,theme.sky):'cloud'+(1+Math.floor(r()*8)),x,95+r()*110,'sky');
     else add(t,x,120+r()*40,'sky');});
   // 뒷줄: 지평선 위 건물·큰 나무 5개
@@ -1395,11 +1399,24 @@ function tinted(name,deg){
   }catch(e){}
   tintCache.set(key,c);return c;
 }
+// 땅에 닿는 부드러운 그림자 색 (지역 땅색에 맞춤)
+const SHADOW_COL={flowerhill:'28,70,12',beach:'130,85,25',snowmount:'70,95,150',nightsky:'15,5,50'};
+function drawShadow(ctx,o,b,sc){
+  const c=SHADOW_COL[sc.theme.bg]||'0,0,0',a=sc.theme.bg==='nightsky'?.55:sc.theme.bg==='snowmount'?.42:.45;
+  const r=Math.max(12,Math.min(b.w*.58,b.h*1.1));
+  ctx.save();ctx.translate(o.x,o.y-2);ctx.scale(1,.24);
+  // 넓고 옅은 그림자 + 바로 아래 진한 접지 그림자
+  let g=ctx.createRadialGradient(0,0,0,0,0,r);g.addColorStop(0,`rgba(${c},${a*.7})`);g.addColorStop(.6,`rgba(${c},${a*.35})`);g.addColorStop(1,`rgba(${c},0)`);
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();
+  g=ctx.createRadialGradient(0,0,0,0,0,r*.55);g.addColorStop(0,`rgba(${c},${a})`);g.addColorStop(1,`rgba(${c},0)`);
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r*.55,0,Math.PI*2);ctx.fill();ctx.restore();
+}
 function drawScene(ctx,sc,objs){
   ctx.drawImage(ART.bg[sc.theme.bg],0,0,SW,SH);
   for(const o of objs){
     if(o.gone)continue;
     const b=objBox(o),src=o.hue?tinted(o.spr,o.hue):ART.spr[o.spr];
+    if(o.row!=='sky'&&sc.theme.zone!=null)drawShadow(ctx,o,b,sc);
     ctx.save();ctx.translate(o.x,o.y);if(o.flip)ctx.scale(-1,1);
     ctx.drawImage(src,-b.w/2,-b.h,b.w,b.h);ctx.restore();
   }
@@ -1998,10 +2015,10 @@ function showMenu(){
     const yLow=islTop(z),yUp=islBot(z+1),arrived=openZone>z&&z+1!==lifting;
     const dock=`<img src="${embedded('img/sprites/dock.png')}" alt="">`;
     h+=`<div class="pier" style="top:${yLow-PIER}px;height:${PIER+24}px">${dock}</div><div class="pier flip" style="top:${yUp-24}px;height:${PIER+24}px">${dock}</div>`;
-    h+=`<div class="boat${arrived?' at-up':''}" data-z="${z}" style="--yl:${yLow-PIER-70}px;--yu:${yUp+PIER-18}px"><img src="${embedded(`img/sprites/${MAP_BOATS[z]}.png`)}" alt=""></div>`;
+    h+=`<div class="boat${arrived?' at-up':''}" data-z="${z}" style="--yl:${yLow-PIER-70}px;--yu:${yUp+PIER-18}px"><img src="${embedded(sprPath(MAP_BOATS[z]))}" alt=""></div>`;
     // 바다 장식: 바위·부표·뛰어오르는 물고기 (선착장 길은 비워 둠)
     const mid=(yLow+yUp)/2,gap=yLow-yUp;
-    SEA_DECO[z].forEach(([n,x,dy,w,cls])=>{h+=`<div class="sea-deco ${cls||''}" style="left:${x}%;top:${(mid+dy*gap/2).toFixed(0)}px;width:${w}px"><img src="${embedded(`img/sprites/${n}.png`)}" alt=""></div>`});
+    SEA_DECO[z].forEach(([n,x,dy,w,cls])=>{h+=`<div class="sea-deco ${cls||''}" style="left:${x}%;top:${(mid+dy*gap/2).toFixed(0)}px;width:${w}px"><img src="${embedded(sprPath(n))}" alt=""></div>`});
   }
   // 라운드 칸
   for(let n=MAXR;n>=1;n--){
@@ -2099,7 +2116,7 @@ function pebblesHTML(openZone,W){
       if(!(p.seg<P.unlocked))continue;
       const isNew=fresh.includes(p.seg);
       // 꽃 언덕 조약돌 · 푸른 바다 조개 · 눈 덮인 산 눈덩이 · 별빛 하늘 빛나는 버섯
-      const kind=PEB_KIND[z],pic=PEB_PIC[z]?`<img src="${embedded(`img/sprites/${PEB_PIC[z][(pi++)%PEB_PIC[z].length]}.png`)}" alt="">`:'';
+      const kind=PEB_KIND[z],pic=PEB_PIC[z]?`<img src="${embedded(sprPath(PEB_PIC[z][(pi++)%PEB_PIC[z].length]))}" alt="">`:'';
       const rr=kind==='shell'?Math.round(rot*.6):kind==='mush'?Math.round(rot*.25):rot;
       h+=`<i class="peb ${kind}${isNew?' new':''}" style="left:${p.x.toFixed(2)}%;top:${p.y.toFixed(1)}px;--s:${sz};--r:${rr}deg;--p0:${C[0]};--p1:${C[1]}${isNew?`;--d:${(.55+k++*.2).toFixed(2)}s`:''}">${pic}</i>`;
     }
@@ -2109,7 +2126,7 @@ function pebblesHTML(openZone,W){
 }
 function playVoyage(from,to,done){
   if(FX.RM){done();return}
-  const sp=n=>`<img src="${embedded(`img/sprites/${n}.png`)}" alt="">`;
+  const sp=n=>`<img src="${embedded(sprPath(n))}" alt="">`;
   const isl=(z,side)=>{const L=ZONES[z].land;return `<div class="vy-isl ${side}" style="--l0:${L[0]};--l1:${L[1]}"><div class="vy-props">${VOY.props[z].map(sp).join('')}</div></div>`};
   const el=document.createElement('div');el.className='voyage';el.setAttribute('role','dialog');el.setAttribute('aria-label',`${ZONES[to].name}로 이동`);
   const S0=VOY.sky[from],S1=VOY.sky[to],W0=VOY.sea[from],W1=VOY.sea[to];
