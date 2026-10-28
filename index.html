@@ -718,6 +718,18 @@ body.game-mode .nono-wrap{width:100%;max-height:100%;overflow:auto;align-items:c
 .pf-stats dt{font-size:12px;color:var(--muted)}
 .pf-stats dd{margin:0;font-family:var(--f-mono);font-weight:600;font-size:18px;font-variant-numeric:tabular-nums}
 @media (max-width:400px){.mb-prof{max-width:56vw}.pf-av{width:36px;height:36px}.pf-av svg,.pf-av img{width:32px;height:32px}}
+
+/* 프로필 사진 고르기 */
+button.pf-big{position:relative;padding:0;cursor:pointer}
+.pf-edit{position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--card);font-size:13px;display:grid;place-items:center;border:2px solid var(--card)}
+.av-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;overflow-y:auto;min-height:0}
+.av-pick{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px 6px;border-radius:14px;border:2px solid var(--line);background:var(--card);cursor:pointer;min-width:0}
+.av-pick svg{width:100%;max-width:56px;height:auto;aspect-ratio:1;display:block}
+.av-pick b{font-size:13px;line-height:1.2;white-space:nowrap}
+.av-pick small{font-size:10.5px;color:var(--muted);line-height:1.1}
+.av-pick.on{border-color:#f5c84c;background:#fff3bf;color:#1b2742;box-shadow:0 0 0 2px #f5c84c}
+.av-pick.on small{color:#7a6a40}
+.av-pick:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -907,21 +919,21 @@ const ZODIAC=(function(){
 
   // 각 동물: m=재질, ao=그늘색, back=머리 뒤, face=머리와 얼굴, top=머리 위 장식, body={arm,hand,leg,foot,behind,torso,hold}
   const L=[
-    {name:'쥐',c:'#b9b4cf',ao:'#4f4870',m:{sk:['#f6f3fd','#c9c3dc','#8f88ad'],cr:['#ffffff','#f7f4fc','#d6cfe6'],in:['#ffe4ea','#ffb0c0','#ef7f99'],rd:['#ff9a9a','#ff4f6d','#c4213f']},
+    {name:'찍찍이',kind:'쥐',c:'#b9b4cf',ao:'#4f4870',m:{sk:['#f6f3fd','#c9c3dc','#8f88ad'],cr:['#ffffff','#f7f4fc','#d6cfe6'],in:['#ffe4ea','#ffb0c0','#ef7f99'],rd:['#ff9a9a','#ff4f6d','#c4213f']},
       back:p=>`<circle cx="64" cy="54" r="44" fill="${u(p+'sk')}"/><circle cx="66" cy="57" r="27" fill="${u(p+'in')}"/><circle cx="236" cy="54" r="44" fill="${u(p+'sk')}"/><circle cx="234" cy="57" r="27" fill="${u(p+'in')}"/>`,
       face:p=>head(p)+`<ellipse cx="150" cy="172" rx="48" ry="29" fill="${u(p+'cr')}"/>`+headFx(p)+eyes(134)+`<ellipse cx="150" cy="156" rx="10" ry="7.5" fill="#ff8fa6"/><ellipse cx="146" cy="153" rx="4" ry="2.2" fill="#fff" opacity=".7"/>`+
         mir(`<path d="M112,164 L78,156 M112,172 L80,176" stroke="#8f88ad" stroke-width="3" stroke-linecap="round" opacity=".7"/>`)+mouth(168,14,22,`<rect x="145" y="168" width="10" height="9" rx="2.5" fill="#fff"/>`)+blush(),
       body:{arm:'sk',hand:'cr',leg:'sk',foot:'in',
         behind:p=>`<path d="M196,282 C240,300 270,270 250,248 C238,236 226,252 240,258" fill="none" stroke="#ffb0c0" stroke-width="8" stroke-linecap="round"/>`,
         torso:p=>`<ellipse cx="150" cy="254" rx="34" ry="32" fill="${u(p+'cr')}"/><path d="M150,206 L120,192 L120,222Z M150,206 L180,192 L180,222Z" fill="${u(p+'rd')}"/><circle cx="150" cy="206" r="9" fill="${u(p+'rd')}"/>`}},
-    {name:'소',c:'#d8cbb8',ao:'#6e5a40',m:{sk:['#ffffff','#fbf6ef','#d8cbb8'],sp:['#a87556','#7a4e34','#4f2f1d'],mu:['#ffe4e8','#ffb9c4','#e98898'],hn:['#fff6d6','#f2d79a','#c9a35c'],bl:['#fff3b0','#ffc93c','#c98a00']},
+    {name:'음메',kind:'소',c:'#d8cbb8',ao:'#6e5a40',m:{sk:['#ffffff','#fbf6ef','#d8cbb8'],sp:['#a87556','#7a4e34','#4f2f1d'],mu:['#ffe4e8','#ffb9c4','#e98898'],hn:['#fff6d6','#f2d79a','#c9a35c'],bl:['#fff3b0','#ffc93c','#c98a00']},
       back:p=>mir(`<path d="M98,60 C78,44 74,22 86,10 C90,30 104,42 120,48Z" fill="${u(p+'hn')}"/><g transform="rotate(-22 54 104)"><ellipse cx="54" cy="104" rx="30" ry="15" fill="${u(p+'sk')}"/><ellipse cx="56" cy="104" rx="18" ry="8" fill="${u(p+'mu')}"/></g>`),
       face:p=>head(p)+`<g clip-path="url(#zhc)"><ellipse cx="100" cy="70" rx="34" ry="26" fill="${u(p+'sp')}"/><ellipse cx="226" cy="100" rx="22" ry="18" fill="${u(p+'sp')}"/></g>`+
         `<ellipse cx="150" cy="176" rx="58" ry="31" fill="${u(p+'mu')}"/>`+headFx(p,108,80)+eyes(128)+`<ellipse cx="128" cy="170" rx="6" ry="8" fill="#c4566c"/><ellipse cx="172" cy="170" rx="6" ry="8" fill="#c4566c"/>`+mouth(182,13,14)+blush(158)+shine(150,158,22,5,0,.5),
       body:{arm:'sk',hand:'sp',leg:'sk',foot:'sp',
         behind:p=>`<path d="M198,270 C232,276 244,250 236,226" fill="none" stroke="#e8dccb" stroke-width="7" stroke-linecap="round"/><ellipse cx="236" cy="222" rx="9" ry="12" fill="${u(p+'sp')}"/>`,
         torso:p=>`<ellipse cx="126" cy="250" rx="18" ry="14" fill="${u(p+'sp')}"/><ellipse cx="184" cy="272" rx="12" ry="10" fill="${u(p+'sp')}"/><path d="M106,200 Q150,216 194,200 L192,212 Q150,228 108,212Z" fill="#e2463f"/><circle cx="150" cy="226" r="13" fill="${u(p+'bl')}"/><circle cx="150" cy="230" r="3" fill="#7a5200"/>`}},
-    {name:'호랑이',c:'#ff9d3f',ao:'#9a3a08',m:{sk:['#ffd99a','#ff9d3f','#d8621b'],cr:['#ffffff','#fff4e6','#ecceb0'],rd:['#ff9a8c','#f04d4d','#b5232c']},
+    {name:'어흥이',kind:'호랑이',c:'#ff9d3f',ao:'#9a3a08',m:{sk:['#ffd99a','#ff9d3f','#d8621b'],cr:['#ffffff','#fff4e6','#ecceb0'],rd:['#ff9a8c','#f04d4d','#b5232c']},
       back:p=>`<circle cx="74" cy="62" r="31" fill="${u(p+'sk')}"/><circle cx="76" cy="65" r="16" fill="#ffd1bf"/><circle cx="226" cy="62" r="31" fill="${u(p+'sk')}"/><circle cx="224" cy="65" r="16" fill="#ffd1bf"/>`,
       face:p=>head(p)+`<g fill="#b6501a" opacity=".85"><path d="M137,39 Q150,80 163,39Z"/><path d="M110,45 Q121,70 126,42Z"/><path d="M190,45 Q179,70 174,42Z"/><path d="M55,110 Q82,118 57,131Z"/><path d="M57,140 Q80,146 61,155Z"/><path d="M245,110 Q218,118 243,131Z"/><path d="M243,140 Q220,146 239,155Z"/></g>`+
         `<ellipse cx="150" cy="176" rx="52" ry="31" fill="${u(p+'cr')}"/>`+headFx(p)+eye(110,134,'happy')+eye(190,132)+
@@ -929,14 +941,14 @@ const ZODIAC=(function(){
       body:{arm:'sk',hand:'cr',leg:'sk',foot:'cr',
         behind:p=>`<path d="M196,276 C250,280 268,240 250,206" fill="none" stroke="${u(p+'sk')}" stroke-width="20" stroke-linecap="round"/><circle cx="250" cy="206" r="10.5" fill="#8a3b12"/>`,
         torso:p=>`<ellipse cx="150" cy="252" rx="36" ry="34" fill="${u(p+'cr')}"/><path d="M100,196 Q150,216 200,196 L184,214 Q150,240 116,214Z" fill="${u(p+'rd')}"/><circle cx="172" cy="214" r="8" fill="${u(p+'rd')}"/>`}},
-    {name:'토끼',c:'#b99dff',ao:'#8a5a5a',m:{sk:['#ffffff','#fdf3ec','#dcc0b2'],hd:['#efe3ff','#b99dff','#7a5bdc'],st:['#fffbc4','#ffd23f','#ee9c00'],in:['#ffe2e4','#ffb3bd','#f0849a']},
+    {name:'깡총이',kind:'토끼',c:'#b99dff',ao:'#8a5a5a',m:{sk:['#ffffff','#fdf3ec','#dcc0b2'],hd:['#efe3ff','#b99dff','#7a5bdc'],st:['#fffbc4','#ffd23f','#ee9c00'],in:['#ffe2e4','#ffb3bd','#f0849a']},
       back:p=>`<ellipse cx="150" cy="158" rx="108" ry="66" fill="${u(p+'hd')}"/><g transform="rotate(-10 118 30)"><ellipse cx="118" cy="2" rx="25" ry="62" fill="${u(p+'sk')}"/><ellipse cx="118" cy="8" rx="12" ry="46" fill="${u(p+'in')}"/></g><g transform="rotate(22 186 34)"><ellipse cx="186" cy="4" rx="25" ry="60" fill="${u(p+'sk')}"/><ellipse cx="186" cy="10" rx="12" ry="44" fill="${u(p+'in')}"/></g>`,
       face:p=>head(p)+headFx(p,106,72)+`<path d="M138,44 Q146,30 152,44 Q158,32 164,46" fill="none" stroke="#efdfd5" stroke-width="5" stroke-linecap="round"/>`+eyes(134,'open','open',1.1)+
         `<path d="M143,156 Q150,152 157,156 Q154,163 150,163 Q146,163 143,156Z" fill="#ff8a9c"/>`+mouth(168,15,20,teeth2(168))+blush(),
       body:{arm:'hd',hand:'sk',leg:'sk',foot:'sk',
         torso:p=>`<path d="M122,256 L178,256 L174,284 Q150,290 126,284Z" fill="#a487f5" opacity=".7"/><path d="${star(150,228,15)}" fill="${u(p+'st')}"/>`,
         behind:p=>`<circle cx="204" cy="286" r="14" fill="${u(p+'sk')}"/>`}},
-    {name:'용',c:'#5fd8b2',ao:'#0f5a48',m:{sk:['#d2fff0','#5fd8b2','#279076'],be:['#fffde6','#ffeaa6','#e4bd66'],hn:['#fff5b8','#ffc94a','#d58c12'],wg:['#ffe6f6','#ffa6d6','#d65ea4'],or:['#ffffff','#ffc1d2','#ff6f91']},
+    {name:'미르',kind:'용',c:'#5fd8b2',ao:'#0f5a48',m:{sk:['#d2fff0','#5fd8b2','#279076'],be:['#fffde6','#ffeaa6','#e4bd66'],hn:['#fff5b8','#ffc94a','#d58c12'],wg:['#ffe6f6','#ffa6d6','#d65ea4'],or:['#ffffff','#ffc1d2','#ff6f91']},
       back:p=>`<path d="M108,60 C98,30 102,12 116,4 C116,26 122,42 130,52Z" fill="${u(p+'hn')}"/><path d="M192,60 C202,30 198,12 184,4 C184,26 178,42 170,52Z" fill="${u(p+'hn')}"/><g fill="#9ef0d4"><path d="M138,44 Q150,16 162,44Z"/><path d="M118,50 Q124,30 134,46Z"/><path d="M182,50 Q176,30 166,46Z"/></g>`+
         mir(`<path d="M60,108 C30,92 22,120 40,134 C46,126 52,132 60,128Z" fill="${u(p+'wg')}"/>`),
       face:p=>head(p)+`<ellipse cx="150" cy="174" rx="55" ry="32" fill="${u(p+'be')}"/>`+headFx(p)+eyes(134,'happy','happy',1,42)+`<ellipse cx="139" cy="158" rx="4" ry="3" fill="#7a5a2a"/><ellipse cx="161" cy="158" rx="4" ry="3" fill="#7a5a2a"/>`+
@@ -945,7 +957,7 @@ const ZODIAC=(function(){
         behind:p=>mir(`<path d="M110,214 C70,176 36,196 42,238 C56,226 68,242 82,236 C88,250 102,248 114,240Z" fill="${u(p+'wg')}"/>`)+`<path d="M196,270 C246,286 274,258 266,224 C258,246 242,256 210,252Z" fill="${u(p+'sk')}"/><path d="M262,236 l14,-10 l-4,16Z" fill="${u(p+'hn')}"/>`,
         torso:p=>`<ellipse cx="150" cy="252" rx="38" ry="38" fill="${u(p+'be')}"/><g stroke="#d9ad55" stroke-width="2.5" fill="none" opacity=".6"><path d="M120,240 Q150,248 180,240"/><path d="M116,258 Q150,266 184,258"/><path d="M122,276 Q150,283 178,276"/></g>`,
         hold:p=>`<circle cx="150" cy="262" r="26" fill="${u(p+'or')}" filter="url(#zglow)"/>`+shine(141,252,9,6,-30,.9)}},
-    {name:'뱀',c:'#9ad94a',ao:'#2f5a0a',m:{sk:['#ecffc0','#9ad94a','#5a9a1e'],be:['#fffbe0','#fff0a8','#e0c860']},
+    {name:'스르르',kind:'뱀',c:'#9ad94a',ao:'#2f5a0a',m:{sk:['#ecffc0','#9ad94a','#5a9a1e'],be:['#fffbe0','#fff0a8','#e0c860']},
       back:p=>'',
       face:p=>head(p)+`<g clip-path="url(#zhc)" fill="#6aaa2a" opacity=".75"><path d="M150,40 l16,18 l-16,18 l-16,-18Z"/><path d="M104,52 l12,14 l-12,14 l-12,-14Z"/><path d="M196,52 l12,14 l-12,14 l-12,-14Z"/></g>`+
         `<ellipse cx="150" cy="178" rx="54" ry="28" fill="${u(p+'be')}"/>`+headFx(p)+eyes(132,'open','open',1.05)+`<ellipse cx="141" cy="158" rx="3.5" ry="2.5" fill="#3e6a12"/><ellipse cx="159" cy="158" rx="3.5" ry="2.5" fill="#3e6a12"/>`+
@@ -953,14 +965,14 @@ const ZODIAC=(function(){
       top:p=>flower(204,50,13,'#ff9ccc')+shine(198,44,5,3,0,.8),
       noLimbs:true,
       body:{coil:p=>`<path d="M240,300 C290,300 296,262 268,256" fill="none" stroke="${u(p+'sk')}" stroke-width="24" stroke-linecap="round"/><ellipse cx="150" cy="298" rx="98" ry="26" fill="${u(p+'sk')}"/><ellipse cx="150" cy="306" rx="80" ry="12" fill="${u(p+'be')}" opacity=".8"/><ellipse cx="150" cy="262" rx="76" ry="24" fill="${u(p+'sk')}"/><ellipse cx="150" cy="226" rx="56" ry="21" fill="${u(p+'sk')}"/>`+ao(p,'M52,298 a98,26 0 1,0 196,0 a98,26 0 1,0 -196,0Z')}},
-    {name:'말',c:'#e0a066',ao:'#6a3a12',m:{sk:['#ffe0b8','#e0a066','#a86a36'],mn:['#b0704a','#7a4226','#4a2410'],mu:['#fff4e6','#ffe0c2','#e2b48c'],sc:['#a6d8ff','#4aa3ff','#1f6fd0'],st:['#fffbc4','#ffd23f','#ee9c00']},
+    {name:'다그닥',kind:'말',c:'#e0a066',ao:'#6a3a12',m:{sk:['#ffe0b8','#e0a066','#a86a36'],mn:['#b0704a','#7a4226','#4a2410'],mu:['#fff4e6','#ffe0c2','#e2b48c'],sc:['#a6d8ff','#4aa3ff','#1f6fd0'],st:['#fffbc4','#ffd23f','#ee9c00']},
       back:p=>mir(`<path d="M86,70 C74,34 90,14 112,42Z" fill="${u(p+'sk')}"/><path d="M90,62 C84,40 92,30 104,44Z" fill="#ffc6b0"/>`),
       face:p=>head(p)+`<ellipse cx="150" cy="178" rx="52" ry="31" fill="${u(p+'mu')}"/>`+headFx(p)+eyes(132)+`<ellipse cx="134" cy="172" rx="4.5" ry="6" fill="#8a5a3a"/><ellipse cx="166" cy="172" rx="4.5" ry="6" fill="#8a5a3a"/>`+mouth(186,14,14)+blush(156),
       top:p=>`<circle cx="122" cy="46" r="22" fill="${u(p+'mn')}"/><circle cx="178" cy="46" r="22" fill="${u(p+'mn')}"/><circle cx="150" cy="34" r="26" fill="${u(p+'mn')}"/><ellipse cx="150" cy="64" rx="17" ry="20" fill="${u(p+'mn')}"/>`+shine(140,28,10,5,-20,.5),
       body:{arm:'sk',hand:'mn',leg:'sk',foot:'mn',
         behind:p=>`<path d="M198,262 C236,262 252,282 242,306 C232,290 222,288 206,284Z" fill="${u(p+'mn')}"/>`,
         torso:p=>`<path d="M100,196 Q150,216 200,196 L184,214 Q150,244 116,214Z" fill="${u(p+'sc')}"/><path d="${star(150,220,9)}" fill="${u(p+'st')}"/><ellipse cx="150" cy="262" rx="30" ry="26" fill="${u(p+'mu')}" opacity=".8"/>`}},
-    {name:'양',c:'#ead9c6',ao:'#6e5640',m:{sk:['#fff6ea','#f6dcc2','#d2ac86'],wl:['#ffffff','#f6f4fb','#cdc9dc'],hn:['#fff0d6','#e9c28a','#b88a4e'],lg:['#a8968a','#6b5a50','#43352c']},
+    {name:'몽실이',kind:'양',c:'#ead9c6',ao:'#6e5640',m:{sk:['#fff6ea','#f6dcc2','#d2ac86'],wl:['#ffffff','#f6f4fb','#cdc9dc'],hn:['#fff0d6','#e9c28a','#b88a4e'],lg:['#a8968a','#6b5a50','#43352c']},
       back:p=>{let w='';for(let k=0;k<12;k++){const a=k*Math.PI/6;w+=`<circle cx="${(150+Math.cos(a)*92).toFixed(1)}" cy="${(124+Math.sin(a)*78).toFixed(1)}" r="30" fill="${u(p+'wl')}"/>`}
         return w+mir(`<path d="M70,96 C40,90 34,124 56,132 C72,136 76,118 64,114" fill="none" stroke="${u(p+'hn')}" stroke-width="13" stroke-linecap="round"/>`)},
       face:p=>head(p)+headFx(p,108,96)+eyes(136)+`<path d="M142,158 Q150,154 158,158 Q155,165 150,165 Q145,165 142,158Z" fill="#c2556b"/>`+mouth(170,13,17)+blush(),
@@ -968,7 +980,7 @@ const ZODIAC=(function(){
       body:{arm:'wl',hand:'lg',leg:'lg',foot:'lg',
         torso:p=>{let w='';[[110,206],[150,200],[190,206],[100,240],[200,240],[106,276],[150,286],[194,276],[150,244]].forEach(([x,y])=>w+=`<circle cx="${x}" cy="${y}" r="26" fill="${u(p+'wl')}"/>`);return w},
         behind:p=>`<circle cx="206" cy="284" r="14" fill="${u(p+'wl')}"/>`}},
-    {name:'원숭이',c:'#a8693e',ao:'#4a2408',m:{sk:['#e0ab80','#a8693e','#6e3e1c'],fc:['#fff4e2','#f6d6b0','#d9a97c'],lf:['#c8f59a','#5cc43a','#2e8a1e']},
+    {name:'끼끼',kind:'원숭이',c:'#a8693e',ao:'#4a2408',m:{sk:['#e0ab80','#a8693e','#6e3e1c'],fc:['#fff4e2','#f6d6b0','#d9a97c'],lf:['#c8f59a','#5cc43a','#2e8a1e']},
       back:p=>mir(`<circle cx="50" cy="128" r="28" fill="${u(p+'sk')}"/><circle cx="52" cy="129" r="16" fill="${u(p+'fc')}"/>`),
       face:p=>head(p)+`<circle cx="120" cy="126" r="36" fill="${u(p+'fc')}"/><circle cx="180" cy="126" r="36" fill="${u(p+'fc')}"/><ellipse cx="150" cy="170" rx="58" ry="34" fill="${u(p+'fc')}"/>`+headFx(p,100,66)+eyes(128,'open','open',1,32)+
         `<circle cx="144" cy="156" r="3.5" fill="#6e3e1c"/><circle cx="156" cy="156" r="3.5" fill="#6e3e1c"/>`+mouth(166,22,26)+blush(162),
@@ -976,14 +988,14 @@ const ZODIAC=(function(){
       body:{arm:'sk',hand:'fc',leg:'sk',foot:'fc',
         behind:p=>`<path d="M196,282 C250,296 270,250 246,236 C230,228 222,250 238,254" fill="none" stroke="${u(p+'sk')}" stroke-width="12" stroke-linecap="round"/>`,
         torso:p=>`<ellipse cx="150" cy="254" rx="34" ry="34" fill="${u(p+'fc')}"/>`}},
-    {name:'닭',c:'#ffb02e',ao:'#8a6a2a',m:{sk:['#ffffff','#fff8ea','#e6d2ae'],cm:['#ff9a9a','#f03e3e','#b0101f'],bk:['#fff1b0','#ffb02e','#e07800']},
+    {name:'꼬꼬',kind:'닭',c:'#ffb02e',ao:'#8a6a2a',m:{sk:['#ffffff','#fff8ea','#e6d2ae'],cm:['#ff9a9a','#f03e3e','#b0101f'],bk:['#fff1b0','#ffb02e','#e07800']},
       back:p=>`<circle cx="128" cy="44" r="18" fill="${u(p+'cm')}"/><circle cx="150" cy="32" r="22" fill="${u(p+'cm')}"/><circle cx="172" cy="44" r="18" fill="${u(p+'cm')}"/>`,
       face:p=>head(p)+headFx(p)+eyes(128)+`<path d="M126,152 Q150,138 174,152 Q164,170 150,172 Q136,170 126,152Z" fill="${u(p+'bk')}"/><path d="M130,156 Q150,164 170,156" stroke="#c86a00" stroke-width="2.5" fill="none" opacity=".6"/>`+
         `<ellipse cx="150" cy="186" rx="9" ry="12" fill="${u(p+'cm')}"/>`+blush(160)+shine(142,148,8,3,0,.7),
       body:{arm:'sk',hand:'sk',leg:'bk',foot:'bk',
         behind:p=>`<g transform="rotate(-20 206 250)"><ellipse cx="226" cy="236" rx="16" ry="34" fill="${u(p+'sk')}"/><ellipse cx="244" cy="250" rx="14" ry="30" transform="rotate(30 244 250)" fill="${u(p+'sk')}"/></g>`,
         torso:p=>`<ellipse cx="150" cy="256" rx="36" ry="32" fill="#fffdf6" opacity=".8"/>`}},
-    {name:'개',c:'#f0be82',ao:'#7a4a1a',m:{sk:['#ffeccf','#f0be82','#c98a4c'],er:['#b07a50','#7e4f2e','#4e2e18'],mu:['#ffffff','#fff6ea','#ead2b6'],col:['#9ee0ff','#3fa9f5','#1a6fc0'],tg:['#fff3b0','#ffc93c','#c98a00']},
+    {name:'멍멍이',kind:'개',c:'#f0be82',ao:'#7a4a1a',m:{sk:['#ffeccf','#f0be82','#c98a4c'],er:['#b07a50','#7e4f2e','#4e2e18'],mu:['#ffffff','#fff6ea','#ead2b6'],col:['#9ee0ff','#3fa9f5','#1a6fc0'],tg:['#fff3b0','#ffc93c','#c98a00']},
       back:p=>'',
       face:p=>head(p)+`<g clip-path="url(#zhc)"><ellipse cx="194" cy="118" rx="30" ry="28" fill="#d99a5c"/></g><ellipse cx="150" cy="174" rx="50" ry="31" fill="${u(p+'mu')}"/>`+headFx(p)+eyes(128)+
         `<ellipse cx="150" cy="158" rx="13" ry="9.5" fill="#3a2418"/><ellipse cx="146" cy="155" rx="5" ry="2.6" fill="#fff" opacity=".6"/>`+mouth(170,17,20,`<ellipse cx="156" cy="196" rx="9" ry="12" fill="#ff7d8b"/><path d="M156,188 L156,202" stroke="#e85a6e" stroke-width="2"/>`)+blush(),
@@ -991,7 +1003,7 @@ const ZODIAC=(function(){
       body:{arm:'sk',hand:'mu',leg:'sk',foot:'mu',
         behind:p=>`<path d="M196,270 C230,268 240,240 232,220" fill="none" stroke="${u(p+'sk')}" stroke-width="14" stroke-linecap="round"/>`,
         torso:p=>`<ellipse cx="150" cy="254" rx="32" ry="30" fill="${u(p+'mu')}"/><path d="M104,198 Q150,214 196,198 L196,212 Q150,228 104,212Z" fill="${u(p+'col')}"/><circle cx="150" cy="228" r="10" fill="${u(p+'tg')}"/>`}},
-    {name:'돼지',c:'#ffb3b5',ao:'#a0384e',m:{sk:['#ffeae6','#ffb3b5','#e47587'],sn:['#ffd6d9','#ff96a2','#d75a70'],wh:['#ffffff','#f6f6fc','#c8cae0'],cp:['#ffeab0','#ffb64c','#d27610'],fr:['#ffffff','#ffd6ec','#ff8ec4'],ch:['#ff9a9a','#f0303f','#a8101f']},
+    {name:'꿀꿀이',kind:'돼지',c:'#ffb3b5',ao:'#a0384e',m:{sk:['#ffeae6','#ffb3b5','#e47587'],sn:['#ffd6d9','#ff96a2','#d75a70'],wh:['#ffffff','#f6f6fc','#c8cae0'],cp:['#ffeab0','#ffb64c','#d27610'],fr:['#ffffff','#ffd6ec','#ff8ec4'],ch:['#ff9a9a','#f0303f','#a8101f']},
       back:p=>mir(`<path d="M66,76 C58,40 80,28 112,50Z" fill="${u(p+'sk')}"/><path d="M74,68 C70,48 84,42 100,52Z" fill="#f2849a"/>`),
       face:p=>head(p)+ao(p,HEAD)+shine(98,88,28,14)+eyes(130,'open','open',1,42)+`<ellipse cx="150" cy="162" rx="31" ry="20" fill="${u(p+'sn')}"/><ellipse cx="140" cy="162" rx="5" ry="7.5" fill="#a83a52"/><ellipse cx="160" cy="162" rx="5" ry="7.5" fill="#a83a52"/>`+shine(142,151,10,4,0,.6)+mouth(186,15,16)+blush(),
       top:p=>`<rect x="102" y="32" width="96" height="28" rx="11" fill="${u(p+'wh')}"/><circle cx="120" cy="16" r="28" fill="${u(p+'wh')}"/><circle cx="180" cy="16" r="28" fill="${u(p+'wh')}"/><circle cx="150" cy="4" r="33" fill="${u(p+'wh')}"/>`+shine(136,-10,14,8),
@@ -1000,7 +1012,7 @@ const ZODIAC=(function(){
         torso:p=>`<path d="M114,206 Q150,198 186,206 L192,286 Q150,296 108,286Z" fill="${u(p+'wh')}"/>`,
         hold:p=>`<path d="M128,256 L172,256 L166,288 L134,288Z" fill="${u(p+'cp')}"/><ellipse cx="150" cy="252" rx="28" ry="12" fill="${u(p+'fr')}"/><ellipse cx="150" cy="242" rx="21" ry="10" fill="${u(p+'fr')}"/><ellipse cx="150" cy="233" rx="13" ry="8" fill="${u(p+'fr')}"/><circle cx="150" cy="221" r="8" fill="${u(p+'ch')}"/>`}}
   ];
-  const NAMES=L.map(z=>z.name),COLORS=L.map(z=>z.c);
+  const NAMES=L.map(z=>z.name),KINDS=L.map(z=>z.kind),COLORS=L.map(z=>z.c);
   const idx=n=>((n-1)%12+12)%12;
   const P=i=>'z'+i;
   const faceG=i=>{const z=L[i],p=P(i);return (z.back?z.back(p):'')+z.face(p)+(z.top?z.top(p):'')};
@@ -1040,7 +1052,7 @@ const ZODIAC=(function(){
     }
     return s+`<use href="#zf${i}" xlink:href="#zf${i}"/>`+front;
   }
-  return {inject,face,body,NAMES,COLORS,idx,count:12};
+  return {inject,face,body,NAMES,KINDS,COLORS,idx,count:12};
 })();
 
 /* ---------- 십이지 전신 ---------- */
@@ -1943,10 +1955,13 @@ const RANK=(function(){
     const n=newNick||nick();if(!enabled||!n)return;
     const s=await auth();
     const row=Object.assign({id:s.user.id,nickname:n},mine());
+    if(typeof P.avatar==='number')row.avatar=P.avatar;
     const send=b=>api('/rest/v1/leaderboard?on_conflict=id',{method:'POST',headers:Object.assign(bearer(s),{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(b)});
     try{await send(row)}catch(e){
       // 서버에 새 칸(clears, avg_time)이 아직 없으면 예전 방식으로 다시 보냄
-      if(e&&(e.code==='PGRST204'||/clears|avg_time|column/i.test(e.message||''))){delete row.clears;delete row.avg_time;await send(row)}
+      if(e&&(e.code==='PGRST204'||/avatar|clears|avg_time|column/i.test(e.message||''))){
+        // 서버에 새 칸이 아직 없으면 그 칸만 빼고 다시 보냄 (avatar 먼저, 그래도 안 되면 clears·avg_time까지)
+        delete row.avatar;try{await send(row)}catch(e2){if(e2&&(e2.code==='PGRST204'||/clears|avg_time|column/i.test(e2.message||''))){delete row.clears;delete row.avg_time;await send(row)}else throw e2}}
       // 서버 제한이 아직 예전(300라운드·별 900개)이면 그 안으로 맞춰서 다시 보냄
       else if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))){row.best_round=Math.min(300,row.best_round);row.stars=Math.min(900,row.stars);await send(row)}
       else throw e}
@@ -2049,7 +2064,7 @@ async function openRank(){
     meEl.innerHTML=me?`<div class="me-card"><span class="rk">${me.rank}위</span><span class="nm">${esc(me.nickname)}</span><button class="btn" type="button" id="rkNick">이름 변경</button><span class="st">${me.total}명 중 · 라운드 ${me.best_round} · ★ ${me.stars} · ${Number(me.score).toLocaleString()}점${me.clears?` · 클리어 ${me.clears}회`:''}${me.avg_time?` · 평균 ${fmtTime(me.avg_time)}`:''}</span></div>`:'<p class="rank-note">아직 내 기록이 없어요. 라운드를 깨면 올라가요.</p>';
     const nb=$('#rkNick');if(nb)nb.addEventListener('click',()=>openNick(false,openRank));
     const ul=$('#rkList');
-    ul.innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(nickHash(r.nickname))}</span><span class="nm">${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
+    ul.innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname))}</span><span class="nm">${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
   }catch(e){
     const ul=$('#rkList');if(ul)ul.innerHTML=`<li class="rank-empty">${esc(RANK.explain(e))}</li>`;
   }
@@ -2155,6 +2170,9 @@ function mergeP(a,b){
   const wa=(a.walletAt||0)>=(b.walletAt||0)?a:b;
   if(typeof wa.coins==='number'){o.coins=wa.coins;o.hints=wa.hints;o.hintAt=wa.hintAt;o.walletAt=wa.walletAt||0}
   if(a.backpaid||b.backpaid)o.backpaid=true;
+  const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
+  if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
+  else{const o2=av===a?b:a;if(typeof o2.avatar==='number'){o.avatar=o2.avatar;o.avatarAt=o2.avatarAt||0}}
   return o;
 }
 let syncT=0;
@@ -2280,7 +2298,8 @@ function openRoundSheet(n){
 
 /* ---------- 라운드 선택 화면 좌측 상단 프로필 ---------- */
 function myStars(){return Object.values(P.rounds).reduce((a,x)=>a+(x.stars||1),0)}
-function profFace(){const n=RANK.nick();return ZODIAC.face(n?nickHash(n):ZODIAC.idx(P.unlocked))}
+function myAvatar(){if(typeof P.avatar==='number'&&P.avatar>=0&&P.avatar<12)return P.avatar;const n=RANK.nick();return n?nickHash(n):ZODIAC.idx(P.unlocked)}
+function profFace(){return ZODIAC.face(myAvatar())}
 function profName(){return RANK.nick()||RANK.account()||'게스트'}
 function profInner(){
   return `<span class="pf-av">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${esc(profName())}</span>`+
@@ -2291,14 +2310,27 @@ function openProfile(){
   const acc=RANK.account(),cleared=Object.keys(P.rounds).length;
   const total=Object.values(P.rounds).reduce((a,x)=>a+(x.best||0),0);
   const sh=openSheet(`<div class="eyebrow">프로필</div>
-    <div class="pf-head"><span class="pf-big">${profFace()}</span><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>
+    <div class="pf-head"><button type="button" class="pf-big" id="pfAv" aria-label="프로필 사진 바꾸기">${profFace()}<span class="pf-edit" aria-hidden="true">✎</span></button><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>
     <p class="lead">${RANK.enabled?(acc?`아이디 <b>${esc(acc)}</b>`:'로그인 없이 하는 중'):'이 기기에 저장 중'} · ${ZONES[zoneOf(P.unlocked)].lvl} 단계</p></div></div>
     <dl class="pf-stats"><div><dt>별</dt><dd>★ ${myStars().toLocaleString()}</dd></div><div><dt>지금 라운드</dt><dd>${P.unlocked}</dd></div>
     <div><dt>깬 라운드</dt><dd>${cleared}</dd></div><div><dt>총점</dt><dd>${total.toLocaleString()}</dd></div></dl>
     <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button>`:''}
     <button class="btn primary" type="button" id="pfClose">닫기</button></div>`);
   const nb=sh.querySelector('#pfNick');if(nb)nb.addEventListener('click',()=>openNick(!RANK.nick()));
+  sh.querySelector('#pfAv').addEventListener('click',()=>{NATIVE.buzz('tick');openAvatar()});
   sh.querySelector('#pfClose').addEventListener('click',closeSheet);
+}
+function openAvatar(){
+  const cur=myAvatar();
+  const sh=openSheet(`<div class="eyebrow">프로필 사진</div><h3>친구 고르기</h3>
+    <p class="lead">십이지 친구 중 한 명을 골라 주세요. 랭킹에도 이 얼굴로 보여요.</p>
+    <div class="av-grid">${ZODIAC.NAMES.map((nm,i)=>`<button type="button" class="av-pick${i===cur?' on':''}" data-i="${i}" aria-pressed="${i===cur}" style="--c:${ZODIAC.COLORS[i]}">${ZODIAC.face(i)}<b>${nm}</b><small>${ZODIAC.KINDS[i]}</small></button>`).join('')}</div>
+    <div class="row"><button class="btn" type="button" id="avBack">돌아가기</button></div>`);
+  sh.querySelectorAll('.av-pick').forEach(b=>b.addEventListener('click',()=>{
+    P.avatar=+b.dataset.i;P.avatarAt=Date.now();saveP();RANK.submitQuiet();NATIVE.buzz('ok');profRefresh();openProfile();
+    FX.text(`${ZODIAC.NAMES[P.avatar]} 얼굴로 바꿨어요`,window.innerWidth/2,window.innerHeight*.25,{size:22,color:'#ffd43b'});
+  }));
+  sh.querySelector('#avBack').addEventListener('click',openProfile);
 }
 function openSettings(){
   const acc=RANK.account();
