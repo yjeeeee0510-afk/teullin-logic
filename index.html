@@ -819,6 +819,14 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
   box-shadow:0 4px 0 rgba(60,40,20,.32),0 5px 8px rgba(0,0,0,.18),inset 0 -3px 0 rgba(0,0,0,.12),0 0 0 2px rgba(255,255,255,.7);transform:rotate(var(--r)) scale(var(--s))}
 .map .z-night~.peb,.map .peb[style*="#c9a8f5"]{box-shadow:0 3px 0 rgba(20,10,60,.3),0 0 10px 2px rgba(255,236,150,.55)}
 .map .peb.new{animation:pebPop .55s cubic-bezier(.3,1.6,.5,1) var(--d) both}
+
+/* 지역별 조약돌 모양 */
+.map .peb.shell,.map .peb.mush{background:none;box-shadow:none;border-radius:0;width:30px;height:26px;margin:-15px 0 0 -15px}
+.map .peb.shell img,.map .peb.mush img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 0 rgba(60,40,20,.25)) drop-shadow(0 0 1.5px #fff)}
+.map .peb.mush{width:30px;height:30px;margin:-20px 0 0 -15px}
+.map .peb.mush img{filter:drop-shadow(0 0 6px rgba(255,236,170,.9)) drop-shadow(0 2px 0 rgba(30,10,60,.35))}
+.map .peb.snow{width:22px;height:20px;margin:-10px 0 0 -11px;border-radius:50%;
+  background:radial-gradient(circle at 36% 30%,#fff 0 30%,#eef4fc 48%,#c6d5ea 100%);box-shadow:0 4px 0 rgba(70,90,130,.28),0 5px 7px rgba(40,60,100,.18),0 0 0 1.5px rgba(255,255,255,.9)}
 @keyframes pebPop{0%{transform:rotate(var(--r)) translateY(-22px) scale(0);opacity:0}60%{opacity:1}100%{transform:rotate(var(--r)) scale(var(--s));opacity:1}}
 @media (prefers-reduced-motion:reduce){.map .peb.new{animation:none}}
 </style>
@@ -2033,6 +2041,7 @@ const VOY_BOAT=`<svg viewBox="0 0 160 130" aria-hidden="true"><path d="M78 8 V92
 // '바다로', '산으로'처럼 받침에 맞춰 '로/으로'를 붙임 (ㄹ 받침은 '로')
 function roName(w){const c=w.charCodeAt(w.length-1)-0xAC00;if(c<0||c>11171)return w+'로';const j=c%28;return w+(j===0||j===8?'로':'으로')}
 // 조약돌: 라운드를 깨면 다음 라운드(또는 선착장)까지 3~4개가 놓임
+const PEB_KIND=['stone','shell','snow','mush'],PEB_PIC=[null,['shellPink','shellWhite','shellPink'],null,['glowMushPink','glowMushBlue','glowMushGreen']];
 const PEB_COL=[['#efe7da','#a99a82'],['#fff1d2','#c99a58'],['#e6eef9','#8ea3c4'],['#fff6c8','#b48ff0']];
 function pebbleSpots(z,W){
   const lo=z*ZSIZE+1,hi=z*ZSIZE+ZSIZE,pts=[];
@@ -2057,14 +2066,17 @@ function pebbleSpots(z,W){
 function pebblesHTML(openZone,W){
   const prev=store.get('sekan-peb',null),from=prev==null?P.unlocked:Math.min(prev,P.unlocked);
   const fresh=[];for(let s=Math.max(from,P.unlocked-3);s<P.unlocked;s++)fresh.push(s);  // 최근 깬 라운드 최대 3개만 모션
-  let h='',k=0;
+  let h='',k=0,pi=0;
   for(let z=0;z<=Math.min(openZone,ZONES.length-1);z++){
     const C=PEB_COL[z],r=rng(7700+z*13);
     for(const p of pebbleSpots(z,W)){
       const sz=(.85+r()*.35).toFixed(2),rot=Math.round(r()*60-30);
       if(!(p.seg<P.unlocked))continue;
       const isNew=fresh.includes(p.seg);
-      h+=`<i class="peb${isNew?' new':''}" style="left:${p.x.toFixed(2)}%;top:${p.y.toFixed(1)}px;--s:${sz};--r:${rot}deg;--p0:${C[0]};--p1:${C[1]}${isNew?`;--d:${(.55+k++*.2).toFixed(2)}s`:''}"></i>`;
+      // 꽃 언덕 조약돌 · 푸른 바다 조개 · 눈 덮인 산 눈덩이 · 별빛 하늘 빛나는 버섯
+      const kind=PEB_KIND[z],pic=PEB_PIC[z]?`<img src="${embedded(`img/sprites/${PEB_PIC[z][(pi++)%PEB_PIC[z].length]}.png`)}" alt="">`:'';
+      const rr=kind==='shell'?Math.round(rot*.6):kind==='mush'?Math.round(rot*.25):rot;
+      h+=`<i class="peb ${kind}${isNew?' new':''}" style="left:${p.x.toFixed(2)}%;top:${p.y.toFixed(1)}px;--s:${sz};--r:${rr}deg;--p0:${C[0]};--p1:${C[1]}${isNew?`;--d:${(.55+k++*.2).toFixed(2)}s`:''}">${pic}</i>`;
     }
   }
   store.set('sekan-peb',P.unlocked);
