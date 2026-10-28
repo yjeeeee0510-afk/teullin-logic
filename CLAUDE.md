@@ -34,6 +34,9 @@
 - 난이도 표 `ZONE_DIFF` (30라운드마다 한 줄): 틀린 곳 개수·로직 칸·퍼즐 조각·틀린 곳 미묘함(dd).
 - 지역 `ZONES`: 꽃 언덕(아주 쉬움) → 푸른 바다(쉬움) → 눈 덮인 산(보통) → 별빛 하늘(어려움). 지도는 라운드당 80px(`MAP.STEP`), 지역마다 섬 하나.
 - 섬 사이 바다 `MAP.SEA`=480px, 섬 끝 여백 `MAP.ISL`, 위치는 `mapY`·`islTop`·`islBot`. 섬 사이에 선착장(`PIER_SVG`) 두 개와 배(`BOAT_SVG`). 지역이 새로 열리면 배가 건너간 뒤 안개가 걷힌다.
+- 섬 바닥은 `img/map/zone0~3.jpg`(사용자가 준 지역 그림, 위아래로 이어지게 다듬은 타일)를 섬 모양 마스크로 깐다(`groundHTML`).
+- 길은 없고 조약돌(`pebblesHTML`): 깬 라운드에서 다음 라운드(섬 끝이면 선착장)까지 3~4개. 마지막으로 본 라운드는 localStorage `sekan-peb`, 새로 깬 구간은 하나씩 놓이는 모션.
+- 지역 이동 장면 `playVoyage(from,to,done)`: 옆에서 본 바다를 배가 왼쪽→오른쪽으로, 문구는 '○○로 출발!' → '○○ 도착!' → 지도에서 '○○ 오픈!'.
 - 틀린그림·퍼즐 장면: `makeScene`이 배경 + 물건(`THEMES`/`REGION_THEMES`)을 판마다 무작위 배치. `themeFor(round)`가 지역 테마를 고른다.
   - 바꿔치기 문제는 `GROUPS`(같은 물건의 색 변형 묶음), 크기는 `ART_H`, 뒤집기 허용은 `ART_FLIP`, 색 바꾸기 제외는 `ART_NOCOLOR`.
 - 인게임 화면: `body.game-mode` — 위 상태줄(`#ghud`), 우측 상단 메뉴(`#gmMenu`, 일시정지), 우측 하단 게임 버튼(`#gdock`). 지역 배경은 `setGameBg`.
