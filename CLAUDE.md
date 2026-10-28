@@ -40,6 +40,7 @@
 - 섬 바닥은 `img/map/zone0~3.jpg`(사용자가 준 지역 그림, 위아래로 이어지게 다듬은 타일)를 섬 모양 마스크로 깐다(`groundHTML`).
 - 길은 없고 조약돌(`pebblesHTML`, 지역별 `PEB_KIND`: 꽃 언덕 조약돌·푸른 바다 조개·눈 덮인 산 눈덩이·별빛 하늘 빛나는 버섯): 깬 라운드에서 다음 라운드(섬 끝이면 선착장)까지 3~4개. 마지막으로 본 라운드는 localStorage `sekan-peb`, 새로 깬 구간은 하나씩 놓이는 모션.
 - 지역 이동 장면 `playVoyage(from,to,done)`: `img/voyage/`(옆에서 본 바다 sea.jpg·섬 isl*·배 vyBoat*, 사용자 그림)로, 배가 왼쪽 섬→오른쪽 섬(좌우 뒤집음)으로. 지역 분위기는 곱하기 색(`TINT`). 문구는 '○○로 출발!' → '○○ 도착!' → 지도에서 '○○ 오픈!'.
+- 네모네모 로직: 문제집 `LOGIC_BANK`(`/*LOGIC_BANK*/` 블록, `python3 tools/logic/gen.py`로 다시 만듦). 크기(5·6·7·8·10·12)마다 120문제, 물건 그림 축소(이름은 `tools/logic/names.json`, 풀면 '○○ 완성!')·도형·대칭/비대칭 무늬. 모두 줄 추론만으로 풀림(답 하나), 회전·뒤집기 중복과 비슷한 문제 제외. `logicFor(round)`: 같은 크기 라운드끼리 다른 문제, 다시 하면(`plays`) 아직 안 쓴 문제.
 - 틀린그림·퍼즐 장면: `makeScene`이 배경 + 물건(`THEMES`/`REGION_THEMES`)을 판마다 무작위 배치. `themeFor(round)`가 지역 테마를 고른다.
   - 바꿔치기 문제는 `GROUPS`(같은 물건의 색 변형 묶음), 크기는 `ART_H`, 뒤집기 허용은 `ART_FLIP`, 색 바꾸기 제외는 `ART_NOCOLOR`.
 - 인게임 화면: `body.game-mode` — 위 상태줄(`#ghud`), 우측 상단 메뉴(`#gmMenu`, 일시정지), 우측 하단 게임 버튼(`#gdock`). 지역 배경은 `setGameBg`.
