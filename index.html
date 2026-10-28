@@ -789,7 +789,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
   </main>
 
   <div class="foot">
-    <span>진행 상황은 이 기기에 저장됩니다. 그림: Kenney(kenney.nl), CC0</span>
+    <span>진행 상황은 이 기기에 저장됩니다. 그림: 직접 그린 그림, 일부 Kenney(kenney.nl) CC0</span>
     <div class="foot-btns"><button class="linkbtn" id="menuBtn" type="button" hidden>라운드 선택으로</button><button class="linkbtn" id="resetBtn" type="button">기록 초기화</button></div>
   </div>
 </div>
@@ -1153,6 +1153,37 @@ const FX=(function(){
 
 /* ---------- scene (Kenney CC0 그림으로 장면 합성) ---------- */
 const SW=800,SH=600,HORIZON=340;
+// 지역별 그림 (직접 그린 그림). zone: 0 아주 쉬움(꽃 언덕) 1 쉬움(푸른 바다) 2 보통(눈 덮인 산) 3 어려움(별빛 하늘)
+const REGION_THEMES=[
+  {name:'꽃 언덕',zone:0,bg:'flowerhill',lights:['sun'],sky:['puffA','puffB','puffC','butterfly','kite'],
+   back:['windmill','cottageRed','cottageBlue','cottagePurple','blossomPink','blossomWhite','blossomYellow','treeRound','windmill','blossomPink'],
+   front:['flowersPink','flowersYellow','flowersBlue','flowersWhite','tulipRed','tulipYellow','tulipPurple','mushroomRed','fenceWhite','beehive','hayBale']},
+  {name:'푸른 바다',zone:1,bg:'beach',lights:['sun'],sky:['puffA','puffB','puffC','gull','gull'],
+   back:['lighthouse','beachHutBlue','beachHutPink','beachHutMint','palmA','palmB','palmA','palmB','lighthouse'],
+   front:['umbrellaRed','umbrellaBlue','umbrellaYellow','sandcastle','shellPink','shellWhite','starfishOrange','starfishPink','crab','bucketBlue','bucketGreen','swimRing']},
+  {name:'눈 덮인 산',zone:2,bg:'snowmount',lights:['sun','moonFull'],sky:['puffA','puffB','puffC'],
+   back:['cabinRed','cabinBrown','cabinGreen','igloo','pineSnowA','pineSnowB','pineSnowC','pineSnowA','igloo'],
+   front:['snowmanRed','snowmanBlue','snowmanGreen','penguin','penguin','sled','snowBush','iceBlue','icePurple','snowballs','skiSign']},
+  {name:'별빛 하늘',zone:3,bg:'nightsky',lights:['moonCrescent','moonFull'],sky:['starBig','starWish','planetRing','planetSmall','cloudNight','starWish'],night:true,
+   back:['castleLilac','castleBlue','castlePink','observatory','lampYellow','lampBlue','treeNightPurple','treeNightTeal','lampYellow'],
+   front:['glowMushBlue','glowMushPink','glowMushGreen','gemPurple','gemBlue','gemPink','lanternOrange','lanternPink','bushNight','owlPost']}
+];
+// 새 그림 크기(그림 속 높이, 최소~최대)
+const ART_H={windmill:[190,215],cottageRed:[115,135],cottageBlue:[115,135],cottagePurple:[115,135],blossomPink:[165,195],blossomWhite:[165,195],blossomYellow:[165,195],treeRound:[150,175],
+  hayBale:[52,62],beehive:[70,82],flowersPink:[42,52],flowersYellow:[42,52],flowersBlue:[42,52],flowersWhite:[42,52],tulipRed:[60,72],tulipYellow:[60,72],tulipPurple:[60,72],mushroomRed:[46,56],fenceWhite:[46,54],
+  lighthouse:[200,225],beachHutBlue:[110,130],beachHutPink:[110,130],beachHutMint:[110,130],palmA:[185,210],palmB:[185,210],
+  umbrellaRed:[95,110],umbrellaBlue:[95,110],umbrellaYellow:[95,110],sandcastle:[72,84],shellPink:[34,40],shellWhite:[34,40],starfishOrange:[38,44],starfishPink:[38,44],crab:[40,48],bucketBlue:[50,58],bucketGreen:[50,58],swimRing:[36,44],
+  cabinRed:[115,135],cabinBrown:[115,135],cabinGreen:[115,135],igloo:[75,90],pineSnowA:[165,195],pineSnowB:[155,180],pineSnowC:[160,190],
+  snowmanRed:[95,110],snowmanBlue:[95,110],snowmanGreen:[95,110],penguin:[60,70],sled:[40,46],snowBush:[42,50],iceBlue:[55,65],icePurple:[55,65],snowballs:[34,40],skiSign:[80,92],
+  castleLilac:[160,180],castleBlue:[160,180],castlePink:[160,180],observatory:[120,135],lampYellow:[120,140],lampBlue:[120,140],treeNightPurple:[150,175],treeNightTeal:[150,175],
+  glowMushBlue:[50,58],glowMushPink:[50,58],glowMushGreen:[50,58],gemPurple:[56,66],gemBlue:[56,66],gemPink:[56,66],lanternOrange:[52,60],lanternPink:[52,60],bushNight:[40,48],owlPost:[84,96],
+  puffA:[50,66],puffB:[46,60],puffC:[54,70],butterfly:[32,40],kite:[70,80],gull:[22,28],moonCrescent:[70,80],starBig:[46,54],starWish:[44,50],planetRing:[56,64],planetSmall:[46,54],cloudNight:[44,54]};
+// 좌우를 뒤집으면 달라 보이는 그림만 '뒤집기' 문제로 씀
+const ART_FLIP=new Set(['windmill','cottageRed','cottageBlue','cottagePurple','palmA','palmB','bucketBlue','bucketGreen','cabinRed','cabinBrown','cabinGreen','sled','skiSign','observatory','planetRing','moonCrescent','snowmanRed','snowmanBlue','snowmanGreen','kite']);
+// 흰색·회색이라 색을 바꿔도 티가 안 나는 그림은 '색 바꾸기' 문제에서 뺌
+const ART_NOCOLOR=/^cloud|^moon|^puff|^gull$|^igloo$|^snowballs$|^fenceWhite$|^shellWhite$/;
+// 지역마다 쓰는 그림 묶음 (아주 쉬움·보통은 예전 그림도 번갈아 씀)
+const ZONE_THEME_NAMES=[['꽃 언덕','초원 마을'],['푸른 바다'],['눈 덮인 산','눈 덮인 들판'],['별빛 하늘']];
 const THEMES=[
   {name:'초원 마을',bg:'grass',lights:['sun'],
    back:['house1','house2','houseAlt1','houseAlt2','houseSmall1','houseSmallAlt2','tree','treeLong','tree','treeLong'],
@@ -1170,6 +1201,8 @@ const THEMES=[
    back:['treeSnow','treePineSnow','treeLongSnow','treeFrozen','treePineFrozen','treeLongFrozen','houseSmall1','houseSmall2','castleSmall'],
    front:['fenceIron','fence','treeSmall_greenAlt1','treeSmall_green2','bushAlt2','bushAlt4','treeSmall_greenAlt3']}
 ];
+THEMES.push(...REGION_THEMES);
+const themeFor=r=>{const names=ZONE_THEME_NAMES[Math.min(ZONE_THEME_NAMES.length-1,zoneOf(r))],n=names[(Math.max(1,r)-1)%names.length];return THEMES.find(t=>t.name===n)||THEMES[0]};
 const GROUPS=[
   ['house1','house2','houseAlt1','houseAlt2'],['houseSmall1','houseSmall2','houseSmallAlt1','houseSmallAlt2'],
   ['tree','treeLong','treePine'],['treeOrange','treeLongOrange','treePineOrange'],['treeSnow','treeLongSnow','treePineSnow'],
@@ -1178,11 +1211,17 @@ const GROUPS=[
   ['bush1','bush2','bush3','bush4'],['bushAlt1','bushAlt2','bushAlt3','bushAlt4'],['bushOrange1','bushOrange2','bushOrange3','bushOrange4'],
   ['treeSmall_green1','treeSmall_green2','treeSmall_green3'],['treeSmall_greenAlt1','treeSmall_greenAlt2','treeSmall_greenAlt3'],
   ['treeSmall_orange1','treeSmall_orange2','treeSmall_orange3'],['cactus1','cactus2','cactus3'],['fence','fenceIron'],
-  ['sun','moonFull'],['moon','moonFull'],['cloud1','cloud2','cloud3','cloud4','cloud5','cloud6','cloud7','cloud8']
+  ['sun','moonFull'],['moon','moonFull'],['cloud1','cloud2','cloud3','cloud4','cloud5','cloud6','cloud7','cloud8'],
+  ['cottageRed','cottageBlue','cottagePurple'],['blossomPink','blossomWhite','blossomYellow'],['flowersPink','flowersYellow','flowersBlue','flowersWhite'],['tulipRed','tulipYellow','tulipPurple'],
+  ['beachHutBlue','beachHutPink','beachHutMint'],['palmA','palmB'],['umbrellaRed','umbrellaBlue','umbrellaYellow'],['shellPink','shellWhite'],['starfishOrange','starfishPink'],['bucketBlue','bucketGreen'],
+  ['cabinRed','cabinBrown','cabinGreen'],['pineSnowA','pineSnowB','pineSnowC'],['snowmanRed','snowmanBlue','snowmanGreen'],['iceBlue','icePurple'],
+  ['castleLilac','castleBlue','castlePink'],['lampYellow','lampBlue'],['treeNightPurple','treeNightTeal'],['glowMushBlue','glowMushPink','glowMushGreen'],['gemPurple','gemBlue','gemPink'],['lanternOrange','lanternPink'],
+  ['puffA','puffB','puffC'],['starBig','starWish'],['planetRing','planetSmall'],['moonCrescent','moonFull']
 ];
 const groupOf=n=>GROUPS.find(g=>g.includes(n));
 function spriteH(n,r){
   const j=(a,b)=>a+r()*(b-a);
+  if(ART_H[n])return j(ART_H[n][0],ART_H[n][1]);
   if(/^house\d|^houseAlt/.test(n))return j(150,175);
   if(/^houseSmall/.test(n))return j(105,125);
   if(/^treeSmall/.test(n))return j(68,92);
@@ -1207,18 +1246,19 @@ function ensureArt(){
   if(artReady)return artReady;
   const names=new Set();GROUPS.forEach(g=>g.forEach(n=>names.add(n)));THEMES.forEach(t=>[...t.back,...t.front,...t.lights].forEach(n=>names.add(n)));
   const jobs=[...new Set(THEMES.map(t=>t.bg))].map(b=>loadImg(`img/scenes/${b}.png`).then(im=>ART.bg[b]=im));
+  REGION_THEMES.forEach(t=>t.sky.forEach(n=>names.add(n)));
   names.forEach(n=>jobs.push(loadImg(`img/sprites/${n}.png`).then(im=>ART.spr[n]=im)));
   artReady=Promise.all(jobs);
   artReady.catch(()=>{artReady=null});
   return artReady;
 }
 function makeScene(seed){
-  const r=rng(seed),theme=THEMES[(S.round-1)%THEMES.length],o=[];let id=0;
-  const add=(spr,x,y,row)=>o.push({id:id++,spr,x,y,h:spriteH(spr,r),row,k:1,flip:r()<0.3&&/^cloud|^bush|^cactus|^house/.test(spr),hue:0,gone:false});
+  const r=rng(seed),theme=themeFor(S.round),o=[];let id=0;
+  const add=(spr,x,y,row)=>o.push({id:id++,spr,x,y,h:spriteH(spr,r),row,k:1,flip:r()<0.3&&(/^cloud|^bush|^cactus|^house/.test(spr)||ART_FLIP.has(spr)),hue:0,gone:false});
   // 하늘: 해/달 하나 + 구름 셋
   const sky=shuffle(r,[pick(r,theme.lights),'c','c','c']);
   sky.forEach((t,i)=>{const x=100+i*200+(r()*60-30);
-    if(t==='c')add('cloud'+(1+Math.floor(r()*8)),x,95+r()*110,'sky');
+    if(t==='c')add(theme.sky?pick(r,theme.sky):'cloud'+(1+Math.floor(r()*8)),x,95+r()*110,'sky');
     else add(t,x,120+r()*40,'sky');});
   // 뒷줄: 지평선 위 건물·큰 나무 5개
   const nb=5+(S.round>=90?1:0),nf=6+(S.round>=60?1:0)+(S.round>=150?1:0);
@@ -1268,8 +1308,8 @@ let spot=null;
 function diffKinds(o){
   const k=['gone','size'];
   if(groupOf(o.spr))k.push('swap','swap');
-  if(/^cloud|^bush|^cactus|^house|^moon|treeDead|treePalm|^fence$/.test(o.spr))k.push('flip');
-  if(!/^cloud|^moon/.test(o.spr))k.push('color','color');
+  if(/^cloud|^bush|^cactus|^house|^moon|treeDead|treePalm|^fence$/.test(o.spr)||ART_FLIP.has(o.spr))k.push('flip');
+  if(!/^cloud|^moon/.test(o.spr)&&!ART_NOCOLOR.test(o.spr))k.push('color','color');
   return k;
 }
 function initSpot(){
