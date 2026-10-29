@@ -63,6 +63,7 @@
 - 함수: `leaderboard_top(n)`, `leaderboard_me()`, `leaderboard_players(n)`(지도용, 아이디 계정만), `delete_my_account()`. 운영진 기록은 트리거 `leaderboard_skip_admin`이 막는다.
 - 아이디 로그인은 `아이디@teullin.game` 이메일 형식으로 Supabase Auth에 저장된다.
 - 운영 데이터베이스 변경(SQL)은 사용자가 Supabase SQL Editor에서 직접 실행한다. SQL을 만들어 주고, 실행 전에도 게임이 깨지지 않게 클라이언트에 대비 코드를 둔다.
+- 실행할 SQL이 생기면 항상 브라우저에서 SQL Editor를 SQL이 채워진 채로 열어 준다 (사용자 요청): `https://supabase.com/dashboard/project/mceiajddsvxlunsovoth/sql/new?content=<URL 인코딩한 SQL>`. Run은 사용자가 누른다.
 
 ## 확인 방법
 - `python3 -m http.server 8765` 로 띄우고 playwright로 휴대폰 크기(390×844, 360×640) 화면을 찍어 본다.
