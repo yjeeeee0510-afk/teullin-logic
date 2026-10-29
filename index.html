@@ -139,6 +139,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0;font-size:13px}
 .foot-btns{display:flex;gap:16px;flex-wrap:wrap}
 .mbtns{display:flex;flex-direction:column;gap:8px}
+.mrow{display:flex;gap:8px}.mrow .btn{flex:1}
 /* round select */
 .rgroups{display:flex;flex-direction:column;gap:18px}
 .rgroup h3{margin:0 0 8px;font-family:var(--f-display);font-weight:400;font-size:19px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
@@ -746,6 +747,33 @@ body.game-mode .nono-wrap{width:100%;max-height:100%;overflow:auto;align-items:c
 
 /* 프로필 사진 고르기 */
 button.pf-big{position:relative;padding:0;cursor:pointer}
+/* 프로필 테두리 */
+.fr{border:3px solid transparent!important;background:linear-gradient(var(--fin,#fff3bf),var(--fin,#fff3bf)) padding-box,var(--fb,linear-gradient(#f5c84c,#f5c84c)) border-box!important;box-shadow:var(--fs,none)}
+.pf-big.fr{border-width:4px!important}
+.fr-none{--fin:#fff3bf;--fb:linear-gradient(#f5c84c,#f5c84c)}
+.fr-wood{--fin:#f6e6cc;--fb:repeating-linear-gradient(45deg,#8a5a34 0 6px,#a8703e 6px 12px);--fs:0 2px 0 #5c3a1e}
+.fr-flower{--fin:#fff0f6;--fb:conic-gradient(#ff8fb1,#ffd43b,#8ce99a,#ff8fb1,#ffd43b,#8ce99a,#ff8fb1)}
+.fr-sea{--fin:#e3f6ff;--fb:linear-gradient(135deg,#1c7ed6,#66d9e8,#1c7ed6);--fs:0 0 8px rgba(28,126,214,.45)}
+.fr-snow{--fin:#f8fbff;--fb:linear-gradient(135deg,#ffffff,#a5d8ff,#ffffff,#d0ebff);--fs:0 0 10px rgba(165,216,255,.9)}
+.fr-night{--fin:#2b2466;--fb:linear-gradient(135deg,#ffe066,#7048e8,#ffe066);--fs:0 0 10px rgba(255,224,102,.6)}
+.fr-sky{--fin:#f3fbff;--fb:linear-gradient(135deg,#ffd6e7,#c5f6fa,#fff3bf,#d0bfff);--fs:0 0 10px rgba(197,246,250,.9)}
+.fr-silver{--fin:#f1f3f5;--fb:linear-gradient(135deg,#868e96,#f8f9fa,#adb5bd,#f8f9fa,#868e96);--fs:0 2px 6px rgba(0,0,0,.25)}
+.fr-gold{--fin:#fff9db;--fb:linear-gradient(135deg,#b8860b,#ffe066,#f08c00,#fff3bf,#b8860b);--fs:0 0 10px rgba(255,212,59,.75)}
+.fr-heart{--fin:#fff0f3;--fb:linear-gradient(135deg,#ff6b81,#ffa8a8,#e64980);--fs:0 0 8px rgba(230,73,128,.45)}
+.fr-rainbow{--fin:#ffffff;--fb:conic-gradient(#ff6b6b,#ffd43b,#69db7c,#4dabf7,#b197fc,#ff6b6b);--fs:0 0 10px rgba(177,151,252,.6)}
+.fr-crown{--fin:#fff9db;--fb:conic-gradient(#ffd43b,#fab005,#fff3bf,#f08c00,#ffd43b);--fs:0 0 0 2px #fff,0 0 14px rgba(250,176,5,.9)}
+.fr-crown::after{content:"👑";position:absolute;top:-14px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:18px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.pf-av.fr,.pf-big.fr{position:relative;overflow:visible}
+.pf-av.fr>svg,.pf-big.fr>svg,.pf-av.fr>img,.pf-big.fr>img{border-radius:9px}
+.fr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;max-height:56vh;overflow:auto;padding:14px 2px 2px}
+.fr-pick{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border:2px solid #e3e8f0;border-radius:14px;background:#fff;font:inherit;cursor:pointer}
+.fr-pick.on{border-color:#ffd43b;background:#fff9db}
+.fr-pick:disabled{cursor:default;opacity:.55}
+.fr-pick b{font-size:13px;color:#1b2742}.fr-pick small{font-size:11px;color:#7a869a;text-align:center;line-height:1.3}
+.fr-pick .pf-big{width:56px;height:56px}.fr-pick .pf-big svg{width:48px;height:48px}
+.fr-lock{position:absolute;right:-6px;bottom:-6px;width:22px;height:22px;border-radius:50%;background:#495057;color:#fff;display:grid;place-items:center}
+.fr-lock svg{width:12px!important;height:12px!important}
+
 .pf-edit{position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--card);font-size:13px;display:grid;place-items:center;border:2px solid var(--card)}
 .av-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;overflow-y:auto;min-height:0}
 .av-pick{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px 6px;border-radius:14px;border:2px solid var(--line);background:var(--card);cursor:pointer;min-width:0}
@@ -1010,7 +1038,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.9</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.0</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1054,7 +1082,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <h3 id="mTitle"></h3>
     <div class="stars" id="mStars" aria-label="별점"></div>
     <dl id="mStats"></dl>
-    <div class="mbtns"><button class="btn primary" id="mNext" type="button"></button><button class="btn" id="mMenu" type="button" hidden>라운드 선택</button></div>
+    <div class="mbtns"><button class="btn primary" id="mNext" type="button"></button><div class="mrow"><button class="btn" id="mRetry" type="button">↻ 재도전</button><button class="btn" id="mMenu" type="button" hidden>라운드 선택</button></div></div>
   </div>
 </div>
 
@@ -2122,7 +2150,7 @@ function clearStage(){
   S.score+=pts;
   const stageNo=S.stage,nStars=starsFor(stageNo,secs);
   S.stars=Array.isArray(S.stars)?S.stars:[];S.stars[stageNo]=nStars;
-  const round=S.round,wasLast=true;
+  const round=S.round,wasLast=true;retryRound=round;
   let extra='';
   $('#mMenu').hidden=!wasLast;
   if(wasLast){
@@ -2177,6 +2205,8 @@ function starsFor(stage,secs){
 }
 $('#mNext').addEventListener('click',startStage);
 $('#mMenu').addEventListener('click',()=>{pendingNext=0;showMenu()});
+let retryRound=0;
+$('#mRetry').addEventListener('click',()=>{if(!retryRound)return;pendingNext=0;$('#veil').hidden=true;startRound(retryRound)});
 
 /* ---------- round select ---------- */
 function startRound(n){
@@ -2879,7 +2909,7 @@ const ACH=(function(){
     sh.querySelector('#ttlBack').addEventListener('click',()=>(back||openProfile)());
   }
   return {
-    A,LIST,ready,dot,open,openTitles,snapshot,newSince,
+    A,LIST,ready,dot,open,openTitles,snapshot,newSince,gotOf:id=>{const a=LIST.find(x=>x.id===id);return a?got(a):0},
     // 클리어 직전 기록으로 끈기 업적 세기
     onClear(round,prevStars,hadPrev,newStars){const a=A();if(hadPrev&&prevStars<3&&newStars>=3)a.c.up=(a.c.up|0)+1;if(a.fail[round]){delete a.fail[round];a.c.back=(a.c.back|0)+1}},
     onFail(round){A().fail[round]=1;saveP()},
@@ -2921,8 +2951,8 @@ function openNick(first,after){
 }
 async function openRank(){
   if(!RANK.enabled){
-    openSheet(`<div class="eyebrow">랭킹</div><h3>랭킹</h3>${RANK.nick()?`<p class="lead">내 닉네임: <b>${esc(RANK.nick())}</b></p>`:''}<p class="lead">${RANK.onClaude?'claude.ai 링크에서는 외부 랭킹 서버에 연결할 수 없어요. HTML 파일, 웹 주소, 앱 버전에서 랭킹에 참여할 수 있어요.':'랭킹 서버가 아직 연결되지 않았어요. README의 "8. 랭킹 설정"을 따라 rank-config.js에 주소와 키를 넣으면 켜져요.'}</p><div class="row"><button class="btn" type="button" id="rkNick2">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button><button class="btn primary" type="button" id="rkClose">닫기</button></div>`);
-    $('#rkClose').addEventListener('click',closeSheet);$('#rkNick2').addEventListener('click',()=>openNick(!RANK.nick()));return;
+    openSheet(`<div class="eyebrow">랭킹</div><h3>랭킹</h3>${RANK.nick()?`<p class="lead">내 닉네임: <b>${esc(RANK.nick())}</b></p>`:''}<p class="lead">${RANK.onClaude?'claude.ai 링크에서는 외부 랭킹 서버에 연결할 수 없어요. HTML 파일, 웹 주소, 앱 버전에서 랭킹에 참여할 수 있어요.':'랭킹 서버가 아직 연결되지 않았어요. README의 "8. 랭킹 설정"을 따라 rank-config.js에 주소와 키를 넣으면 켜져요.'}</p><div class="row"><button class="btn primary" type="button" id="rkClose">닫기</button></div>`);
+    $('#rkClose').addEventListener('click',closeSheet);return;
   }
   if(!RANK.nick()){openNick(true,openRank);return}
   const sh=openSheet(`<div class="eyebrow">랭킹 · 가장 높이 깬 라운드 → 별 → 총점 순</div><h3>랭킹</h3><div id="rkMe"></div><ul class="rlist" id="rkList"><li class="rank-empty">불러오는 중…</li></ul>
@@ -2934,8 +2964,7 @@ async function openRank(){
     const [list,me]=await Promise.all([RANK.top(50),RANK.me()]);
     if(!$('#sheet'))return;
     const meEl=$('#rkMe');
-    meEl.innerHTML=me?`<div class="me-card"><span class="rk">${me.rank}위</span><span class="nm">${esc(me.nickname)}</span><button class="btn" type="button" id="rkNick">이름 변경</button><span class="st">${me.total}명 중 · 라운드 ${me.best_round} · ★ ${me.stars} · ${Number(me.score).toLocaleString()}점${me.clears?` · 클리어 ${me.clears}회`:''}${me.avg_time?` · 평균 ${fmtTime(me.avg_time)}`:''}</span></div>`:'<p class="rank-note">아직 내 기록이 없어요. 라운드를 깨면 올라가요.</p>';
-    const nb=$('#rkNick');if(nb)nb.addEventListener('click',()=>openNick(false,openRank));
+    meEl.innerHTML=me?`<div class="me-card"><span class="rk">${me.rank}위</span><span class="nm">${esc(me.nickname)}</span><span class="st">${me.total}명 중 · 라운드 ${me.best_round} · ★ ${me.stars} · ${Number(me.score).toLocaleString()}점${me.clears?` · 클리어 ${me.clears}회`:''}${me.avg_time?` · 평균 ${fmtTime(me.avg_time)}`:''}</span></div>`:'<p class="rank-note">아직 내 기록이 없어요. 라운드를 깨면 올라가요.</p>';
     const ul=$('#rkList');
     ul.innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
   }catch(e){
@@ -3116,6 +3145,7 @@ function mergeP(a,b){
   if(a.ach||b.ach)o.ach=ACH.merge(a.ach,b.ach);
   const tl=(a.titleAt||0)>=(b.titleAt||0)?a:b;if(typeof tl.title==='string'){o.title=tl.title;o.titleAt=tl.titleAt||0}
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
+  {const fa=(a.frameAt||0)>=(b.frameAt||0)?a:b;if(fa.frame){o.frame=fa.frame;o.frameAt=fa.frameAt||0}}
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
   else{const o2=av===a?b:a;if(typeof o2.avatar==='number'){o.avatar=o2.avatar;o.avatarAt=o2.avatarAt||0}}
   return o;
@@ -3248,7 +3278,7 @@ function myAvatar(){if(typeof P.avatar==='number'&&P.avatar>=0&&P.avatar<12)retu
 function profFace(){return ZODIAC.face(myAvatar())}
 function profName(){return RANK.nick()||RANK.account()||'게스트'}
 function profInner(){
-  return `<span class="pf-av">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${isAdmin()?'<span class="adm-badge">운영진</span>':''}${ACH.badge(P.title)}${esc(profName())}</span>`+
+  return `<span class="pf-av${frCls()}">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${isAdmin()?'<span class="adm-badge">운영진</span>':''}${ACH.badge(P.title)}${esc(profName())}</span>`+
     `<span class="pf-st"><span class="pf-star">★</span><b>${myStars().toLocaleString()}</b><span class="pf-dot"></span>라운드 <b>${P.unlocked}</b></span></span>`;
 }
 function profRefresh(){const b=$('#profBtn');if(b)b.innerHTML=profInner()}
@@ -3256,18 +3286,50 @@ function openProfile(){
   const acc=RANK.account(),cleared=Object.keys(P.rounds).length;
   const total=Object.values(P.rounds).reduce((a,x)=>a+(x.best||0),0);
   const sh=openSheet(`<div class="eyebrow">프로필</div>
-    <div class="pf-head"><button type="button" class="pf-big" id="pfAv" aria-label="프로필 사진 바꾸기">${profFace()}<span class="pf-edit" aria-hidden="true">✎</span></button><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>${P.title?`<p class="pf-ttl">${ACH.badge(P.title)}</p>`:''}
+    <div class="pf-head"><button type="button" class="pf-big${frCls()}" id="pfAv" aria-label="프로필 사진 바꾸기">${profFace()}<span class="pf-edit" aria-hidden="true">✎</span></button><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>${P.title?`<p class="pf-ttl">${ACH.badge(P.title)}</p>`:''}
     <p class="lead">${isAdmin()?'<span class="adm-badge">운영진</span> ':''}${RANK.enabled?(acc?`아이디 <b>${esc(acc)}</b>`:'로그인 없이 하는 중'):'이 기기에 저장 중'} · ${ZONES[zoneOf(P.unlocked)].lvl} 단계</p></div></div>
     <dl class="pf-stats"><div><dt>별</dt><dd>★ ${myStars().toLocaleString()}</dd></div><div><dt>지금 라운드</dt><dd>${P.unlocked}</dd></div>
     <div><dt>깬 라운드</dt><dd>${cleared}</dd></div><div><dt>총점</dt><dd>${total.toLocaleString()}</dd></div></dl>
-    <div class="row"><button class="btn" type="button" id="pfTitle">칭호 ${P.title?'바꾸기':'고르기'}</button><button class="btn" type="button" id="pfAch">${ICON.medal} 업적</button></div>
+    <div class="row"><button class="btn" type="button" id="pfTitle">칭호 ${P.title?'바꾸기':'고르기'}</button><button class="btn" type="button" id="pfFrame">테두리 고르기</button></div>
+    <div class="row"><button class="btn" type="button" id="pfAch">${ICON.medal} 업적</button></div>
     <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button>`:''}
     <button class="btn primary" type="button" id="pfClose">닫기</button></div>`);
   const nb=sh.querySelector('#pfNick');if(nb)nb.addEventListener('click',()=>openNick(!RANK.nick()));
   sh.querySelector('#pfAv').addEventListener('click',()=>{NATIVE.buzz('tick');openAvatar()});
   sh.querySelector('#pfTitle').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.openTitles()});
+  sh.querySelector('#pfFrame').addEventListener('click',()=>{NATIVE.buzz('tick');openFrames()});
   sh.querySelector('#pfAch').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});
   sh.querySelector('#pfClose').addEventListener('click',closeSheet);
+}
+/* 프로필 테두리: 업적 보상을 받으면 열림 (운영진은 모두 열림) */
+const FRAMES=[
+  {id:'none',name:'기본',need:'처음부터',ok:()=>true},
+  {id:'wood',name:'나무',need:'라운드 정복 Ⅰ',ok:()=>ACH.gotOf('clear')>=1},
+  {id:'flower',name:'꽃 언덕',need:'꽃 언덕 정복',ok:()=>ACH.gotOf('zone0')>=1},
+  {id:'sea',name:'푸른 바다',need:'푸른 바다 정복',ok:()=>ACH.gotOf('zone1')>=1},
+  {id:'snow',name:'눈 덮인 산',need:'눈 덮인 산 정복',ok:()=>ACH.gotOf('zone2')>=1},
+  {id:'night',name:'별빛 하늘',need:'별빛 하늘 정복',ok:()=>ACH.gotOf('zone3')>=1},
+  {id:'sky',name:'하늘섬',need:'하늘섬 정복',ok:()=>ACH.gotOf('zone4')>=1},
+  {id:'silver',name:'은빛',need:'별 모으기 Ⅱ',ok:()=>ACH.gotOf('star')>=2},
+  {id:'gold',name:'금빛',need:'별 모으기 Ⅳ',ok:()=>ACH.gotOf('star')>=4},
+  {id:'heart',name:'오뚝이',need:'오뚝이 Ⅱ',ok:()=>ACH.gotOf('back')>=2},
+  {id:'rainbow',name:'무지개',need:'칭호 고수 하나',ok:()=>[0,1,2].some(t=>ACH.gotOf('type'+t)>=3)},
+  {id:'crown',name:'왕관',need:'라운드 정복 Ⅵ (510)',ok:()=>ACH.gotOf('clear')>=6}
+];
+const frameOk=f=>isAdmin()||f.ok();
+function myFrame(){const f=FRAMES.find(x=>x.id===P.frame);return f&&frameOk(f)?f.id:'none'}
+const frCls=()=>' fr fr-'+myFrame();
+function openFrames(){
+  const cur=myFrame();
+  const sh=openSheet(`<div class="eyebrow">프로필 테두리</div><h3>테두리 고르기</h3>
+    <p class="lead">업적 보상을 받으면 새 테두리가 열려요.</p>
+    <div class="fr-grid">${FRAMES.map(f=>{const ok=frameOk(f);return `<button type="button" class="fr-pick${f.id===cur?' on':''}" data-f="${f.id}" ${ok?'':'disabled'} aria-pressed="${f.id===cur}">
+      <span class="pf-big fr fr-${f.id}">${profFace()}${ok?'':'<i class="fr-lock">'+LOCK+'</i>'}</span><b>${f.name}</b><small>${ok?(f.id===cur?'쓰는 중':'고르기'):esc(f.need)}</small></button>`}).join('')}</div>
+    <div class="row"><button class="btn" type="button" id="frBack">돌아가기</button></div>`);
+  sh.querySelectorAll('.fr-pick').forEach(b=>b.addEventListener('click',()=>{if(b.disabled)return;
+    P.frame=b.dataset.f;P.frameAt=Date.now();saveP();NATIVE.buzz('ok');SFX.play('badge');profRefresh();openProfile();
+    FX.text(`${FRAMES.find(x=>x.id===P.frame).name} 테두리로 바꿨어요`,innerWidth/2,innerHeight*.25,{size:22,color:'#ffd43b'})}));
+  sh.querySelector('#frBack').addEventListener('click',openProfile);
 }
 function openAvatar(){
   const cur=myAvatar();
@@ -3284,6 +3346,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['3.0','10월 30일','재도전·프로필 테두리',['라운드 클리어 창에 \'재도전\' 버튼 (같은 라운드 다시 하기)','프로필 테두리 12가지: 업적 보상을 받으면 하나씩 열려요 (프로필 → 테두리 고르기)','랭킹 창의 이름 변경 버튼을 없앴어요 (닉네임은 프로필·설정에서 바꿀 수 있어요)']],
   ['2.9','10월 29일','배 출발 소리',['지역에서 지역으로 배를 타고 갈 때 파도를 가르는 물소리로 바꿨어요 (하늘섬 날갯짓 소리는 그대로)']],
   ['2.8','10월 29일','지역 이동 별 70%',['다음 지역으로 가는 데 필요한 별을 80%에서 70%로 낮췄어요 (90라운드 지역은 별 189개)']],
   ['2.7','10월 29일','효과음',['버튼·틀린 곳 찾음·콤보·로직 칸·한 줄 완성·퍼즐 조각·클리어·별·코인 등 상황별 효과음 20가지','실로폰 소리를 바탕으로 실수·힌트·조약돌·날갯짓은 말랑 버블, 실패·코인·배 출발은 8비트','설정에서 효과음 켜기·끄기']],
