@@ -964,7 +964,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.3</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.4</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2005,12 +2005,15 @@ function clearStage(){
     const isBest=!prev||S.score>prev.best;
     const got=S.stars.filter(x=>x>0),rs=Math.max(1,Math.min(3,Math.round(got.reduce((a,b)=>a+b,0)/Math.max(1,got.length))));
     const prevStars=prev&&prev.stars||0;
-    P.rounds[round]={best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
+    // 코인 기능 바뀌기 전에 깬 라운드는 그때 별만큼 이미 받은 것으로 친다
+    const paidStars=prev?Math.max(0,Math.min(3,typeof prev.cs==='number'?prev.cs:prevStars)):0;
+    const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars]);
+    P.rounds[round]={cs:Math.max(rs,paidStars),best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
     const opened=round<MAXR&&P.unlocked<round+1;
     if(round<MAXR)P.unlocked=Math.max(P.unlocked,round+1);
-    W().coins+=CLEAR_COIN;P.walletAt=Date.now();
+    if(coinGot){W().coins+=coinGot;P.walletAt=Date.now()}
     saveP();RANK.submitQuiet();
-    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}+${CLEAR_COIN}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
+    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
     S=null;save();
     const toDock=isZoneEnd(round)&&!isAdmin()&&P.revealed<zoneOf(round+1);
     pendingNext=round<MAXR&&!toDock?round+1:0;
@@ -2721,6 +2724,8 @@ const ICON={
 
 /* ---------- 코인 · 힌트 ---------- */
 const HINT_MAX=10,HINT_EVERY=30*60*1000,HINT_PRICE=200,CLEAR_COIN=50,HINT_START=5;
+// 라운드 클리어 코인: 별 1개 25 · 2개 50 · 3개 100. 같은 라운드는 받은 만큼 빼고 차액만 (cs = 코인을 받은 별 수)
+const STAR_COIN=[0,25,50,100];
 // 하트: 라운드를 시작할 때 1개를 걸고, 깨면 돌려받는다. 실수 MISS_MAX번(틀린그림·로직)이나 그만두면 잃는다.
 const HEART_MAX=10,HEART_EVERY=10*60*1000,HEART_PRICE=100,MISS_MAX=5;
 function W(){if(typeof P.coins!=='number'){P.coins=0;P.hints=HINT_START;P.hintAt=Date.now();P.walletAt=0}if(typeof P.hearts!=='number'){P.hearts=HEART_MAX;P.heartAt=Date.now()}return P}
@@ -2816,7 +2821,7 @@ function openShop(msg){
       <button class="btn primary si-buy" id="shBuy" type="button">${ICON.coin}${HINT_PRICE}</button>
     </div>
     <p class="formmsg shop-msg" id="shMsg" aria-live="polite">${msg?esc(msg):''}</p>
-    <p class="rank-note">라운드를 깰 때마다 ${CLEAR_COIN}코인을 받아요. 하트는 ${HEART_EVERY/60000}분마다 1개씩(최대 ${HEART_MAX}개), 힌트는 ${HINT_EVERY/60000}분마다 1개씩(최대 ${HINT_MAX}개) 무료로 채워져요.</p>
+    <p class="rank-note">라운드를 깨면 별 1개 ${STAR_COIN[1]}코인, 2개 ${STAR_COIN[2]}코인, 3개 ${STAR_COIN[3]}코인을 받아요. 같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요. 하트는 ${HEART_EVERY/60000}분마다 1개씩(최대 ${HEART_MAX}개), 힌트는 ${HINT_EVERY/60000}분마다 1개씩(최대 ${HINT_MAX}개) 무료로 채워져요.</p>
     <div class="row"><button class="btn" id="shClose" type="button">닫기</button></div></div>`);
   sh.classList.add('shopsheet');
   const m=sh.querySelector('#shMsg');
@@ -2856,7 +2861,7 @@ function mergeP(a,b){
   for(const k of new Set([...Object.keys(ra),...Object.keys(rb)])){
     const x=ra[k],y=rb[k];
     if(!x||!y){o.rounds[k]=Object.assign({},x||y);continue}
-    o.rounds[k]={best:Math.max(x.best||0,y.best||0),stars:Math.max(x.stars||0,y.stars||0),plays:Math.max(x.plays||1,y.plays||1),
+    o.rounds[k]={cs:Math.max(typeof x.cs==='number'?x.cs:(x.stars||0),typeof y.cs==='number'?y.cs:(y.stars||0)),best:Math.max(x.best||0,y.best||0),stars:Math.max(x.stars||0,y.stars||0),plays:Math.max(x.plays||1,y.plays||1),
       time:x.time&&y.time?Math.min(x.time,y.time):(x.time||y.time||0),last:Math.max(x.last||0,y.last||0)};
   }
   const wa=(a.walletAt||0)>=(b.walletAt||0)?a:b;
@@ -3028,6 +3033,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.4','10월 29일','별점에 따라 코인',['라운드를 깨면 별 1개 25코인, 2개 50코인, 3개 100코인을 받아요','같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요 (별 1개 → 2개: 25코인, 1개 → 3개: 75코인)','이미 받은 별점으로 다시 깨면 코인은 없어요']],
   ['2.3','10월 29일','지도에 친구들 표시',['아이디로 로그인해 랭킹에 있는 플레이어들의 프로필이 지도에서 그 사람이 지금 하고 있는 라운드 옆에 보여요','같은 라운드에 여러 명이면 겹쳐서 보이고, 누르면 누가 있는지 목록이 떠요']],
   ['2.2','10월 29일','다섯 번째 지역 하늘섬',['구름 위 하늘섬 150라운드(361~510), 난이도 아주 어려움','별빛 하늘에서 날개 달린 배를 타고 위로 날아올라 하늘섬으로','다음 지역으로 가려면 그 지역 별의 80%를 모아야 해요 (이미 열린 지역은 그대로)','하늘섬 틀린그림: 살짝 이동·하나 더 생김·살짝 기울기·배경 속 차이, 작은 물건에 숨김','481라운드부터 9라운드마다 오른쪽 그림이 좌우로 뒤집힌 거울 라운드','하늘섬 물건 18가지, 구름 디딤돌','틀린 곳 최대 12개, 퍼즐 최대 9×9']],
   ['2.1','10월 29일','하트와 실패',['하트 생김: 최대 10개, 10분마다 1개씩 채워져요','라운드를 시작할 때 하트 1개를 걸고, 깨면 그대로예요','틀린그림·로직에서 실수 5번이면 실패, 하트 1개가 줄어요','중간에 그만두거나 처음부터 다시 하면 하트 1개가 줄어요','로직에서 틀린 칸을 칠하면 바로 알려 주고 맞는 표시로 고정해요','상점에서 하트 1개 100코인','하트가 없으면 라운드를 시작할 수 없어요']],
