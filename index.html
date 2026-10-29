@@ -857,6 +857,9 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
   -webkit-mask:linear-gradient(#000 calc(100% - 90px),transparent);mask:linear-gradient(#000 calc(100% - 90px),transparent)}
 .map .shore-top{position:absolute;left:0;right:0;top:0;z-index:0;background-size:cover;background-position:center bottom;pointer-events:none;
   -webkit-mask:linear-gradient(#000 calc(100% - 90px),transparent);mask:linear-gradient(#000 calc(100% - 90px),transparent)}
+
+/* 시작 화면 우측 하단 패치 버전 */
+.intro-ver{position:absolute;z-index:5;right:max(12px,env(safe-area-inset-right,0px));bottom:max(10px,calc(env(safe-area-inset-bottom,0px) + 8px));font-size:11px;font-weight:600;color:#fff;opacity:.9;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.45);pointer-events:none}
 </style>
 </head>
 <body>
@@ -875,6 +878,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임 스타트</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 1.7</span>
 </div>
 <div class="wrap">
   <header class="top">
