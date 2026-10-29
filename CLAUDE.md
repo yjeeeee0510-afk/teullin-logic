@@ -53,7 +53,7 @@
   - 바꿔치기 문제는 `GROUPS`(같은 물건의 색 변형 묶음), 크기는 `ART_H`, 뒤집기 허용은 `ART_FLIP`, 색 바꾸기 제외는 `ART_NOCOLOR`.
 - 인게임 화면: `body.game-mode` — 위 상태줄(`#ghud`), 우측 상단 메뉴(`#gmMenu`, 일시정지), 우측 하단 게임 버튼(`#gdock`). 지역 배경은 `setGameBg`.
 - 하트: `HEART_MAX=10`, `HEART_EVERY` 10분, 상점 `HEART_PRICE=100`. `startRound`에서 1개를 걸고(`S.held`) `clearStage`에서 돌려줌. 실수 `MISS_MAX=5`(틀린그림 오답 터치·로직 틀린 칸)면 `failStage`. 그만두기·처음부터 다시는 건 하트를 잃음. 실수 수는 `S.miss`로 저장(이어하기 해도 유지). 운영진은 하트를 안 씀.
-- 클리어 코인 `STAR_COIN=[0,25,50,100]`(라운드 별점 기준). 라운드마다 코인 받은 별 수 `P.rounds[n].cs`를 두고 `STAR_COIN[새 별]-STAR_COIN[cs]`만 준다. `cs`가 없는 예전 기록은 `stars`만큼 받은 것으로 침. `CLEAR_COIN`(50)은 예전 소급 지급(`backpay`)에만 씀.
+- 클리어 코인 `STAR_COIN=[0,25,50,100]`(라운드 별점 기준). 라운드마다 코인 받은 별 수 `P.rounds[n].cs`를 두고 `STAR_COIN[새 별]-STAR_COIN[cs]`만 준다. `cs`가 없는 예전 기록은 `stars`만큼 받은 것으로 침. `CLEAR_COIN`(50)은 예전 소급 지급(`backpay`)에만 씀. 2.4 소급(`starBackpay`, 한 번만 `P.starpaid`): `cs` 없는 라운드마다 `STAR_COIN[stars]-plays×50`이 양수면 지급(빼지는 않음), 그 뒤 `cs=stars`.
 - 진행 기록 `P` (localStorage `sekan-progress`), 아이디 계정이면 Supabase `progress` 표와 동기화(`mergeP`).
 - 프로필: 좌측 상단 `#profBtn`, 십이지 친구 얼굴 선택(`P.avatar`), 이름은 `ZODIAC.NAMES`(찍찍이·음메·어흥이·깡총이·미르·스르르·다그닥·몽실이·끼끼·꼬꼬·멍멍이·꿀꿀이).
 - 지도 위 다른 플레이어(`OTHERS`): 서버 함수 `leaderboard_players`(아이디 계정만, 게스트 제외)로 받아 `best_round+1` 라운드 옆에 얼굴(최대 3개+N)과 닉네임, 누르면 그 라운드 목록. 1분 캐시, 함수가 없으면 아무것도 안 보임. 내 기록은 빼고 보임.

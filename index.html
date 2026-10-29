@@ -2291,7 +2291,7 @@ function showMenu(){
   $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   $('#hintChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   $('#heartChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
-  backpay();regenHints();updWalletUI();setTimeout(showBackpay,500);
+  backpay();starBackpay();regenHints();updWalletUI();setTimeout(showBackpay,500);
   board.querySelectorAll('.nd').forEach(btn=>btn.addEventListener('click',()=>{if(!btn.disabled){NATIVE.buzz('tick');const p=FX.center(btn);FX.burst(p.x,p.y,{count:14,speed:5,ringR:40});openRoundSheet(+btn.dataset.r)}}));
   const rb=$('#resumeBtn');if(rb)rb.addEventListener('click',startStage);
   if(!FX.RM)board.querySelectorAll('.peb.new').forEach(pb=>{const d=parseFloat(pb.style.getPropertyValue('--d'))||0;
@@ -2793,12 +2793,26 @@ function backpay(){
   if(n>0){w.coins+=n*CLEAR_COIN;backpayNote={clears:n,coins:n*CLEAR_COIN}}
   walletChanged();return n;
 }
+// 패치 2.4 소급: 예전(클리어마다 50코인)에 깬 라운드 중 새 규칙(별 1·2·3개 = 25·50·100)보다 덜 받은 라운드만 차액 지급, 코인은 빼지 않음
+function starBackpay(){
+  const w=W();if(w.starpaid)return 0;
+  let add=0,rounds=0;
+  for(const r of Object.values(P.rounds||{})){
+    if(typeof r.cs==='number')continue;
+    const st=Math.max(1,Math.min(3,r.stars||1)),d=STAR_COIN[st]-Math.max(1,r.plays||1)*CLEAR_COIN;
+    if(d>0){add+=d;rounds++}
+    r.cs=st;
+  }
+  w.starpaid=true;
+  if(add>0){w.coins+=add;const n=backpayNote||{clears:0,coins:0};backpayNote={clears:n.clears,coins:n.coins+add,star:rounds}}
+  walletChanged();return add;
+}
 function showBackpay(){
   if(!backpayNote)return;const b=backpayNote;backpayNote=0;
   const sh=openSheet(`<div class="bp">
     <div class="bp-coin">${ICON.coin}</div>
     <h3>코인 보상 도착!</h3>
-    <p class="lead">그동안 깬 라운드 <b>${b.clears}번</b>에 대한 보상이에요.</p>
+    <p class="lead">${b.clears?`그동안 깬 라운드 <b>${b.clears}번</b>에 대한 보상이에요.`:''}${b.star?`${b.clears?'<br>':''}새 코인 규칙에 맞춰 별 3개로 깬 라운드 <b>${b.star}개</b>에 코인을 더 드려요.`:''}</p>
     <div class="bp-amt">${ICON.coin}<b>+${b.coins.toLocaleString()}</b></div>
     <div class="row"><button class="btn primary" id="bpOk" type="button">받기</button></div></div>`);
   sh.querySelector('#bpOk').addEventListener('click',e=>{const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:26,speed:7,ringR:60,colors:['#ffd43b','#fff3bf','#ff922b']});NATIVE.buzz('win');closeSheet();FX.confetti(50)});
@@ -2867,6 +2881,7 @@ function mergeP(a,b){
   const wa=(a.walletAt||0)>=(b.walletAt||0)?a:b;
   if(typeof wa.coins==='number'){o.coins=wa.coins;o.hints=wa.hints;o.hintAt=wa.hintAt;o.walletAt=wa.walletAt||0;if(typeof wa.hearts==='number'){o.hearts=wa.hearts;o.heartAt=wa.heartAt}}
   if(a.backpaid||b.backpaid)o.backpaid=true;
+  if(a.starpaid||b.starpaid)o.starpaid=true;
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
   else{const o2=av===a?b:a;if(typeof o2.avatar==='number'){o.avatar=o2.avatar;o.avatarAt=o2.avatarAt||0}}
@@ -3033,7 +3048,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
-  ['2.4','10월 29일','별점에 따라 코인',['라운드를 깨면 별 1개 25코인, 2개 50코인, 3개 100코인을 받아요','같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요 (별 1개 → 2개: 25코인, 1개 → 3개: 75코인)','이미 받은 별점으로 다시 깨면 코인은 없어요']],
+  ['2.4','10월 29일','별점에 따라 코인',['이전에 별 3개로 깬 라운드는 모자란 코인을 한 번 채워 드려요 (코인이 줄지는 않아요)','라운드를 깨면 별 1개 25코인, 2개 50코인, 3개 100코인을 받아요','같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요 (별 1개 → 2개: 25코인, 1개 → 3개: 75코인)','이미 받은 별점으로 다시 깨면 코인은 없어요']],
   ['2.3','10월 29일','지도에 친구들 표시',['아이디로 로그인해 랭킹에 있는 플레이어들의 프로필이 지도에서 그 사람이 지금 하고 있는 라운드 옆에 보여요','같은 라운드에 여러 명이면 겹쳐서 보이고, 누르면 누가 있는지 목록이 떠요']],
   ['2.2','10월 29일','다섯 번째 지역 하늘섬',['구름 위 하늘섬 150라운드(361~510), 난이도 아주 어려움','별빛 하늘에서 날개 달린 배를 타고 위로 날아올라 하늘섬으로','다음 지역으로 가려면 그 지역 별의 80%를 모아야 해요 (이미 열린 지역은 그대로)','하늘섬 틀린그림: 살짝 이동·하나 더 생김·살짝 기울기·배경 속 차이, 작은 물건에 숨김','481라운드부터 9라운드마다 오른쪽 그림이 좌우로 뒤집힌 거울 라운드','하늘섬 물건 18가지, 구름 디딤돌','틀린 곳 최대 12개, 퍼즐 최대 9×9']],
   ['2.1','10월 29일','하트와 실패',['하트 생김: 최대 10개, 10분마다 1개씩 채워져요','라운드를 시작할 때 하트 1개를 걸고, 깨면 그대로예요','틀린그림·로직에서 실수 5번이면 실패, 하트 1개가 줄어요','중간에 그만두거나 처음부터 다시 하면 하트 1개가 줄어요','로직에서 틀린 칸을 칠하면 바로 알려 주고 맞는 표시로 고정해요','상점에서 하트 1개 100코인','하트가 없으면 라운드를 시작할 수 없어요']],
