@@ -1003,7 +1003,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.8</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.9</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1094,7 +1094,7 @@ window.NATIVE=(function(){
 })();
 /* 효과음: 소리 파일 없이 브라우저(Web Audio)가 직접 만든다. 사용자가 고른 시안(A 실로폰·B 말랑 버블·C 8비트) */
 window.SFX=(function(){
-  let AC=null,out=null,on=true;
+  let AC=null,out=null,on=true,sailBus=null;
   try{on=localStorage.getItem('sekan-sfx')!=='0'}catch(e){}
   const ctx=()=>{
     if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C();out=AC.createGain();out.gain.value=.6;out.connect(AC.destination)}
@@ -1137,7 +1137,20 @@ window.SFX=(function(){
     coin:t=>{sq(t,N('B5'),.06,.11);sq(t+.06,N('E6'),.25,.11)},                        // C
     buy:t=>{noise(t,.08,{v:.12,f:3000});bell(t+.05,N('C7'),.3,.2);bell(t+.12,N('G7'),.4,.14)}, // A
     empty:t=>{bell(t,N('D5'),.3,.2);bell(t+.18,N('A4'),.45,.2)},                      // A 하트·힌트가 없을 때
-    sail:t=>{sq(t,N('C4'),.35,.1);sq(t+.4,N('G4'),.5,.1);seq(t+.95,['C5','E5','G5'],.07,(x,f)=>sq(x,f,.08,.09))}, // C
+    sail:t=>{   // 배가 파도를 가르는 소리: 낮게 깔린 물결 + 뱃머리가 물을 가르는 '쏴아' + 물보라
+      const c=AC,bus=c.createGain();bus.gain.value=1;bus.connect(out);sailBus=bus;
+      const D=4.8,len=Math.ceil(c.sampleRate*D),buf=c.createBuffer(1,len,c.sampleRate),x=buf.getChannelData(0);
+      let b0=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;b0=b0*.97+w*.03;x[i]=w*.35+b0*2.2}   // 거친 물소리 + 낮은 웅웅거림
+      const src=c.createBufferSource();src.buffer=buf;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;lp.Q.value=.4;
+      const g=c.createGain(),curve=new Float32Array(96);
+      for(let i=0;i<96;i++){const u=i/95,env=Math.min(1,u*D/.5)*Math.min(1,(1-u)*D/.6);curve[i]=Math.max(.0001,env*(.11+.06*Math.sin(u*D*2*Math.PI/1.15)))}
+      g.gain.setValueCurveAtTime(curve,t,D);src.connect(lp);lp.connect(g);g.connect(bus);src.start(t);src.stop(t+D+.05);
+      const swish=(at,d,f1,f2,v,q)=>{const n=Math.ceil(c.sampleRate*d),bb=c.createBuffer(1,n,c.sampleRate),y=bb.getChannelData(0);for(let i=0;i<n;i++)y[i]=Math.random()*2-1;
+        const sN=c.createBufferSource();sN.buffer=bb;const bp=c.createBiquadFilter();bp.type='bandpass';bp.Q.value=q;bp.frequency.setValueAtTime(f1,at);bp.frequency.exponentialRampToValueAtTime(f2,at+d*.55);bp.frequency.exponentialRampToValueAtTime(f1*.8,at+d);
+        const gg=c.createGain();gg.gain.setValueAtTime(.0001,at);gg.gain.exponentialRampToValueAtTime(v,at+d*.35);gg.gain.exponentialRampToValueAtTime(.0001,at+d);
+        sN.connect(bp);bp.connect(gg);gg.connect(bus);sN.start(at);sN.stop(at+d+.02)};
+      for(let k=0;k<5;k++){const at=t+.35+k*.85+Math.random()*.12;swish(at,.75,480,2100,.16,.8);swish(at+.32,.28,3800,6500,.05,1.4)}
+    }, // 파도 가르기
     fly:t=>{[0,.2,.4,.6,.8].forEach(d=>noise(t+d,.14,{v:.18,f:900,f2:400,q:1.2}));noise(t,1.3,{v:.06,f:600,f2:3000,q:.5})}, // B
     open:t=>{seq(t,['G5','C6','E6','G6'],.1,(x,f)=>bell(x,f,.45,.22));['C6','E6','G6','C7','E7'].forEach(n=>bell(t+.42,N(n),1.2,.1));noise(t+.4,.8,{v:.05,f:8000})}, // A
     badge:t=>{bell(t,N('C6'),.3);bell(t+.1,N('G6'),.3);bell(t+.2,N('C7'),.8,.25)}    // A
@@ -1150,7 +1163,9 @@ window.SFX=(function(){
       const now=c.currentTime;if(lastAt[name]&&now-lastAt[name]<.03)return;lastAt[name]=now;
       S[name](now+.01,arg)}catch(e){}
   }
-  return {play,get on(){return on},set(v){on=!!v;try{localStorage.setItem('sekan-sfx',on?'1':'0')}catch(e){}if(on)play('tap')}};
+  // 건너뛰기 하면 파도 소리를 부드럽게 줄임
+  function stop(name){if(name==='sail'&&sailBus&&AC){const g=sailBus.gain,t=AC.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(0,t+.35);sailBus=null}}
+  return {play,stop,get on(){return on},set(v){on=!!v;try{localStorage.setItem('sekan-sfx',on?'1':'0')}catch(e){}if(on)play('tap')}};
 })();
 </script>
 <script>
@@ -2553,7 +2568,7 @@ function playVoyage(from,to,done){
     <div class="vy-title"><small>${ZONES[from].name} → ${ZONES[to].name}</small><b>${roName(ZONES[to].name)} 출발!</b></div>
     <button type="button" class="vy-skip">건너뛰기 ›</button>`;
   document.body.appendChild(el);
-  let ended=false;const end=()=>{if(ended)return;ended=true;el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
+  let ended=false;const end=()=>{if(ended)return;ended=true;SFX.stop('sail');el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
   el.querySelector('.vy-skip').addEventListener('click',e=>{e.stopPropagation();NATIVE.buzz('tick');end()});
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
   setTimeout(()=>{const t=el.querySelector('.vy-title b');if(t){t.textContent=`${ZONES[to].name} 도착!`;el.classList.add('arrive');NATIVE.buzz('win')}},4100);
@@ -3254,6 +3269,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.9','10월 29일','배 출발 소리',['지역에서 지역으로 배를 타고 갈 때 파도를 가르는 물소리로 바꿨어요 (하늘섬 날갯짓 소리는 그대로)']],
   ['2.8','10월 29일','지역 이동 별 70%',['다음 지역으로 가는 데 필요한 별을 80%에서 70%로 낮췄어요 (90라운드 지역은 별 189개)']],
   ['2.7','10월 29일','효과음',['버튼·틀린 곳 찾음·콤보·로직 칸·한 줄 완성·퍼즐 조각·클리어·별·코인 등 상황별 효과음 20가지','실로폰 소리를 바탕으로 실수·힌트·조약돌·날갯짓은 말랑 버블, 실패·코인·배 출발은 8비트','설정에서 효과음 켜기·끄기']],
   ['2.6','10월 29일','시작 화면 글씨',['시작 화면 패치 번호를 연한 회색으로','시작 화면 아래 가운데에 \'Made by 중독 게임사\'']],
