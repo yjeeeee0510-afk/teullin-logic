@@ -896,7 +896,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 1.9</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.0</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2450,7 +2450,7 @@ const ICON={
 };
 
 /* ---------- 코인 · 힌트 ---------- */
-const HINT_MAX=20,HINT_EVERY=10*60*1000,HINT_PRICE=200,CLEAR_COIN=50,HINT_START=5;
+const HINT_MAX=10,HINT_EVERY=30*60*1000,HINT_PRICE=200,CLEAR_COIN=50,HINT_START=5;
 function W(){if(typeof P.coins!=='number'){P.coins=0;P.hints=HINT_START;P.hintAt=Date.now();P.walletAt=0}return P}
 function walletChanged(){P.walletAt=Date.now();saveP();updWalletUI()}
 function regenHints(){
@@ -2507,7 +2507,7 @@ function openShop(msg){
       <button class="btn primary si-buy" id="shBuy" type="button">${ICON.coin}${HINT_PRICE}</button>
     </div>
     <p class="formmsg shop-msg" id="shMsg" aria-live="polite">${msg?esc(msg):''}</p>
-    <p class="rank-note">라운드를 깰 때마다 ${CLEAR_COIN}코인을 받아요. 힌트는 10분마다 1개씩 무료로 채워지고, 최대 ${HINT_MAX}개까지 가질 수 있어요.</p>
+    <p class="rank-note">라운드를 깰 때마다 ${CLEAR_COIN}코인을 받아요. 힌트는 ${HINT_EVERY/60000}분마다 1개씩 무료로 채워지고, 최대 ${HINT_MAX}개까지 가질 수 있어요.</p>
     <div class="row"><button class="btn" id="shClose" type="button">닫기</button></div></div>`);
   sh.classList.add('shopsheet');
   const m=sh.querySelector('#shMsg');
@@ -2708,6 +2708,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.0','10월 29일','힌트 충전 바꾸기',['힌트는 최대 10개까지 가질 수 있어요 (전에는 20개)','무료 힌트는 30분마다 1개씩 채워져요 (전에는 10분)','이미 10개보다 많이 가진 힌트는 그대로 쓸 수 있어요']],
   ['1.9','10월 29일','진행 중인 라운드로 바로',['게임을 켜면 지금 진행 중인 라운드가 있는 지역 지도가 바로 나와요','다른 지역을 보다가 껐어도 진행 중인 지역으로 맞춰서 열려요','지역 마지막 라운드를 깨고 아직 배를 안 탔으면 선착장이 보이게 열려요']],
   ['1.8','10월 29일','깜박이는 \'게임시작\'',['시작 화면의 노란 \'게임 스타트\' 버튼을 흰 글씨 \'게임시작\'으로 바꿨어요','글씨가 은은하게 깜박이고, 누르면 게임으로 들어가요']],
   ['1.7','10월 29일','네모네모 로직 720문제',['로직 크기(5·6·7·8·10·12칸)마다 120문제씩, 모두 720문제','라운드마다 다른 문제가 나오고, 다시 하면 아직 안 푼 문제가 나와요','물건 그림·도형·무늬 문제, 풀면 \'○○ 완성!\'','모두 줄 추론만으로 풀리고 답이 하나예요. 돌리거나 뒤집어서 같은 문제는 뺐어요','시작 화면 우측 하단에 패치 번호 표시']],
