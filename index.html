@@ -626,6 +626,21 @@ body.menu-mode,body.menu-mode .wrap,body.menu-mode .panel,body.menu-mode #board,
   padding:10px max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(12px,env(safe-area-inset-left,0px))}
 .map-foot>*{pointer-events:auto}
 .hint-chip{border:0;cursor:pointer;font:inherit;align-items:center;gap:4px}
+.heart-chip{border:0;cursor:pointer;font:inherit;align-items:center;gap:4px}
+.heart-chip b{color:#c2255c;font-variant-numeric:tabular-nums}
+.heart-chip em{font-style:normal;font-size:11px;font-weight:700;color:#8a7a60;margin-left:2px;font-variant-numeric:tabular-nums}
+.cell.wrong{background:#ffe3e3}.cell.wrong.f{background:#c2255c}.cell.wrong.x::after{color:#e03131}
+.rs-heart{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 2px;font-size:13.5px;color:#3a4660;text-align:left;line-height:1.4}
+.rs-heart .ico{width:26px;height:26px;flex:none}.rs-heart small{color:#7a869a;font-size:12px}
+.heart-dd{display:inline-flex;align-items:center;gap:4px}.heart-dd .ico{width:18px;height:18px}
+.fail,.nh{text-align:center}
+.fail-heart,.nh-ico{display:flex;justify-content:center;margin:4px 0 2px}
+.fail-heart .ico,.nh-ico .ico{width:72px;height:72px;filter:drop-shadow(0 6px 10px rgba(214,51,108,.3))}
+.fail-heart .ico{animation:heartBreak .7s cubic-bezier(.3,1.6,.5,1) both;filter:grayscale(.55) drop-shadow(0 6px 10px rgba(0,0,0,.2))}
+.fail h3{color:#e03131}
+.fail-amt{display:inline-flex;align-items:center;gap:6px;font-size:30px;font-weight:800;color:#e03131;margin:2px 0 4px}.fail-amt .ico{width:30px;height:30px}
+.fail-left{font-size:14px;color:#3a4660;margin:4px 0 10px}
+@keyframes heartBreak{0%{transform:scale(1.3)}40%{transform:scale(.85) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
 .hint-chip b{color:#7a4a00}
 .hint-chip em{font-style:normal;font-size:11px;font-weight:700;color:#8a7a60;margin-left:4px;font-variant-numeric:tabular-nums}
 .mb-btn.shop{background:linear-gradient(#9be86a,#4fb83a);color:#fff;box-shadow:0 3px 0 #2f7a2a,0 6px 14px rgba(0,0,0,.22);text-shadow:0 1px 0 rgba(0,0,0,.2)}
@@ -641,10 +656,11 @@ body.menu-mode,body.menu-mode .wrap,body.menu-mode .panel,body.menu-mode #board,
 .coin-dd{display:flex;align-items:center;justify-content:flex-end;gap:4px;color:#c07a00;font-weight:800}
 .shopbox{display:flex;flex-direction:column;gap:10px}
 .shopbox h3{margin:0}
-.shop-wallet{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.shop-wallet>div{display:flex;align-items:center;gap:6px;background:var(--soft);border-radius:12px;padding:10px 12px}
+.shop-wallet{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mf-chips{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.shop-wallet>div{display:flex;align-items:center;justify-content:center;gap:4px;background:var(--soft);border-radius:12px;padding:10px 6px;flex-wrap:wrap}
 .shop-wallet .ico{width:26px;height:26px}
-.shop-wallet b{font-size:22px;font-variant-numeric:tabular-nums}
+.shop-wallet b{font-size:20px;font-variant-numeric:tabular-nums}
 .shop-wallet small{font-size:12px;color:var(--muted)}
 .shop-next{margin:0;font-size:13px;color:var(--muted);text-align:center}
 .shop-item{display:flex;align-items:center;gap:12px;border:2px solid #ffd43b;border-radius:16px;padding:12px;background:linear-gradient(#fffbea,#fff3c4)}
@@ -896,7 +912,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.0</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.1</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1507,7 +1523,7 @@ function renderSpot(){
   }
   const f=spot.diffs.filter(d=>d.found).length;
   $('#spotCount').textContent=`찾은 곳 ${f} / ${spot.diffs.length}`;
-  $('#spotMiss').textContent=`실수 ${misses}`;
+  $('#spotMiss').textContent=`실수 ${misses} / ${MISS_MAX}`;
 }
 function spotClick(e,side){
   if(!running||!spot)return;
@@ -1521,7 +1537,7 @@ function spotClick(e,side){
     if(spot.diffs.every(d=>d.found))setTimeout(clearStage,500);}
   else{
     if(spot.diffs.some(d=>d.found&&Math.hypot(d.x-x,d.y-y)<=d.rad))return;
-    NATIVE.buzz('bad');misses++;combo=0;spot.miss={x,y,side};renderSpot();
+    NATIVE.buzz('bad');misses++;combo=0;spot.miss={x,y,side};renderSpot();addMiss();
     FX.shake(e.currentTarget);FX.text('앗!',e.clientX,e.clientY-10,{size:30,color:'#ff6b6b'});FX.bump($('#spotMiss'));
     clearTimeout(spot.mt);spot.mt=setTimeout(()=>{if(spot){spot.miss=null;renderSpot()}},650);
   }
@@ -1575,7 +1591,7 @@ function initLogic(){
   const q=logicFor(S.round);let sol,label='';
   if(q){sol=q.sol;label=q.label}else sol=symRandom(r,n);
   const rows=sol.map(lineClue),cols=sol[0].map((_,x)=>lineClue(sol.map(row=>row[x])));
-  logic={n,rows,cols,sol,label,g:Array.from({length:n},()=>Array(n).fill(0))};
+  logic={n,rows,cols,sol,label,g:Array.from({length:n},()=>Array(n).fill(0)),lock:Array.from({length:n},()=>Array(n).fill(false))};
 }
 function renderLogic(){
   const {n,rows,cols}=logic,el=$('#nono');
@@ -1607,7 +1623,7 @@ function renderLogic(){
   updateClues();
 }
 function cellEl(x,y){return $('#nono').querySelector(`.cell[data-x="${x}"][data-y="${y}"]`)}
-function paintCell(x,y){const v=logic.g[y][x],c=cellEl(x,y);c.classList.toggle('f',v===1);c.classList.toggle('x',v===2)}
+function paintCell(x,y){const v=logic.g[y][x],c=cellEl(x,y);c.classList.toggle('f',v===1);c.classList.toggle('x',v===2);c.classList.toggle('wrong',!!logic.lock[y][x])}
 const same=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 function updateClues(fx){
   const {n,g,rows,cols}=logic;let all=true;const fresh=[];
@@ -1649,7 +1665,16 @@ function logicHint(){
 function applyAt(el){
   if(!el||!el.classList||!el.classList.contains('cell'))return;
   const x=+el.dataset.x,y=+el.dataset.y;
-  if(logic.g[y][x]===paint)return;
+  if(logic.lock[y][x]||logic.g[y][x]===paint)return;
+  const want=logic.sol[y][x]?1:0;
+  // 틀린 칸을 칠하거나, 칠해야 할 칸에 × 를 치면 실수: 맞는 표시로 고정하고 실수 1번
+  if((paint===1&&!want)||(paint===2&&want)){
+    dragging=false;logic.g[y][x]=want?1:2;logic.lock[y][x]=true;paintCell(x,y);
+    NATIVE.buzz('bad');FX.shake(el);const p=FX.center(el);FX.text('앗!',p.x,p.y-14,{size:28,color:'#ff6b6b'});
+    misses++;addMiss();
+    if(running&&updateClues(true)){logicWinFx();$('#nono').classList.add('won');setTimeout(clearStage,700)}
+    return;
+  }
   logic.g[y][x]=paint;paintCell(x,y);NATIVE.buzz('tick');
 }
 function bindLogic(){
@@ -1770,7 +1795,7 @@ function startStage(){
   if(!S){showMenu();return}
   paused=false;inGame=true;$('#track').hidden=true;$('#menuBtn').hidden=false;document.body.classList.remove('menu-mode');document.body.classList.add('game-mode');setGameBg(S.round);closeSheet();
   $('#ghInfo').querySelectorAll('.mv').forEach(e=>e.remove());
-  misses=0;hints=0;combo=0;lastHit=0;comboPts=0;running=false;elapsedFrozen=0;
+  misses=S.miss||0;hints=0;combo=0;lastHit=0;comboPts=0;running=false;elapsedFrozen=0;
   $('#veil').hidden=true;
   const st=STAGES[S.stage];
   const sz=S.stage===0?`틀린 곳 ${SIZE.spot(S.round)}개`:S.stage===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
@@ -1788,12 +1813,12 @@ function startStage(){
   }
   if(S.stage===1){
     spot=null;initLogic();mode=1;
-    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
+    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
     board.innerHTML=`<div class="nono-wrap"><div class="nono" id="nono"></div></div>`;
     const setMode=m=>{mode=m;$('#mFill').setAttribute('aria-pressed',m===1);$('#mX').setAttribute('aria-pressed',m===2)};
     $('#mFill').addEventListener('click',()=>setMode(1));
     $('#mX').addEventListener('click',()=>setMode(2));
-    $('#clrBtn').addEventListener('click',()=>{logic.g=logic.g.map(r=>r.map(()=>0));renderLogic()});
+    $('#clrBtn').addEventListener('click',()=>{logic.g=logic.g.map((r,y)=>r.map((v,x)=>logic.lock[y][x]?v:0));renderLogic()});
     $('#lgHintBtn').addEventListener('click',logicHint);
     gameDock();bindLogic();renderLogic();
     goTime(token);
@@ -1807,6 +1832,33 @@ function elapsed(){return running?performance.now()-t0:elapsedFrozen}
 function fmt(ms){const s=Math.floor(ms/1000);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
 setInterval(()=>{const t=fmt(elapsed());$('#sTime').textContent=t;const g=$('#ghTime');if(g)g.textContent=t},250);
 
+function addMiss(){
+  if(!S)return;S.miss=misses;save();
+  const c=$('#lgMiss');if(c){c.textContent=`실수 ${misses} / ${MISS_MAX}`;FX.bump(c)}
+  if(misses>=MISS_MAX&&running)failStage();
+}
+function failStage(){
+  if(!running||!S)return;
+  elapsedFrozen=performance.now()-t0;running=false;
+  const round=S.round,lost=!!S.held;
+  S=null;save();updWalletUI();
+  setTimeout(()=>{
+    NATIVE.buzz('bad');
+    const sh=openSheet(`<div class="fail">
+      <div class="fail-heart">${ICON.heart}</div>
+      <h3>실패!</h3>
+      <p class="lead">실수가 ${MISS_MAX}번이 되었어요.</p>
+      ${lost?`<div class="fail-amt">${ICON.heart}<b>−1</b></div>`:''}
+      <p class="fail-left">남은 하트 <b data-hearts>${W().hearts}</b>개 · <span data-heart-next-long></span></p>
+      <div class="row"><button class="btn" id="flMap" type="button">라운드 선택으로</button><button class="btn primary" id="flRe" type="button">다시 도전</button></div></div>`);
+    sh.classList.add('failsheet');
+    const toMap=()=>{closeSheet();showMenu()};
+    sh.addEventListener('click',e=>{if(e.target===sh)toMap()});
+    sh.querySelector('#flMap').addEventListener('click',toMap);
+    sh.querySelector('#flRe').addEventListener('click',()=>{closeSheet();startRound(round)});
+    updWalletUI();
+  },FX.RM?150:650);
+}
 function clearStage(){
   if(!running)return;
   elapsedFrozen=performance.now()-t0;running=false;NATIVE.buzz('win');
@@ -1820,6 +1872,7 @@ function clearStage(){
   let extra='';
   $('#mMenu').hidden=!wasLast;
   if(wasLast){
+    if(S.held){S.held=false;refundHeart()}
     const prev=P.rounds[round];
     const isBest=!prev||S.score>prev.best;
     const got=S.stars.filter(x=>x>0),rs=Math.max(1,Math.min(3,Math.round(got.reduce((a,b)=>a+b,0)/Math.max(1,got.length))));
@@ -1829,7 +1882,7 @@ function clearStage(){
     if(round<MAXR)P.unlocked=Math.max(P.unlocked,round+1);
     W().coins+=CLEAR_COIN;P.walletAt=Date.now();
     saveP();RANK.submitQuiet();
-    extra=`<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}+${CLEAR_COIN}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&round%ZSIZE===0?`<dt>안개가 걷혔어요</dt><dd>${round+1}–${round+ZSIZE}라운드</dd>`:''}`;
+    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}+${CLEAR_COIN}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&round%ZSIZE===0?`<dt>안개가 걷혔어요</dt><dd>${round+1}–${round+ZSIZE}라운드</dd>`:''}`;
     S=null;save();
     const toDock=round<MAXR&&round%ZSIZE===0&&!isAdmin()&&P.revealed<zoneOf(round+1);
     pendingNext=round<MAXR&&!toDock?round+1:0;
@@ -1867,9 +1920,14 @@ $('#mMenu').addEventListener('click',()=>{pendingNext=0;showMenu()});
 
 /* ---------- round select ---------- */
 function startRound(n){
-  if(zoneOf(n)<=P.revealed||isAdmin())store.set('sekan-viewz',zoneOf(n));
+  // 하트 1개를 걸고 시작 (운영진은 하트를 쓰지 않음). 앞에서 하던 판이 남아 있으면 그 하트는 포기로 잃는다.
+  const adm=isAdmin();
+  if(!adm){regenHearts();if(W().hearts<=0){if(inGame)showMenu();noHeart();return}}
+  S=null;save();
+  if(!adm)takeHeart();
+  if(zoneOf(n)<=P.revealed||adm)store.set('sekan-viewz',zoneOf(n));
   shownScore=0;
-  S={round:n,stage:typeOf(n),score:0,stars:[],seed:Math.floor(Math.random()*1e9)};save();startStage();
+  S={round:n,stage:typeOf(n),score:0,stars:[],seed:Math.floor(Math.random()*1e9),held:!adm,miss:0};save();startStage();
 }
 const LOCK='<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="5.5" width="8" height="5.5" rx="1" fill="currentColor"/><path d="M4 5.5V4a2 2 0 0 1 4 0v1.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>';
 function tierText(a,b){
@@ -2087,7 +2145,7 @@ function showMenu(){
       ${cls==='next'?`<span class="tag">도전 · ${TYPE_SHORT[typeOf(n)]}</span>`:n===MAXR&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
   }
   h+=`</div></div><div class="map-hint"><button type="button" id="toCur">↓ 지금 라운드로</button></div>
-    <div class="map-foot"><button type="button" class="mb-chip hint-chip" id="hintChip" aria-label="보유 힌트">${ICON.bulb}<b data-hints>${W().hints}</b><small>/${HINT_MAX}</small><em data-hint-next></em></button><span class="mb-sp"></span>
+    <div class="map-foot"><div class="mf-chips"><button type="button" class="mb-chip heart-chip" id="heartChip" aria-label="보유 하트">${ICON.heart}<b data-hearts>${W().hearts}</b><small>/${HEART_MAX}</small><em data-heart-next>${heartNextTxt(false)}</em></button><button type="button" class="mb-chip hint-chip" id="hintChip" aria-label="보유 힌트">${ICON.bulb}<b data-hints>${W().hints}</b><small>/${HINT_MAX}</small><em data-hint-next></em></button></div><span class="mb-sp"></span>
     <button type="button" class="mb-btn shop" id="shopBtn">${ICON.cart}<span>상점</span></button><button type="button" class="mb-btn" id="rankBtn">${TROPHY}<span>랭킹</span></button></div></div>`;
   const board=$('#board');board.innerHTML=h;
   $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
@@ -2095,6 +2153,7 @@ function showMenu(){
   $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
   $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   $('#hintChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
+  $('#heartChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   backpay();regenHints();updWalletUI();setTimeout(showBackpay,500);
   board.querySelectorAll('.nd').forEach(btn=>btn.addEventListener('click',()=>{if(!btn.disabled){NATIVE.buzz('tick');const p=FX.center(btn);FX.burst(p.x,p.y,{count:14,speed:5,ringR:40});openRoundSheet(+btn.dataset.r)}}));
   const rb=$('#resumeBtn');if(rb)rb.addEventListener('click',startStage);
@@ -2251,7 +2310,7 @@ function openPause(){
     <p class="pause-how">${esc(st.desc)}</p>
     <div class="pause-btns">
       <button class="btn primary" type="button" id="pzGo">계속하기</button>
-      <button class="btn" type="button" id="pzRe">처음부터 다시</button>
+      <button class="btn" type="button" id="pzRe">처음부터 다시${S.held?' <small>(하트 1개)</small>':''}</button>
       <button class="btn" type="button" id="pzMap">라운드 선택으로</button>
       <button class="btn" type="button" id="pzSet">설정</button>
       ${isAdmin()?'<button class="btn adm-btn" type="button" id="pzWin">운영진 · 바로 클리어</button>':''}
@@ -2444,6 +2503,7 @@ async function openRank(){
 
 
 const ICON={
+  heart:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.2 0 3.8 1.2 5.2 3 1.4-1.8 3-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z" fill="#ff6b81" stroke="#d6336c" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c.6-.9 1.5-1.3 2.4-1.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".8"/></svg>',
   coin:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ffd43b" stroke="#e09a00" stroke-width="2"/><circle cx="12" cy="12" r="6.2" fill="none" stroke="#e09a00" stroke-width="1.6"/><path d="M9.5 8.6l1.2 6.8 1.3-4.6 1.3 4.6 1.2-6.8" fill="none" stroke="#c07a00" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>',
   bulb:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a6.8 6.8 0 0 0-4 12.3c.7.5 1 1.2 1 2V18h6v-1.2c0-.8.4-1.5 1-2A6.8 6.8 0 0 0 12 2.5z" fill="#ffe066" stroke="#e09a00" stroke-width="1.6"/><path d="M9.5 20.5h5M10.3 22.5h3.4" stroke="#8a6a2a" stroke-width="1.8" stroke-linecap="round"/><path d="M10 8.5a2.6 2.6 0 0 1 2.4-2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>',
   cart:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 4h2.6l2.3 10.2a1.6 1.6 0 0 0 1.6 1.3h8.3a1.6 1.6 0 0 0 1.5-1.2L21 7.5H6.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="9.5" cy="19.5" r="1.7" fill="currentColor"/><circle cx="17" cy="19.5" r="1.7" fill="currentColor"/></svg>'
@@ -2451,7 +2511,9 @@ const ICON={
 
 /* ---------- 코인 · 힌트 ---------- */
 const HINT_MAX=10,HINT_EVERY=30*60*1000,HINT_PRICE=200,CLEAR_COIN=50,HINT_START=5;
-function W(){if(typeof P.coins!=='number'){P.coins=0;P.hints=HINT_START;P.hintAt=Date.now();P.walletAt=0}return P}
+// 하트: 라운드를 시작할 때 1개를 걸고, 깨면 돌려받는다. 실수 MISS_MAX번(틀린그림·로직)이나 그만두면 잃는다.
+const HEART_MAX=10,HEART_EVERY=10*60*1000,HEART_PRICE=100,MISS_MAX=5;
+function W(){if(typeof P.coins!=='number'){P.coins=0;P.hints=HINT_START;P.hintAt=Date.now();P.walletAt=0}if(typeof P.hearts!=='number'){P.hearts=HEART_MAX;P.heartAt=Date.now()}return P}
 function walletChanged(){P.walletAt=Date.now();saveP();updWalletUI()}
 function regenHints(){
   const w=W(),now=Date.now();
@@ -2461,6 +2523,34 @@ function regenHints(){
 }
 function nextHintIn(){const w=W();return w.hints>=HINT_MAX?0:Math.max(0,HINT_EVERY-(Date.now()-w.hintAt))}
 function useHint(){regenHints();const w=W();if(w.hints<=0)return false;if(w.hints>=HINT_MAX)w.hintAt=Date.now();w.hints--;walletChanged();return true}
+const heldHeart=()=>S&&S.held?1:0;
+const heartCap=()=>HEART_MAX-heldHeart();
+function regenHearts(){
+  const w=W(),now=Date.now(),cap=heartCap();
+  if(w.hearts>=cap){w.heartAt=now;return}
+  const k=Math.floor((now-w.heartAt)/HEART_EVERY);
+  if(k>0){w.hearts=Math.min(cap,w.hearts+k);w.heartAt=w.hearts>=cap?now:w.heartAt+k*HEART_EVERY;walletChanged()}
+}
+function nextHeartIn(){const w=W();return w.hearts>=heartCap()?0:Math.max(0,HEART_EVERY-(Date.now()-w.heartAt))}
+function takeHeart(){regenHearts();const w=W();if(w.hearts<=0)return false;if(w.hearts>=heartCap())w.heartAt=Date.now();w.hearts--;walletChanged();return true}
+function refundHeart(){const w=W();w.hearts=Math.min(HEART_MAX,w.hearts+1);walletChanged()}
+function heartNextTxt(long){
+  const w=W();
+  if(w.hearts>=HEART_MAX)return long?'하트가 가득 찼어요':'가득';
+  if(w.hearts>=heartCap())return long?'하트 1개를 걸고 도전 중이에요':'도전 중';
+  return long?`다음 하트까지 ${fmtMS(nextHeartIn())}`:fmtMS(nextHeartIn());
+}
+function noHeart(){
+  NATIVE.buzz('bad');regenHearts();
+  const sh=openSheet(`<div class="nh">
+    <div class="nh-ico">${ICON.heart}</div>
+    <h3>하트가 없어요</h3>
+    <p class="lead">하트는 ${HEART_EVERY/60000}분마다 1개씩 채워져요.<br><b data-heart-next-long></b></p>
+    <div class="row"><button class="btn" id="nhNo" type="button">닫기</button><button class="btn primary" id="nhShop" type="button">상점에서 사기</button></div></div>`);
+  sh.querySelector('#nhNo').addEventListener('click',closeSheet);
+  sh.querySelector('#nhShop').addEventListener('click',()=>openShop());
+  updWalletUI();
+}
 function fmtMS(ms){const t=Math.ceil(ms/1000);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
 function updWalletUI(){
   const w=W();
@@ -2470,9 +2560,13 @@ function updWalletUI(){
   document.querySelectorAll('[data-hint-next]').forEach(e=>e.textContent=w.hints>=HINT_MAX?'가득':fmtMS(nx));
   document.querySelectorAll('[data-hint-next-long]').forEach(e=>e.textContent=w.hints>=HINT_MAX?'힌트가 가득 찼어요':`다음 무료 힌트까지 ${fmtMS(nx)}`);
   const bb=document.getElementById('shBuy');if(bb)bb.classList.toggle('dim',w.coins<HINT_PRICE||w.hints>=HINT_MAX);
+  document.querySelectorAll('[data-hearts]').forEach(e=>e.textContent=w.hearts);
+  document.querySelectorAll('[data-heart-next]').forEach(e=>e.textContent=heartNextTxt(false));
+  document.querySelectorAll('[data-heart-next-long]').forEach(e=>e.textContent=heartNextTxt(true));
+  const hb=document.getElementById('shHeart');if(hb)hb.classList.toggle('dim',w.coins<HEART_PRICE||w.hearts>=heartCap());
 }
-setInterval(()=>{regenHints();updWalletUI()},1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){regenHints();updWalletUI()}});
+setInterval(()=>{regenHints();regenHearts();updWalletUI()},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){regenHints();regenHearts();updWalletUI()}});
 // 코인 기능이 생기기 전에 깬 라운드도 1번 클리어마다 50코인씩 한 번만 소급 지급
 const COIN_LAUNCH=Date.parse('2026-10-28T02:30:00Z');
 let backpayNote=0;
@@ -2499,19 +2593,34 @@ function openShop(msg){
   regenHints();
   const sh=openSheet(`<div class="shopbox">
     <div class="eyebrow">상점</div><h3>상점</h3>
-    <div class="shop-wallet"><div>${ICON.coin}<b data-coins>0</b><small>코인</small></div><div>${ICON.bulb}<b data-hints>0</b><small>/ ${HINT_MAX} 힌트</small></div></div>
-    <p class="shop-next" data-hint-next-long></p>
+    <div class="shop-wallet"><div>${ICON.coin}<b data-coins>0</b><small>코인</small></div><div>${ICON.heart}<b data-hearts>0</b><small>/ ${HEART_MAX} 하트</small></div><div>${ICON.bulb}<b data-hints>0</b><small>/ ${HINT_MAX} 힌트</small></div></div>
+    <p class="shop-next"><span data-heart-next-long></span> · <span data-hint-next-long></span></p>
+    <div class="shop-item">
+      <div class="si-ico">${ICON.heart}</div>
+      <div class="si-txt"><b>하트 1개</b><span>라운드에 도전할 때 필요해요 · 깨면 그대로, 실패하면 1개 줄어요</span></div>
+      <button class="btn primary si-buy" id="shHeart" type="button">${ICON.coin}${HEART_PRICE}</button>
+    </div>
     <div class="shop-item">
       <div class="si-ico">${ICON.bulb}</div>
       <div class="si-txt"><b>힌트 1개</b><span>틀린 곳 하나 보기 · 로직 한 칸 알려주기 · 퍼즐 원본 보기</span></div>
       <button class="btn primary si-buy" id="shBuy" type="button">${ICON.coin}${HINT_PRICE}</button>
     </div>
     <p class="formmsg shop-msg" id="shMsg" aria-live="polite">${msg?esc(msg):''}</p>
-    <p class="rank-note">라운드를 깰 때마다 ${CLEAR_COIN}코인을 받아요. 힌트는 ${HINT_EVERY/60000}분마다 1개씩 무료로 채워지고, 최대 ${HINT_MAX}개까지 가질 수 있어요.</p>
+    <p class="rank-note">라운드를 깰 때마다 ${CLEAR_COIN}코인을 받아요. 하트는 ${HEART_EVERY/60000}분마다 1개씩(최대 ${HEART_MAX}개), 힌트는 ${HINT_EVERY/60000}분마다 1개씩(최대 ${HINT_MAX}개) 무료로 채워져요.</p>
     <div class="row"><button class="btn" id="shClose" type="button">닫기</button></div></div>`);
   sh.classList.add('shopsheet');
   const m=sh.querySelector('#shMsg');
   sh.querySelector('#shClose').addEventListener('click',closeSheet);
+  sh.querySelector('#shHeart').addEventListener('click',e=>{
+    regenHearts();const w=W();
+    if(w.hearts>=heartCap()){m.textContent=`하트는 최대 ${HEART_MAX}개까지 가질 수 있어요.`;NATIVE.buzz('bad');return}
+    if(w.coins<HEART_PRICE){m.textContent=`코인이 ${HEART_PRICE-w.coins}개 부족해요. 라운드를 깨서 모아 보세요.`;NATIVE.buzz('bad');return}
+    w.coins-=HEART_PRICE;w.hearts++;walletChanged();
+    m.textContent='';NATIVE.buzz('win');
+    const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#ff6b81','#ffc9d4','#ffd43b']});
+    FX.text('하트 +1',p.x,p.y-40,{size:26,color:'#ff6b81'});
+    const hb=sh.querySelector('.shop-wallet div:nth-child(2) b');if(hb)FX.bump(hb);
+  });
   sh.querySelector('#shBuy').addEventListener('click',e=>{
     regenHints();const w=W();
     if(w.hints>=HINT_MAX){m.textContent=`힌트는 최대 ${HINT_MAX}개까지 가질 수 있어요.`;NATIVE.buzz('bad');return}
@@ -2520,7 +2629,7 @@ function openShop(msg){
     m.textContent='';NATIVE.buzz('win');
     const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#ffd43b','#fff3bf','#ff922b']});
     FX.text('힌트 +1',p.x,p.y-40,{size:26,color:'#ffd43b'});
-    const hb=sh.querySelector('.shop-wallet div:nth-child(2) b');if(hb)FX.bump(hb);
+    const hb=sh.querySelector('.shop-wallet div:nth-child(3) b');if(hb)FX.bump(hb);
   });
   updWalletUI();
 }
@@ -2541,7 +2650,7 @@ function mergeP(a,b){
       time:x.time&&y.time?Math.min(x.time,y.time):(x.time||y.time||0),last:Math.max(x.last||0,y.last||0)};
   }
   const wa=(a.walletAt||0)>=(b.walletAt||0)?a:b;
-  if(typeof wa.coins==='number'){o.coins=wa.coins;o.hints=wa.hints;o.hintAt=wa.hintAt;o.walletAt=wa.walletAt||0}
+  if(typeof wa.coins==='number'){o.coins=wa.coins;o.hints=wa.hints;o.hintAt=wa.hintAt;o.walletAt=wa.walletAt||0;if(typeof wa.hearts==='number'){o.hearts=wa.hearts;o.heartAt=wa.heartAt}}
   if(a.backpaid||b.backpaid)o.backpaid=true;
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
@@ -2663,6 +2772,7 @@ function openRoundSheet(n){
     <h3>라운드 ${n}</h3>
     <div class="rs-type"><i class="ty t${t}">${TYPE_ICON[t]}</i><span>${STAGES[t].name}</span><em>${sz}</em></div>
     ${recHtml}
+    ${isAdmin()?'':`<p class="rs-heart">${ICON.heart}<span>${resumeHere?'하트 1개를 걸고 하던 판이에요':`하트 1개를 걸고 시작해요 · 지금 <b data-hearts>${W().hearts}</b>개`}<br><small>${t===2?'깨면 그대로, 중간에 그만두면 1개 줄어요':`깨면 그대로, 실수 ${MISS_MAX}번이거나 그만두면 1개 줄어요`}</small></span></p>`}
     <div class="row"><button class="btn" type="button" id="rsNo">닫기</button><button class="btn primary rs-go" type="button" id="rsGo">${resumeHere?'이어하기':'라운드 시작'}</button></div></div>`);
   sh.classList.add('rsheet');
   sh.querySelector('#rsNo').addEventListener('click',()=>{NATIVE.buzz('tick');closeSheet()});
@@ -2708,6 +2818,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.1','10월 29일','하트와 실패',['하트 생김: 최대 10개, 10분마다 1개씩 채워져요','라운드를 시작할 때 하트 1개를 걸고, 깨면 그대로예요','틀린그림·로직에서 실수 5번이면 실패, 하트 1개가 줄어요','중간에 그만두거나 처음부터 다시 하면 하트 1개가 줄어요','로직에서 틀린 칸을 칠하면 바로 알려 주고 맞는 표시로 고정해요','상점에서 하트 1개 100코인','하트가 없으면 라운드를 시작할 수 없어요']],
   ['2.0','10월 29일','힌트 충전 바꾸기',['힌트는 최대 10개까지 가질 수 있어요 (전에는 20개)','무료 힌트는 30분마다 1개씩 채워져요 (전에는 10분)','이미 10개보다 많이 가진 힌트는 그대로 쓸 수 있어요']],
   ['1.9','10월 29일','진행 중인 라운드로 바로',['게임을 켜면 지금 진행 중인 라운드가 있는 지역 지도가 바로 나와요','다른 지역을 보다가 껐어도 진행 중인 지역으로 맞춰서 열려요','지역 마지막 라운드를 깨고 아직 배를 안 탔으면 선착장이 보이게 열려요']],
   ['1.8','10월 29일','깜박이는 \'게임시작\'',['시작 화면의 노란 \'게임 스타트\' 버튼을 흰 글씨 \'게임시작\'으로 바꿨어요','글씨가 은은하게 깜박이고, 누르면 게임으로 들어가요']],
