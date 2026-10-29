@@ -1003,7 +1003,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.6</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.7</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1092,10 +1092,72 @@ window.NATIVE=(function(){
   }
   return {buzz,native,platform};
 })();
+/* 효과음: 소리 파일 없이 브라우저(Web Audio)가 직접 만든다. 사용자가 고른 시안(A 실로폰·B 말랑 버블·C 8비트) */
+window.SFX=(function(){
+  let AC=null,out=null,on=true;
+  try{on=localStorage.getItem('sekan-sfx')!=='0'}catch(e){}
+  const ctx=()=>{
+    if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C();out=AC.createGain();out.gain.value=.6;out.connect(AC.destination)}
+    if(AC.state==='suspended')AC.resume();return AC};
+  // iOS·안드로이드: 첫 터치에서 소리 장치를 깨워 둔다
+  const unlock=()=>{if(on)try{ctx()}catch(e){}};
+  addEventListener('pointerdown',unlock,{passive:true});addEventListener('keydown',unlock);
+  const N=n=>{const m=/^([A-G])(#?)(\d)$/.exec(n),k={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]?1:0);return 440*Math.pow(2,(k-9)/12+(+m[3]-4))};
+  function tone(t,f,d,o={}){
+    const c=AC,os=c.createOscillator(),g=c.createGain(),{type='sine',v=.3,a=.004,f2=null}=o;
+    os.type=type;os.frequency.setValueAtTime(f,t);if(f2)os.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    os.connect(g);g.connect(out);os.start(t);os.stop(t+d+.02);
+  }
+  const bell=(t,f,d=.35,v=.28)=>{tone(t,f,d,{v});tone(t,f*2.01,d*.6,{v:v*.35});tone(t,f*3.98,d*.3,{v:v*.12})};
+  function noise(t,d,o={}){
+    const c=AC,{v=.25,f=1200,f2=null,q=1}=o,len=Math.ceil(c.sampleRate*d),buf=c.createBuffer(1,len,c.sampleRate),x=buf.getChannelData(0);
+    for(let i=0;i<len;i++)x[i]=Math.random()*2-1;
+    const sN=c.createBufferSource();sN.buffer=buf;const fl=c.createBiquadFilter();fl.type='bandpass';fl.Q.value=q;fl.frequency.setValueAtTime(f,t);if(f2)fl.frequency.exponentialRampToValueAtTime(f2,t+d);
+    const g=c.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+d*.25);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    sN.connect(fl);fl.connect(g);g.connect(out);sN.start(t);sN.stop(t+d+.02);
+  }
+  const pop=(t,f1,f2,d=.08,v=.35)=>tone(t,f1,d,{v,f2});
+  const sq=(t,f,d=.07,v=.12)=>tone(t,f,d,{type:'square',v,a:.002});
+  const seq=(t,notes,step,fn)=>notes.forEach((n,i)=>fn(t+i*step,N(n)));
+  const S={
+    tap:t=>bell(t,N('C6'),.12,.2),                                                    // A 실로폰
+    pebble:t=>pop(t,300,520,.06,.3),                                                  // B 말랑 버블
+    hit:t=>{bell(t,N('E6'),.25);bell(t+.08,N('G6'),.3)},                              // A
+    combo:(t,k)=>{const base=['C6','E6','G6','C7'],up=Math.pow(2,Math.min(4,Math.max(0,(k||2)-2))/12);base.forEach((n,i)=>bell(t+i*.06,N(n)*up,.25,.22))}, // A (콤보가 오를수록 높아짐)
+    miss:t=>tone(t,330,.28,{v:.35,f2:140}),                                           // B
+    hint:t=>{tone(t,500,.4,{v:.25,f2:1600});noise(t,.35,{v:.08,f:4000,f2:9000})},     // B
+    paint:t=>tone(t,N('C6'),.04,{type:'triangle',v:.18}),                             // A
+    line:t=>{bell(t,N('G6'),.35);bell(t+.06,N('B6'),.35);bell(t+.12,N('D7'),.4)},     // A
+    pick:t=>tone(t,N('A5'),.05,{type:'triangle',v:.2}),                               // A
+    piece:t=>{tone(t,N('E5'),.05,{type:'triangle',v:.35});bell(t+.04,N('E6'),.3,.22)},// A
+    clear:t=>{seq(t,['C6','E6','G6'],.09,(x,f)=>bell(x,f,.4,.24));['C6','E6','G6','C7'].forEach(n=>bell(t+.3,N(n),.9,.12))}, // A
+    star:(t,k)=>bell(t,N(['E6','G6','C7'][Math.min(2,k||0)]),.45,.25),                // A (별 하나씩)
+    fail:t=>seq(t,['G4','F#4','F4','E4'],.15,(x,f)=>sq(x,f,.16,.12)),                 // C 8비트
+    coin:t=>{sq(t,N('B5'),.06,.11);sq(t+.06,N('E6'),.25,.11)},                        // C
+    buy:t=>{noise(t,.08,{v:.12,f:3000});bell(t+.05,N('C7'),.3,.2);bell(t+.12,N('G7'),.4,.14)}, // A
+    empty:t=>{bell(t,N('D5'),.3,.2);bell(t+.18,N('A4'),.45,.2)},                      // A 하트·힌트가 없을 때
+    sail:t=>{sq(t,N('C4'),.35,.1);sq(t+.4,N('G4'),.5,.1);seq(t+.95,['C5','E5','G5'],.07,(x,f)=>sq(x,f,.08,.09))}, // C
+    fly:t=>{[0,.2,.4,.6,.8].forEach(d=>noise(t+d,.14,{v:.18,f:900,f2:400,q:1.2}));noise(t,1.3,{v:.06,f:600,f2:3000,q:.5})}, // B
+    open:t=>{seq(t,['G5','C6','E6','G6'],.1,(x,f)=>bell(x,f,.45,.22));['C6','E6','G6','C7','E7'].forEach(n=>bell(t+.42,N(n),1.2,.1));noise(t+.4,.8,{v:.05,f:8000})}, // A
+    badge:t=>{bell(t,N('C6'),.3);bell(t+.1,N('G6'),.3);bell(t+.2,N('C7'),.8,.25)}    // A
+  };
+  let lastAt={};
+  function play(name,arg){
+    if(!on||!S[name])return;
+    try{const c=ctx();if(!c)return;
+      // 같은 소리가 한순간에 겹겹이 나지 않게 (칸을 끌어 칠할 때 등)
+      const now=c.currentTime;if(lastAt[name]&&now-lastAt[name]<.03)return;lastAt[name]=now;
+      S[name](now+.01,arg)}catch(e){}
+  }
+  return {play,get on(){return on},set(v){on=!!v;try{localStorage.setItem('sekan-sfx',on?'1':'0')}catch(e){}if(on)play('tap')}};
+})();
 </script>
 <script>
 (function(){
 const $=s=>document.querySelector(s);
+// 버튼 누르는 소리 (게임판 안 조각·칸은 따로)
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled||b.closest('#jig,#nono,.pics,[data-sfx="none"]'))return;SFX.play('tap')},true);
 let paused=false;
 /* 운영진 아이디: 랭킹 제외, 모든 라운드·화면 열람 */
 const ADMIN_ID='yjeeeee0510';
@@ -1701,11 +1763,11 @@ function spotClick(e,side){
   if(d){NATIVE.buzz('ok');d.found=true;spot.flash=null;spot.miss=null;renderSpot();
     const now=performance.now();combo=(now-lastHit<4000)?combo+1:1;lastHit=now;
     if(combo>=2)comboPts+=combo*10;
-    spotFx(d,combo);
+    spotFx(d,combo);SFX.play(combo>=2?'combo':'hit',combo);
     if(spot.diffs.every(d=>d.found))setTimeout(clearStage,500);}
   else{
     if(spot.diffs.some(d=>d.found&&Math.hypot(d.x-x,d.y-y)<=d.rad))return;
-    NATIVE.buzz('bad');misses++;combo=0;spot.miss={x,y,side};renderSpot();addMiss();
+    NATIVE.buzz('bad');SFX.play('miss');misses++;combo=0;spot.miss={x,y,side};renderSpot();addMiss();
     FX.shake(e.currentTarget);FX.text('앗!',e.clientX,e.clientY-10,{size:30,color:'#ff6b6b'});FX.bump($('#spotMiss'));
     clearTimeout(spot.mt);spot.mt=setTimeout(()=>{if(spot){spot.miss=null;renderSpot()}},650);
   }
@@ -1725,7 +1787,7 @@ function spotFx(d,c){
 function spotHint(){
   const d=spot&&spot.diffs.find(d=>!d.found);if(!d)return;
   if(!useHint()){noHint();return}
-  hints++;spot.flash=d;renderSpot();
+  hints++;SFX.play('hint');spot.flash=d;renderSpot();
   clearTimeout(spot.ht);spot.ht=setTimeout(()=>{if(spot){spot.flash=null;renderSpot()}},1400);
 }
 
@@ -1809,7 +1871,7 @@ function lineFx(list){
   });
   const last=list[list.length-1][2],p=FX.center(last);
   FX.text(list.length>1?`더블!<small>${list.length}줄 완성</small>`:'한 줄 완성!',Math.min(Math.max(p.x,90),window.innerWidth-90),p.y-24,{size:list.length>1?36:28,color:list.length>1?'#ff6b9d':'#69db7c'});
-  NATIVE.buzz('ok');
+  NATIVE.buzz('ok');SFX.play('line');
 }
 function logicWinFx(){
   const cells=[...$('#nono').querySelectorAll('.cell.f')];
@@ -1822,7 +1884,7 @@ function logicHint(){
   for(let y=0;y<n;y++)for(let x=0;x<n;x++){const want=sol[y][x]?1:0,have=g[y][x]===1?1:0;if(want!==have)bad.push([x,y])}
   if(!bad.length)return;
   if(!useHint()){noHint();return}
-  hints++;
+  hints++;SFX.play('hint');
   // 칠해야 할 칸을 먼저 알려줌
   const pickc=bad.find(([x,y])=>sol[y][x])||bad[0],[x,y]=pickc;
   g[y][x]=sol[y][x]?1:2;paintCell(x,y);
@@ -1838,12 +1900,12 @@ function applyAt(el){
   // 틀린 칸을 칠하거나, 칠해야 할 칸에 × 를 치면 실수: 맞는 표시로 고정하고 실수 1번
   if((paint===1&&!want)||(paint===2&&want)){
     dragging=false;logic.g[y][x]=want?1:2;logic.lock[y][x]=true;paintCell(x,y);
-    NATIVE.buzz('bad');FX.shake(el);const p=FX.center(el);FX.text('앗!',p.x,p.y-14,{size:28,color:'#ff6b6b'});
+    NATIVE.buzz('bad');SFX.play('miss');FX.shake(el);const p=FX.center(el);FX.text('앗!',p.x,p.y-14,{size:28,color:'#ff6b6b'});
     misses++;addMiss();
     if(running&&updateClues(true)){logicWinFx();$('#nono').classList.add('won');setTimeout(clearStage,700)}
     return;
   }
-  logic.g[y][x]=paint;paintCell(x,y);NATIVE.buzz('tick');
+  logic.g[y][x]=paint;paintCell(x,y);NATIVE.buzz('tick');SFX.play('paint');
 }
 function bindLogic(){
   const el=$('#nono');
@@ -1893,7 +1955,7 @@ function renderJig(){
 function jigClick(e){
   const t=e.target.closest('.tile');if(!t||!running)return;
   const i=+t.dataset.i;
-  NATIVE.buzz('tick');
+  NATIVE.buzz('tick');SFX.play('pick');
   if(jig.sel<0){jig.sel=i;renderJig();return}
   if(jig.sel===i){jig.sel=-1;renderJig();return}
   let swapped=null;
@@ -1907,7 +1969,7 @@ function jigClick(e){
       if(jig.order[k]===k){good++;el.classList.add('gotit');const p=FX.center(el);FX.burst(p.x,p.y,{count:16,speed:6,ringR:50})}
       else el.classList.add('land');
     }
-    if(good){const el=$('#jig').querySelector(`.tile[data-i="${swapped[1]}"]`),p=FX.center(el);FX.text(good>1?'더블 딱!':'딱!',p.x,p.y-10,{size:good>1?36:30,color:good>1?'#ff6b9d':'#ffd43b'});FX.bump($('#jigCount'))}
+    if(good){SFX.play('piece');const el=$('#jig').querySelector(`.tile[data-i="${swapped[1]}"]`),p=FX.center(el);FX.text(good>1?'더블 딱!':'딱!',p.x,p.y-10,{size:good>1?36:30,color:good>1?'#ff6b9d':'#ffd43b'});FX.bump($('#jigCount'))}
   }
   if(jig.order.every((v,i)=>v===i)){$('#jig').classList.add('won');setTimeout(clearStage,550)}
 }
@@ -1955,7 +2017,7 @@ function buildJig(){
     board.innerHTML=`<div class="jig-area"><div class="jig" id="jig"></div></div>`;
     $('#jig').addEventListener('click',jigClick);
     $('#peekBtn').addEventListener('click',()=>{
-      if(!jig.peek&&!jig.paid){if(!useHint()){noHint();return}jig.paid=true;hints++}
+      if(!jig.peek&&!jig.paid){if(!useHint()){noHint();return}jig.paid=true;hints++;SFX.play('hint')}
       jig.peek=!jig.peek;jig.sel=-1;renderJig()});
     renderJig();gameDock();
 }
@@ -2012,7 +2074,7 @@ function failStage(){
   const round=S.round,lost=!!S.held;
   S=null;save();ACH.onFail(round);updWalletUI();
   setTimeout(()=>{
-    NATIVE.buzz('bad');
+    NATIVE.buzz('bad');SFX.play('fail');
     const sh=openSheet(`<div class="fail">
       <div class="fail-heart">${ICON.heart}</div>
       <h3>실패!</h3>
@@ -2029,6 +2091,7 @@ function failStage(){
   },FX.RM?150:650);
 }
 function clearStage(){
+  let coinSfx=0;
   if(!running)return;
   elapsedFrozen=performance.now()-t0;running=false;NATIVE.buzz('win');
   const secs=Math.round(elapsedFrozen/1000);
@@ -2049,7 +2112,7 @@ function clearStage(){
     // 코인 기능 바뀌기 전에 깬 라운드는 그때 별만큼 이미 받은 것으로 친다
     const achBefore=ACH.snapshot();ACH.onClear(round,prevStars,!!prev,rs);
     const paidStars=prev?Math.max(0,Math.min(3,typeof prev.cs==='number'?prev.cs:prevStars)):0;
-    const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars]);
+    const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars]);coinSfx=coinGot;
     P.rounds[round]={cs:Math.max(rs,paidStars),best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
     const opened=round<MAXR&&P.unlocked<round+1;
     if(round<MAXR)P.unlocked=Math.max(P.unlocked,round+1);
@@ -2074,10 +2137,11 @@ function clearStage(){
   $('#mStats').innerHTML=`<dt>걸린 시간</dt><dd>${fmt(elapsedFrozen)}</dd><dt>기본 점수</dt><dd>+${base}</dd><dt>시간 보너스</dt><dd>+${bonus}</dd>${comboPts?`<dt>콤보 보너스</dt><dd>+${comboPts}</dd>`:''}${pen?`<dt>실수·힌트</dt><dd>−${pen}</dd>`:''}<dt>얻은 점수</dt><dd class="big">+${pts}</dd>${extra}`;
   const STAR='<svg viewBox="-26 -26 52 52"><path d="M0-24 7-8 24-7 11 4 15 22 0 12-15 22-11 4-24-7-7-8Z"/></svg>';
   $('#mStars').innerHTML=[0,1,2].map(k=>`<span class="s${k+1} ${k<nStars?'on':'off'}" style="--d:${0.25+k*0.22}s">${STAR}</span>`).join('');
-  FX.stamp(wasLast?'라운드 클리어!':'클리어!',wasLast?'round':'');
+  FX.stamp(wasLast?'라운드 클리어!':'클리어!',wasLast?'round':'');SFX.play('clear');
   setTimeout(()=>{
     $('#veil').hidden=false;$('#mNext').focus();
-    [...$('#mStars').querySelectorAll('.on')].forEach((st,k)=>setTimeout(()=>{const p=FX.center(st);FX.burst(p.x,p.y,{count:14,speed:6,ringR:45,colors:['#ffd43b','#fff3bf','#ff922b']});NATIVE.buzz('tick')},(250+k*220)+300));
+    [...$('#mStars').querySelectorAll('.on')].forEach((st,k)=>setTimeout(()=>{const p=FX.center(st);FX.burst(p.x,p.y,{count:14,speed:6,ringR:45,colors:['#ffd43b','#fff3bf','#ff922b']});NATIVE.buzz('tick');SFX.play('star',k)},(250+k*220)+300));
+    if(coinSfx>0)setTimeout(()=>SFX.play('coin'),(250+nStars*220)+520);
   },FX.RM?200:1150);
 }
 function starsFor(stage,secs){
@@ -2339,7 +2403,7 @@ function showMenu(){
   board.querySelectorAll('.nd').forEach(btn=>btn.addEventListener('click',()=>{if(!btn.disabled){NATIVE.buzz('tick');const p=FX.center(btn);FX.burst(p.x,p.y,{count:14,speed:5,ringR:40});openRoundSheet(+btn.dataset.r)}}));
   const rb=$('#resumeBtn');if(rb)rb.addEventListener('click',startStage);
   if(!FX.RM)board.querySelectorAll('.peb.new').forEach(pb=>{const d=parseFloat(pb.style.getPropertyValue('--d'))||0;
-    setTimeout(()=>{if(!pb.isConnected)return;const q=pb.getBoundingClientRect();if(q.bottom<0||q.top>innerHeight)return;FX.burst(q.left+q.width/2,q.top+q.height/2,{count:7,speed:3,ringR:16});NATIVE.buzz('tick')},d*1000+300)});
+    setTimeout(()=>{if(!pb.isConnected)return;const q=pb.getBoundingClientRect();if(q.bottom<0||q.top>innerHeight)return;FX.burst(q.left+q.width/2,q.top+q.height/2,{count:7,speed:3,ringR:16});NATIVE.buzz('tick');SFX.play('pebble')},d*1000+300)});
   if(!RANK.nick()&&!RANK.account()&&!store.get('sekan-nick-skip',false))setTimeout(()=>{if(!inGame&&!$('#sheet'))openNick(true)},700);else if(RANK.enabled&&RANK.pending())RANK.submitQuiet()
   const map=$('#map');
   // 지금 라운드가 이 지역보다 뒤면 위쪽 선착장으로
@@ -2359,7 +2423,7 @@ function showMenu(){
   // 새 지역에 처음 도착했을 때
   if(arriveZ===VIEWZ){
     arriveZ=-1;
-    setTimeout(()=>{const r=map.getBoundingClientRect();FX.confetti(70);NATIVE.buzz('win');
+    setTimeout(()=>{const r=map.getBoundingClientRect();FX.confetti(70);NATIVE.buzz('win');SFX.play('open');
       FX.text(`${ZONES[VIEWZ].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'})},250);
   }
   renderStats();
@@ -2440,6 +2504,7 @@ function landHTML(z,H){
 /* 별빛 하늘 ↔ 하늘섬: 옆 바다 대신 위로 날아오르는 장면 */
 function playFlight(from,to,done){
   if(FX.RM){done();return}
+  [0,1400,2800].forEach(d=>setTimeout(()=>SFX.play('fly'),d+250));
   const up=to>from,img=p=>`<img src="${embedded(p)}" alt="">`;
   const el=document.createElement('div');el.className=`voyage flight ${up?'up':'down'}`;el.setAttribute('role','dialog');el.setAttribute('aria-label',`${ZONES[to].name}로 이동`);
   // 배 위치: 아래 섬(별빛 하늘) 위 ↔ 위 섬(하늘섬) 위. 화면 높이 기준
@@ -2473,6 +2538,7 @@ function playFlight(from,to,done){
 function playVoyage(from,to,done){
   if(FX.RM){done();return}
   if(Math.max(from,to)===4){playFlight(from,to,done);return}
+  SFX.play('sail');
   const img=p=>`<img src="${embedded(p)}" alt="">`;
   const ISL=['islFlower','islSea','islSnow','islNight'],BOAT=['vyBoatOrange','vyBoatBlue','vyBoatPurple'];
   // 지역 분위기: 낮 → 낮 → 해 질 녘 → 밤 (바다 그림 위에 곱하기 색)
@@ -2766,7 +2832,7 @@ const ACH=(function(){
     sh.classList.add('achsheet');
     sh.querySelectorAll('.ach-tab').forEach(b=>b.addEventListener('click',()=>{NATIVE.buzz('tick');open(b.dataset.c)}));
     const give=(list,btn)=>{let c=0,h=0,last=null;list.forEach(a=>{const r=claim(a);if(r){c+=r.coins;h+=r.hints;last=r}});if(!last)return;
-      NATIVE.buzz('win');const p=btn?FX.center(btn):{x:innerWidth/2,y:innerHeight/2};FX.burst(p.x,p.y,{count:22,speed:6,ringR:50,colors:['#ffd43b','#fff3bf','#ff922b']});
+      NATIVE.buzz('win');SFX.play('badge');setTimeout(()=>SFX.play('coin'),700);const p=btn?FX.center(btn):{x:innerWidth/2,y:innerHeight/2};FX.burst(p.x,p.y,{count:22,speed:6,ringR:50,colors:['#ffd43b','#fff3bf','#ff922b']});
       if(last.title&&!P.title){P.title=last.title;P.titleAt=Date.now();saveP();RANK.submitQuiet();profRefresh()}
       open(cat);FX.text(`+${c} 코인${h?` · 힌트 +${h}`:''}`,p.x,p.y-30,{size:22,color:'#ffd43b'});if(last.title)setTimeout(()=>FX.text(`칭호 '${last.title}' 획득!`,innerWidth/2,innerHeight*.3,{size:22,color:'#ffffff'}),400);dot()};
     sh.querySelectorAll('.ach-get').forEach(b=>b.addEventListener('click',()=>{const a=LIST.find(x=>x.id===b.dataset.id);if(a)give([a],b)}));
@@ -2891,7 +2957,7 @@ function heartNextTxt(long){
   return long?`다음 하트까지 ${fmtMS(nextHeartIn())}`:fmtMS(nextHeartIn());
 }
 function noHeart(){
-  NATIVE.buzz('bad');regenHearts();
+  NATIVE.buzz('bad');SFX.play('empty');regenHearts();
   const sh=openSheet(`<div class="nh">
     <div class="nh-ico">${ICON.heart}</div>
     <h3>하트가 없어요</h3>
@@ -2950,9 +3016,9 @@ function showBackpay(){
     <p class="lead">${b.clears?`그동안 깬 라운드 <b>${b.clears}번</b>에 대한 보상이에요.`:''}${b.star?`${b.clears?'<br>':''}새 코인 규칙에 맞춰 별 3개로 깬 라운드 <b>${b.star}개</b>에 코인을 더 드려요.`:''}</p>
     <div class="bp-amt">${ICON.coin}<b>+${b.coins.toLocaleString()}</b></div>
     <div class="row"><button class="btn primary" id="bpOk" type="button">받기</button></div></div>`);
-  sh.querySelector('#bpOk').addEventListener('click',e=>{const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:26,speed:7,ringR:60,colors:['#ffd43b','#fff3bf','#ff922b']});NATIVE.buzz('win');closeSheet();FX.confetti(50)});
+  sh.querySelector('#bpOk').addEventListener('click',e=>{const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:26,speed:7,ringR:60,colors:['#ffd43b','#fff3bf','#ff922b']});NATIVE.buzz('win');SFX.play('coin');closeSheet();FX.confetti(50)});
 }
-function noHint(){NATIVE.buzz('bad');openShop('힌트가 다 떨어졌어요. 상점에서 사거나 조금만 기다려 주세요.')}
+function noHint(){NATIVE.buzz('bad');SFX.play('empty');openShop('힌트가 다 떨어졌어요. 상점에서 사거나 조금만 기다려 주세요.')}
 function openShop(msg){
   regenHints();
   const sh=openSheet(`<div class="shopbox">
@@ -2980,7 +3046,7 @@ function openShop(msg){
     if(w.hearts>=heartCap()){m.textContent=`하트는 최대 ${HEART_MAX}개까지 가질 수 있어요.`;NATIVE.buzz('bad');return}
     if(w.coins<HEART_PRICE){m.textContent=`코인이 ${HEART_PRICE-w.coins}개 부족해요. 라운드를 깨서 모아 보세요.`;NATIVE.buzz('bad');return}
     w.coins-=HEART_PRICE;w.hearts++;walletChanged();
-    m.textContent='';NATIVE.buzz('win');
+    m.textContent='';NATIVE.buzz('win');SFX.play('buy');
     const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#ff6b81','#ffc9d4','#ffd43b']});
     FX.text('하트 +1',p.x,p.y-40,{size:26,color:'#ff6b81'});
     const hb=sh.querySelector('.shop-wallet div:nth-child(2) b');if(hb)FX.bump(hb);
@@ -2990,7 +3056,7 @@ function openShop(msg){
     if(w.hints>=HINT_MAX){m.textContent=`힌트는 최대 ${HINT_MAX}개까지 가질 수 있어요.`;NATIVE.buzz('bad');return}
     if(w.coins<HINT_PRICE){m.textContent=`코인이 ${HINT_PRICE-w.coins}개 부족해요. 라운드를 깨서 모아 보세요.`;NATIVE.buzz('bad');return}
     w.coins-=HINT_PRICE;w.hints++;walletChanged();
-    m.textContent='';NATIVE.buzz('win');
+    m.textContent='';NATIVE.buzz('win');SFX.play('buy');
     const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#ffd43b','#fff3bf','#ff922b']});
     FX.text('힌트 +1',p.x,p.y-40,{size:26,color:'#ffd43b'});
     const hb=sh.querySelector('.shop-wallet div:nth-child(3) b');if(hb)FX.bump(hb);
@@ -3188,6 +3254,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.7','10월 29일','효과음',['버튼·틀린 곳 찾음·콤보·로직 칸·한 줄 완성·퍼즐 조각·클리어·별·코인 등 상황별 효과음 20가지','실로폰 소리를 바탕으로 실수·힌트·조약돌·날갯짓은 말랑 버블, 실패·코인·배 출발은 8비트','설정에서 효과음 켜기·끄기']],
   ['2.6','10월 29일','시작 화면 글씨',['시작 화면 패치 번호를 연한 회색으로','시작 화면 아래 가운데에 \'Made by 중독 게임사\'']],
   ['2.5','10월 29일','업적과 칭호',['지도 위쪽 메달 버튼에서 업적을 볼 수 있어요 (진행·지역·별·칭호·끈기)','업적을 달성하면 받기 버튼으로 코인·힌트를 받아요','게임 종류마다 별 3개로 깬 라운드 10·50·100·200개면 초보·중수·고수·달인 칭호','칭호는 프로필에서 고르고, 랭킹에도 보여요','지금까지 깬 기록도 바로 업적에 반영돼요']],
   ['2.4','10월 29일','별점에 따라 코인',['이전에 별 3개로 깬 라운드는 모자란 코인을 한 번 채워 드려요 (코인이 줄지는 않아요)','라운드를 깨면 별 1개 25코인, 2개 50코인, 3개 100코인을 받아요','같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요 (별 1개 → 2개: 25코인, 1개 → 3개: 75코인)','이미 받은 별점으로 다시 깨면 코인은 없어요']],
@@ -3261,6 +3328,7 @@ function openSettings(){
     <div class="set-list">
       ${RANK.enabled?(acc?`<button class="btn" type="button" id="stOut">로그아웃</button>`:`<button class="btn primary" type="button" id="stIn">로그인 · 아이디 만들기</button>`):''}
       <button class="btn" type="button" id="stNick">닉네임 ${RANK.nick()?'바꾸기 · '+esc(RANK.nick()):'정하기'}</button>
+      <button class="btn" type="button" id="stSfx" data-sfx="none" aria-pressed="${SFX.on}">효과음 ${SFX.on?'켜짐 🔊':'꺼짐 🔇'}</button>
       ${isAdmin()?'<button class="btn adm-btn" type="button" id="stAdmin">운영진 도구 · 모든 화면 보기</button><button class="btn adm-btn" type="button" id="stPatch">운영진 · 패치 노트</button>':''}
       <button class="btn" type="button" id="stIntro">시작 화면으로</button>
       <button class="btn danger" type="button" id="stReset">기록 초기화</button>
@@ -3279,6 +3347,7 @@ function openSettings(){
     catch(e){sd.disabled=false;sd.textContent='회원 탈퇴';FX.text(RANK.explain(e),window.innerWidth/2,window.innerHeight*.3,{size:16,color:'#ffffff'})}
   })}
   sh.querySelector('#stNick').addEventListener('click',()=>openNick(!RANK.nick()));
+  const sx=sh.querySelector('#stSfx');sx.addEventListener('click',()=>{SFX.set(!SFX.on);sx.textContent=`효과음 ${SFX.on?'켜짐 🔊':'꺼짐 🔇'}`;sx.setAttribute('aria-pressed',SFX.on)});
   const ad=sh.querySelector('#stAdmin');if(ad)ad.addEventListener('click',openAdmin);
   const pn=sh.querySelector('#stPatch');if(pn)pn.addEventListener('click',openPatchNotes);
   sh.querySelector('#stIntro').addEventListener('click',()=>{closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')});
