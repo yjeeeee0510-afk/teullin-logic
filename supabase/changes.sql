@@ -73,3 +73,33 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 grant execute on function public.leaderboard_players(int) to anon, authenticated;
+
+-- 2026-10-29 · 칭호 칸 추가, 랭킹·지도 함수가 칭호도 돌려주게
+alter table public.leaderboard add column if not exists title text;
+alter table public.leaderboard drop constraint if exists leaderboard_title_check;
+alter table public.leaderboard add constraint leaderboard_title_check check (title is null or char_length(title) <= 20);
+
+drop function if exists public.leaderboard_top(int);
+create function public.leaderboard_top(n int default 50)
+returns table (rank bigint, nickname text, best_round int, stars int, score int, clears int, avg_time int, avatar int, is_me boolean, title text)
+language sql stable security definer set search_path = public as $$
+  select r.rank, r.nickname, r.best_round, r.stars, r.score, r.clears, r.avg_time, r.avatar, coalesce(r.id = auth.uid(), false) as is_me, r.title
+  from (select l.*, rank() over (order by l.best_round desc, l.stars desc, l.score desc) as rank from public.leaderboard l) r
+  order by r.rank, r.updated_at
+  limit greatest(1, least(coalesce(n, 50), 200));
+$$;
+
+drop function if exists public.leaderboard_players(int);
+create function public.leaderboard_players(n int default 300)
+returns table (rank bigint, nickname text, best_round int, stars int, avatar int, is_me boolean, title text)
+language sql stable security definer set search_path = public as $$
+  select r.rank, r.nickname, r.best_round, r.stars, r.avatar, coalesce(r.id = auth.uid(), false) as is_me, r.title
+  from (select l.*, rank() over (order by l.best_round desc, l.stars desc, l.score desc) as rank from public.leaderboard l) r
+  join auth.users u on u.id = r.id
+  where coalesce(u.is_anonymous, false) = false and u.email like '%@teullin.game'
+  order by r.rank, r.updated_at
+  limit greatest(1, least(coalesce(n, 300), 500));
+$$;
+
+grant execute on function public.leaderboard_top(int) to anon, authenticated;
+grant execute on function public.leaderboard_players(int) to anon, authenticated;

@@ -777,6 +777,43 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 .adm-row .btn{font-size:13px;padding:6px 10px;border-radius:10px}
 .node.adm .nd{filter:saturate(.85)}
 
+/* 업적 */
+.ach-btn{position:relative}.ach-btn .ico{width:22px;height:22px}
+.ach-btn .dot{display:none;position:absolute;top:2px;right:2px;width:10px;height:10px;border-radius:50%;background:#fa5252;border:2px solid #fff}
+.ach-btn.has .dot{display:block}
+.ach-tabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 8px;padding-bottom:2px;scrollbar-width:none}
+.ach-tab{position:relative;flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+.ach-tab.on{background:#3a2a10;border-color:#3a2a10;color:#fff}
+.ach-tab i{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#fa5252}
+.ach-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;overflow-y:auto;overscroll-behavior:contain;max-height:min(52vh,460px)}
+.ach-it{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:var(--soft)}
+.ach-it.can{background:#fff3bf;box-shadow:inset 0 0 0 2px #f5c84c}
+.ach-it.lock{opacity:.55}
+.ach-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ach-tx b{font-size:14.5px}
+.ach-tx small{font-size:12px;color:var(--muted);line-height:1.35}
+.ach-tl{align-self:flex-start;font-size:10px;font-weight:800;color:#7048e8;background:#efe9ff;border-radius:6px;padding:1px 6px}
+.ach-bar{display:block;height:6px;border-radius:3px;background:rgba(0,0,0,.08);overflow:hidden;margin-top:2px}
+.ach-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd43b,#fab005);border-radius:3px}
+.ach-it.done .ach-bar i{background:#51cf66}
+.ach-n{font-variant-numeric:tabular-nums}
+.ach-get{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:68px;border:0;border-radius:12px;padding:6px 8px;font:inherit;cursor:pointer;background:linear-gradient(#ffe066,#fab005);color:#5a3a00;box-shadow:0 3px 0 #c98a00}
+.ach-get span{font-weight:800;font-size:14px}
+.ach-get em{font-style:normal;font-size:11px;font-weight:700;display:flex;align-items:center;gap:2px;white-space:nowrap}
+.ach-get em .ico{width:13px;height:13px}
+.ach-get:disabled{background:#e9ecef;color:#868e96;box-shadow:none;cursor:default}
+.ach-get:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 #c98a00}
+.ach-ok{flex:none;font-size:13px;font-weight:800;color:#2b8a3e;min-width:68px;text-align:center}
+.ach-dd{color:#7048e8;font-weight:700}
+.ttl-badge{display:inline-block;font-size:10.5px;font-weight:800;line-height:1;padding:3px 6px;border-radius:6px;background:#7048e8;color:#fff;margin-right:4px;vertical-align:1px}
+.pf-ttl{margin:2px 0 0}
+.rlist .nm .ttl-badge{display:block;width:max-content;max-width:100%;margin-bottom:3px}
+.ttl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:min(46vh,420px);overflow-y:auto}
+.ttl-pick{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:8px;font:inherit;font-size:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:inherit}
+.ttl-pick.on{border-color:#7048e8;background:#efe9ff;color:#5f3dc4;font-weight:800}
+.ttl-pick.off{opacity:.5;cursor:default}
+.ttl-pick small{font-size:11px;color:var(--muted)}
+
 /* 지도: 다른 플레이어가 지금 하고 있는 라운드 옆 프로필 */
 .others{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;padding:0;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
 .others.r{transform:translate(52px,-62%)}
@@ -964,7 +1001,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.4</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.5</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1969,7 +2006,7 @@ function failStage(){
   if(!running||!S)return;
   elapsedFrozen=performance.now()-t0;running=false;
   const round=S.round,lost=!!S.held;
-  S=null;save();updWalletUI();
+  S=null;save();ACH.onFail(round);updWalletUI();
   setTimeout(()=>{
     NATIVE.buzz('bad');
     const sh=openSheet(`<div class="fail">
@@ -2006,14 +2043,16 @@ function clearStage(){
     const got=S.stars.filter(x=>x>0),rs=Math.max(1,Math.min(3,Math.round(got.reduce((a,b)=>a+b,0)/Math.max(1,got.length))));
     const prevStars=prev&&prev.stars||0;
     // 코인 기능 바뀌기 전에 깬 라운드는 그때 별만큼 이미 받은 것으로 친다
+    const achBefore=ACH.snapshot();ACH.onClear(round,prevStars,!!prev,rs);
     const paidStars=prev?Math.max(0,Math.min(3,typeof prev.cs==='number'?prev.cs:prevStars)):0;
     const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars]);
     P.rounds[round]={cs:Math.max(rs,paidStars),best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
     const opened=round<MAXR&&P.unlocked<round+1;
     if(round<MAXR)P.unlocked=Math.max(P.unlocked,round+1);
     if(coinGot){W().coins+=coinGot;P.walletAt=Date.now()}
+    const achNew=ACH.newSince(achBefore);
     saveP();RANK.submitQuiet();
-    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
+    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${achNew.length?`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`:''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
     S=null;save();
     const toDock=isZoneEnd(round)&&!isAdmin()&&P.revealed<zoneOf(round+1);
     pendingNext=round<MAXR&&!toDock?round+1:0;
@@ -2236,7 +2275,7 @@ function showMenu(){
   let h='';
   const TROPHY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.4A6 6 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A6 6 0 0 1 7.4 12H7a4 4 0 0 1-4-4V5h3zm0 4H5v1a2 2 0 0 0 1 1.7zm12 0v2.7A2 2 0 0 0 19 8V7z" fill="currentColor"/></svg>';
   const GEAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm9 3.5-2.1-.6a7 7 0 0 0-.7-1.7l1-1.9-1.9-1.9-1.9 1a7 7 0 0 0-1.7-.7L13.1 3h-2.2l-.6 2.1a7 7 0 0 0-1.7.7l-1.9-1-1.9 1.9 1 1.9a7 7 0 0 0-.7 1.7L3 10.9v2.2l2.1.6c.2.6.4 1.2.7 1.7l-1 1.9 1.9 1.9 1.9-1c.5.3 1.1.5 1.7.7l.6 2.1h2.2l.6-2.1c.6-.2 1.2-.4 1.7-.7l1.9 1 1.9-1.9-1-1.9c.3-.5.5-1.1.7-1.7l2.1-.6z" fill="currentColor"/></svg>';
-  h+=`<div class="map-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px;background:radial-gradient(ellipse 14px 3px at 50% 50%,rgba(255,255,255,.55),transparent 70%) 0 0/36px 42px,linear-gradient(${VOY.sea[VIEWZ][0]},${VOY.sea[VIEWZ][1]})">`;
+  h+=`<div class="map-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic ach-btn" id="achBtn" aria-label="업적">${ICON.medal}<i class="dot"></i></button><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>${S?`<button type="button" class="mb-resume" id="resumeBtn">라운드 ${S.round} 이어하기 ▶</button>`:''}<div class="map" id="map"><div class="map-inner" style="height:${H}px;background:radial-gradient(ellipse 14px 3px at 50% 50%,rgba(255,255,255,.55),transparent 70%) 0 0/36px 42px,linear-gradient(${VOY.sea[VIEWZ][0]},${VOY.sea[VIEWZ][1]})">`;
   // 보고 있는 지역 하나: 땅은 화면 너비를 꽉 채우고, 위·아래 끝에만 바다와 선착장
   const openZone=VIEWZ,Z=ZONES[VIEWZ],landTop=islTop(VIEWZ),landBot=islBot(VIEWZ);
   h+=`<div class="zones"><div class="zone ${Z.cls}" style="top:${landTop}px;height:${landBot-landTop}px">${landHTML(VIEWZ,landBot-landTop)}</div></div>`;
@@ -2287,6 +2326,7 @@ function showMenu(){
   OTHERS.show();
   $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
   $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
+  $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});ACH.dot();
   $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
   $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   $('#hintChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
@@ -2557,11 +2597,13 @@ const RANK=(function(){
     const s=await auth();
     const row=Object.assign({id:s.user.id,nickname:n},mine());
     if(typeof P.avatar==='number')row.avatar=P.avatar;
+    row.title=P.title?String(P.title).slice(0,20):null;
     const send=b=>api('/rest/v1/leaderboard?on_conflict=id',{method:'POST',headers:Object.assign(bearer(s),{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(b)});
     try{await send(row)}catch(e){
       // 서버에 새 칸(clears, avg_time)이 아직 없으면 예전 방식으로 다시 보냄
       if(e&&(e.code==='PGRST204'||/avatar|clears|avg_time|column/i.test(e.message||''))){
         // 서버에 새 칸이 아직 없으면 그 칸만 빼고 다시 보냄 (avatar 먼저, 그래도 안 되면 clears·avg_time까지)
+        if(/title/i.test(e.message||'')||e.code==='PGRST204'){delete row.title;try{await send(row);store.set('sekan-rank-pending',false);return}catch(e1){e=e1}}
         delete row.avatar;try{await send(row)}catch(e2){if(e2&&(e2.code==='PGRST204'||/clears|avg_time|column/i.test(e2.message||''))){delete row.clears;delete row.avg_time;await send(row)}else throw e2}}
       // 서버 제한이 아직 예전(300라운드·별 900개)이면 그 안으로 맞춰서 다시 보냄
       else if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))){row.best_round=Math.min(360,row.best_round);row.stars=Math.min(1080,row.stars);await send(row)}
@@ -2650,13 +2692,101 @@ const OTHERS=(function(){
   function openList(n){
     const ps=(byRound()[n]||[]).slice().sort((a,b)=>(a.rank|0)-(b.rank|0));
     const sh=openSheet(`<div class="eyebrow">${ZONES[zoneOf(n)].name}</div><h3>라운드 ${n}에 있는 친구</h3>
-      <ul class="rlist">${ps.map(r=>`<li><span class="no">${r.rank||''}</span><span class="av">${ZODIAC.face(avOf(r))}</span><span class="nm">${esc(r.nickname)}</span><span class="st">★${r.stars|0}<br>${(r.best_round|0)}라운드 클리어</span></li>`).join('')}</ul>
+      <ul class="rlist">${ps.map(r=>`<li><span class="no">${r.rank||''}</span><span class="av">${ZODIAC.face(avOf(r))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">★${r.stars|0}<br>${(r.best_round|0)}라운드 클리어</span></li>`).join('')}</ul>
       <div class="row"><button class="btn primary" type="button" id="othClose">닫기</button></div>`);
     sh.querySelector('#othClose').addEventListener('click',closeSheet);
   }
   return {
     show(){if(list)paint();load().then(()=>paint())},
     reset(){list=null;at=0}
+  };
+})();
+// ---------- 업적 ----------
+// P.ach = {got:{업적id: 받은 단계 수}, c:{up: 별 3개로 올린 횟수, back: 실패 후 다시 깬 횟수}, fail:{라운드: 1}}
+// 칭호: 게임 종류별 별 3개 라운드 10·50·100·200개 → 초보·중수·고수·달인 (P.title)
+const ACH=(function(){
+  const A=()=>{if(!P.ach||typeof P.ach!=='object')P.ach={};const a=P.ach;a.got=a.got||{};a.c=a.c||{};a.fail=a.fail||{};return a};
+  const TITLE_LV=['초보','중수','고수','달인'];
+  const cleared=()=>Object.keys(P.rounds).length;
+  const three=t=>{let k=0;for(const n in P.rounds)if(typeof+n==='number'&&typeOf(+n)===t&&(P.rounds[n].stars||0)>=3)k++;return k};
+  const typeMax=t=>{let k=0;for(let n=1;n<=MAXR;n++)if(typeOf(n)===t)k++;return k};
+  const zoneLv=z=>{let all=true,last=!!P.rounds[zHi(z)];for(let n=zLo(z);n<=zHi(z);n++){const r=P.rounds[n];if(!r||(r.stars||0)<3){all=false;break}}
+    return all?2:(last&&zoneStars(z)>=zoneNeed(z))?1:0};
+  const C=(coins,hints)=>({coins,hints:hints||0});
+  const LIST=[
+    {id:'clear',cat:'진행',name:'라운드 정복',tiers:[10,50,100,200,360,510],val:cleared,desc:v=>`라운드 ${v}개 깨기`,
+      rw:[C(50),C(100),C(200,1),C(300,1),C(500,2),C(1000,3)]},
+    ...ZONES.map((Z,z)=>({id:'zone'+z,cat:'지역',name:Z.name,tiers:[1,2],val:()=>zoneLv(z),tierName:['정복','완벽 정복'],
+      desc:(v,i)=>i===0?`마지막 라운드를 깨고 별 80%(★${zoneNeed(z)}) 모으기`:`모든 라운드를 별 3개로 깨기`,rw:[C(200,1),C(500,2)]})),
+    {id:'star',cat:'별',name:'별 모으기',tiers:[100,300,600,1000,1530],val:()=>myStars(),desc:v=>`별 ${v.toLocaleString()}개 모으기`,
+      rw:[C(100),C(200),C(300,1),C(500,2),C(1000,3)]},
+    ...[0,1,2].map(t=>({id:'type'+t,cat:'칭호',name:`${TYPE_SHORT[t]} 별 3개`,tiers:[10,50,100,200],val:()=>three(t),max:()=>typeMax(t),
+      titles:TITLE_LV.map(l=>`${TYPE_SHORT[t]} ${l}`),desc:v=>`${TYPE_SHORT[t]} 라운드 ${v}개를 별 3개로 깨기`,rw:[C(100),C(300,1),C(600,2),C(1000,3)]})),
+    {id:'up',cat:'끈기',name:'별 올리기',tiers:[1,10,50],val:()=>A().c.up||0,desc:v=>`깬 라운드를 다시 해서 별 3개로 만들기 ${v}번`,rw:[C(50),C(150),C(400,2)]},
+    {id:'back',cat:'끈기',name:'오뚝이',tiers:[1,10,50],val:()=>A().c.back||0,desc:v=>`실패한 라운드를 다시 깨기 ${v}번`,rw:[C(50),C(150),C(400,2)]},
+  ];
+  const CATS=['진행','지역','별','칭호','끈기'];
+  const ROMAN=['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ'];
+  const reached=a=>{const v=a.val(),mx=a.max?a.max():Infinity;let k=0;for(const t of a.tiers){if(t>mx||v<t)break;k++}return k};
+  const got=a=>Math.min(a.tiers.length,A().got[a.id]|0);
+  const tierLabel=(a,i)=>a.titles?a.titles[i]:a.tierName?`${a.name} ${a.tierName[i]}`:`${a.name} ${ROMAN[i]}`;
+  function ready(){return LIST.reduce((k,a)=>k+Math.max(0,reached(a)-got(a)),0)}
+  function snapshot(){const o={};LIST.forEach(a=>o[a.id]=reached(a));return o}
+  function newSince(s){const out=[];LIST.forEach(a=>{const r=reached(a);for(let i=s[a.id]||0;i<r;i++)out.push(tierLabel(a,i))});return out}
+  function titles(){const o=[];LIST.forEach(a=>{if(a.titles)a.titles.forEach((tt,i)=>o.push({t:tt,on:got(a)>i,lock:a.max&&a.tiers[i]>a.max(),need:a.tiers[i],kind:a.name}))});return o}
+  function claim(a){
+    const g=got(a),r=reached(a);if(r<=g)return null;
+    let coins=0,hints=0;for(let i=g;i<r;i++){coins+=a.rw[i].coins;hints+=a.rw[i].hints}
+    const w=W();w.coins+=coins;w.hints+=hints;A().got[a.id]=r;walletChanged();
+    return {coins,hints,label:tierLabel(a,r-1),title:a.titles?a.titles[r-1]:''};
+  }
+  function dot(){const b=document.getElementById('achBtn');if(b)b.classList.toggle('has',ready()>0)}
+  function rowHTML(a){
+    const g=got(a),r=reached(a),n=a.tiers.length,done=g>=n,can=r>g;
+    const i=can?g:Math.min(g,n-1),target=a.tiers[i],v=a.val(),mx=a.max?a.max():Infinity,lock=!can&&!done&&target>mx;
+    const pct=done?100:Math.max(0,Math.min(100,Math.round(v/target*100)));
+    const rw=a.rw[i],rwTxt=`${ICON.coin}${rw.coins}${rw.hints?` ${ICON.bulb}${rw.hints}`:''}`;
+    return `<li class="ach-it${can?' can':''}${done?' done':''}${lock?' lock':''}">
+      <div class="ach-tx"><b>${esc(tierLabel(a,i))}</b>${a.titles?'<span class="ach-tl">칭호</span>':''}<small>${lock?'아직 도전할 수 없어요 · 라운드가 더 생기면 열려요':esc(a.desc(target,i))}</small>
+        <span class="ach-bar"><i style="width:${lock?0:pct}%"></i></span><small class="ach-n">${done?'모두 달성':lock?`${v} / ${target}`:`${Math.min(v,target).toLocaleString()} / ${target.toLocaleString()}`} · ${g}/${n}단계</small></div>
+      ${done?'<span class="ach-ok">완료</span>':`<button type="button" class="ach-get" data-id="${a.id}" ${can?'':'disabled'}><span>${can?'받기':'보상'}</span><em>${rwTxt}</em></button>`}</li>`;
+  }
+  function open(cat){
+    cat=cat||'전체';
+    const shown=LIST.filter(a=>cat==='전체'||a.cat===cat).sort((x,y)=>(reached(y)>got(y))-(reached(x)>got(x)));
+    const total=LIST.reduce((k,a)=>k+a.tiers.length,0),doneN=LIST.reduce((k,a)=>k+got(a),0),rd=ready();
+    const sh=openSheet(`<div class="eyebrow">업적 · ${doneN} / ${total}</div><h3>업적</h3>
+      <div class="ach-tabs">${['전체',...CATS].map(c=>`<button type="button" class="ach-tab${c===cat?' on':''}" data-c="${c}">${c}${LIST.some(a=>(c==='전체'||a.cat===c)&&reached(a)>got(a))?'<i></i>':''}</button>`).join('')}</div>
+      <ul class="ach-list">${shown.map(rowHTML).join('')}</ul>
+      <div class="row">${rd?`<button class="btn" type="button" id="achAll">모두 받기 (${rd})</button>`:''}<button class="btn primary" type="button" id="achClose">닫기</button></div>`);
+    sh.classList.add('achsheet');
+    sh.querySelectorAll('.ach-tab').forEach(b=>b.addEventListener('click',()=>{NATIVE.buzz('tick');open(b.dataset.c)}));
+    const give=(list,btn)=>{let c=0,h=0,last=null;list.forEach(a=>{const r=claim(a);if(r){c+=r.coins;h+=r.hints;last=r}});if(!last)return;
+      NATIVE.buzz('win');const p=btn?FX.center(btn):{x:innerWidth/2,y:innerHeight/2};FX.burst(p.x,p.y,{count:22,speed:6,ringR:50,colors:['#ffd43b','#fff3bf','#ff922b']});
+      if(last.title&&!P.title){P.title=last.title;P.titleAt=Date.now();saveP();RANK.submitQuiet();profRefresh()}
+      open(cat);FX.text(`+${c} 코인${h?` · 힌트 +${h}`:''}`,p.x,p.y-30,{size:22,color:'#ffd43b'});if(last.title)setTimeout(()=>FX.text(`칭호 '${last.title}' 획득!`,innerWidth/2,innerHeight*.3,{size:22,color:'#ffffff'}),400);dot()};
+    sh.querySelectorAll('.ach-get').forEach(b=>b.addEventListener('click',()=>{const a=LIST.find(x=>x.id===b.dataset.id);if(a)give([a],b)}));
+    const all=sh.querySelector('#achAll');if(all)all.addEventListener('click',()=>give(LIST,all));
+    sh.querySelector('#achClose').addEventListener('click',()=>{closeSheet();dot()});
+  }
+  function openTitles(back){
+    const ts=titles(),cur=P.title||'';
+    const sh=openSheet(`<div class="eyebrow">칭호</div><h3>칭호 고르기</h3>
+      <p class="lead">게임 종류마다 별 3개로 깬 라운드가 10·50·100·200개면 초보·중수·고수·달인 칭호를 받아요. 업적에서 보상을 받으면 열려요. 랭킹에도 보여요.</p>
+      <div class="ttl-grid"><button type="button" class="ttl-pick${cur?'':' on'}" data-t="">칭호 없음</button>${ts.map(x=>`<button type="button" class="ttl-pick${x.t===cur?' on':''}${x.on?'':' off'}" data-t="${esc(x.t)}" ${x.on?'':'disabled'}><b>${esc(x.t)}</b>${x.on?'':`<small>${x.lock?'아직 열리지 않음':`별 3개 ${x.need}개`}</small>`}</button>`).join('')}</div>
+      <div class="row"><button class="btn" type="button" id="ttlBack">돌아가기</button></div>`);
+    sh.querySelectorAll('.ttl-pick:not([disabled])').forEach(b=>b.addEventListener('click',()=>{P.title=b.dataset.t;P.titleAt=Date.now();saveP();RANK.submitQuiet();NATIVE.buzz('ok');profRefresh();(back||openProfile)()}));
+    sh.querySelector('#ttlBack').addEventListener('click',()=>(back||openProfile)());
+  }
+  return {
+    A,LIST,ready,dot,open,openTitles,snapshot,newSince,
+    // 클리어 직전 기록으로 끈기 업적 세기
+    onClear(round,prevStars,hadPrev,newStars){const a=A();if(hadPrev&&prevStars<3&&newStars>=3)a.c.up=(a.c.up|0)+1;if(a.fail[round]){delete a.fail[round];a.c.back=(a.c.back|0)+1}},
+    onFail(round){A().fail[round]=1;saveP()},
+    badge:t=>t?`<span class="ttl-badge">${esc(t)}</span>`:'',
+    merge(a,b){a=a||{};b=b||{};const o={got:{},c:{},fail:Object.assign({},a.fail,b.fail)};
+      for(const k of new Set([...Object.keys(a.got||{}),...Object.keys(b.got||{})]))o.got[k]=Math.max((a.got||{})[k]|0,(b.got||{})[k]|0);
+      for(const k of ['up','back'])o.c[k]=Math.max((a.c||{})[k]|0,(b.c||{})[k]|0);return o}
   };
 })();
 function nickHash(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h%12}
@@ -2707,7 +2837,7 @@ async function openRank(){
     meEl.innerHTML=me?`<div class="me-card"><span class="rk">${me.rank}위</span><span class="nm">${esc(me.nickname)}</span><button class="btn" type="button" id="rkNick">이름 변경</button><span class="st">${me.total}명 중 · 라운드 ${me.best_round} · ★ ${me.stars} · ${Number(me.score).toLocaleString()}점${me.clears?` · 클리어 ${me.clears}회`:''}${me.avg_time?` · 평균 ${fmtTime(me.avg_time)}`:''}</span></div>`:'<p class="rank-note">아직 내 기록이 없어요. 라운드를 깨면 올라가요.</p>';
     const nb=$('#rkNick');if(nb)nb.addEventListener('click',()=>openNick(false,openRank));
     const ul=$('#rkList');
-    ul.innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname))}</span><span class="nm">${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
+    ul.innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
   }catch(e){
     const ul=$('#rkList');if(ul)ul.innerHTML=`<li class="rank-empty">${esc(RANK.explain(e))}</li>`;
   }
@@ -2716,6 +2846,7 @@ async function openRank(){
 
 
 const ICON={
+  medal:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h4l2 6H9z" fill="#4dabf7" stroke="#1c7ed6" stroke-width="1.3" stroke-linejoin="round"/><path d="M17 2h-4l-2 6h4z" fill="#ff6b6b" stroke="#e03131" stroke-width="1.3" stroke-linejoin="round"/><circle cx="12" cy="15" r="7" fill="#ffd43b" stroke="#e09a00" stroke-width="1.8"/><path d="M12 11.2l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z" fill="#fff3bf" stroke="#c07a00" stroke-width=".9" stroke-linejoin="round"/></svg>',
   heart:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.2 0 3.8 1.2 5.2 3 1.4-1.8 3-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z" fill="#ff6b81" stroke="#d6336c" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c.6-.9 1.5-1.3 2.4-1.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".8"/></svg>',
   coin:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ffd43b" stroke="#e09a00" stroke-width="2"/><circle cx="12" cy="12" r="6.2" fill="none" stroke="#e09a00" stroke-width="1.6"/><path d="M9.5 8.6l1.2 6.8 1.3-4.6 1.3 4.6 1.2-6.8" fill="none" stroke="#c07a00" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>',
   bulb:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a6.8 6.8 0 0 0-4 12.3c.7.5 1 1.2 1 2V18h6v-1.2c0-.8.4-1.5 1-2A6.8 6.8 0 0 0 12 2.5z" fill="#ffe066" stroke="#e09a00" stroke-width="1.6"/><path d="M9.5 20.5h5M10.3 22.5h3.4" stroke="#8a6a2a" stroke-width="1.8" stroke-linecap="round"/><path d="M10 8.5a2.6 2.6 0 0 1 2.4-2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>',
@@ -2882,6 +3013,8 @@ function mergeP(a,b){
   if(typeof wa.coins==='number'){o.coins=wa.coins;o.hints=wa.hints;o.hintAt=wa.hintAt;o.walletAt=wa.walletAt||0;if(typeof wa.hearts==='number'){o.hearts=wa.hearts;o.heartAt=wa.heartAt}}
   if(a.backpaid||b.backpaid)o.backpaid=true;
   if(a.starpaid||b.starpaid)o.starpaid=true;
+  if(a.ach||b.ach)o.ach=ACH.merge(a.ach,b.ach);
+  const tl=(a.titleAt||0)>=(b.titleAt||0)?a:b;if(typeof tl.title==='string'){o.title=tl.title;o.titleAt=tl.titleAt||0}
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
   else{const o2=av===a?b:a;if(typeof o2.avatar==='number'){o.avatar=o2.avatar;o.avatarAt=o2.avatarAt||0}}
@@ -3015,7 +3148,7 @@ function myAvatar(){if(typeof P.avatar==='number'&&P.avatar>=0&&P.avatar<12)retu
 function profFace(){return ZODIAC.face(myAvatar())}
 function profName(){return RANK.nick()||RANK.account()||'게스트'}
 function profInner(){
-  return `<span class="pf-av">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${isAdmin()?'<span class="adm-badge">운영진</span>':''}${esc(profName())}</span>`+
+  return `<span class="pf-av">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${isAdmin()?'<span class="adm-badge">운영진</span>':''}${ACH.badge(P.title)}${esc(profName())}</span>`+
     `<span class="pf-st"><span class="pf-star">★</span><b>${myStars().toLocaleString()}</b><span class="pf-dot"></span>라운드 <b>${P.unlocked}</b></span></span>`;
 }
 function profRefresh(){const b=$('#profBtn');if(b)b.innerHTML=profInner()}
@@ -3023,14 +3156,17 @@ function openProfile(){
   const acc=RANK.account(),cleared=Object.keys(P.rounds).length;
   const total=Object.values(P.rounds).reduce((a,x)=>a+(x.best||0),0);
   const sh=openSheet(`<div class="eyebrow">프로필</div>
-    <div class="pf-head"><button type="button" class="pf-big" id="pfAv" aria-label="프로필 사진 바꾸기">${profFace()}<span class="pf-edit" aria-hidden="true">✎</span></button><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>
+    <div class="pf-head"><button type="button" class="pf-big" id="pfAv" aria-label="프로필 사진 바꾸기">${profFace()}<span class="pf-edit" aria-hidden="true">✎</span></button><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>${P.title?`<p class="pf-ttl">${ACH.badge(P.title)}</p>`:''}
     <p class="lead">${isAdmin()?'<span class="adm-badge">운영진</span> ':''}${RANK.enabled?(acc?`아이디 <b>${esc(acc)}</b>`:'로그인 없이 하는 중'):'이 기기에 저장 중'} · ${ZONES[zoneOf(P.unlocked)].lvl} 단계</p></div></div>
     <dl class="pf-stats"><div><dt>별</dt><dd>★ ${myStars().toLocaleString()}</dd></div><div><dt>지금 라운드</dt><dd>${P.unlocked}</dd></div>
     <div><dt>깬 라운드</dt><dd>${cleared}</dd></div><div><dt>총점</dt><dd>${total.toLocaleString()}</dd></div></dl>
+    <div class="row"><button class="btn" type="button" id="pfTitle">칭호 ${P.title?'바꾸기':'고르기'}</button><button class="btn" type="button" id="pfAch">${ICON.medal} 업적</button></div>
     <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button>`:''}
     <button class="btn primary" type="button" id="pfClose">닫기</button></div>`);
   const nb=sh.querySelector('#pfNick');if(nb)nb.addEventListener('click',()=>openNick(!RANK.nick()));
   sh.querySelector('#pfAv').addEventListener('click',()=>{NATIVE.buzz('tick');openAvatar()});
+  sh.querySelector('#pfTitle').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.openTitles()});
+  sh.querySelector('#pfAch').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});
   sh.querySelector('#pfClose').addEventListener('click',closeSheet);
 }
 function openAvatar(){
@@ -3048,6 +3184,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.5','10월 29일','업적과 칭호',['지도 위쪽 메달 버튼에서 업적을 볼 수 있어요 (진행·지역·별·칭호·끈기)','업적을 달성하면 받기 버튼으로 코인·힌트를 받아요','게임 종류마다 별 3개로 깬 라운드 10·50·100·200개면 초보·중수·고수·달인 칭호','칭호는 프로필에서 고르고, 랭킹에도 보여요','지금까지 깬 기록도 바로 업적에 반영돼요']],
   ['2.4','10월 29일','별점에 따라 코인',['이전에 별 3개로 깬 라운드는 모자란 코인을 한 번 채워 드려요 (코인이 줄지는 않아요)','라운드를 깨면 별 1개 25코인, 2개 50코인, 3개 100코인을 받아요','같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요 (별 1개 → 2개: 25코인, 1개 → 3개: 75코인)','이미 받은 별점으로 다시 깨면 코인은 없어요']],
   ['2.3','10월 29일','지도에 친구들 표시',['아이디로 로그인해 랭킹에 있는 플레이어들의 프로필이 지도에서 그 사람이 지금 하고 있는 라운드 옆에 보여요','같은 라운드에 여러 명이면 겹쳐서 보이고, 누르면 누가 있는지 목록이 떠요']],
   ['2.2','10월 29일','다섯 번째 지역 하늘섬',['구름 위 하늘섬 150라운드(361~510), 난이도 아주 어려움','별빛 하늘에서 날개 달린 배를 타고 위로 날아올라 하늘섬으로','다음 지역으로 가려면 그 지역 별의 80%를 모아야 해요 (이미 열린 지역은 그대로)','하늘섬 틀린그림: 살짝 이동·하나 더 생김·살짝 기울기·배경 속 차이, 작은 물건에 숨김','481라운드부터 9라운드마다 오른쪽 그림이 좌우로 뒤집힌 거울 라운드','하늘섬 물건 18가지, 구름 디딤돌','틀린 곳 최대 12개, 퍼즐 최대 9×9']],
