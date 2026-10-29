@@ -365,6 +365,13 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .start{font-family:var(--f-display);font-size:26px;letter-spacing:.04em;color:#1b2742;background:#ffd43b;border:2px solid #1b2742;border-radius:14px;
   padding:14px 40px;box-shadow:0 5px 0 #1b2742;opacity:0;transform:translateY(24px);animation:rise .55s cubic-bezier(.2,1.3,.4,1) 1.55s forwards, nudge 1.8s ease-in-out 2.4s infinite;cursor:pointer}
 .start:active{transform:translateY(4px);box-shadow:0 1px 0 #1b2742}
+/* 게임시작: 버튼 모양 없이 깜박이는 흰 글씨 */
+.intro .start{background:none;border:0;box-shadow:none;border-radius:12px;color:#fff;font-size:clamp(28px,8vw,36px);letter-spacing:.08em;padding:16px 36px;
+  font-weight:700;text-shadow:1px 1px 0 #1b2742,-1px 1px 0 #1b2742,1px -1px 0 #1b2742,-1px -1px 0 #1b2742,0 3px 0 #1b2742,0 4px 14px rgba(0,0,0,.45);-webkit-tap-highlight-color:transparent;
+  animation:rise .55s cubic-bezier(.2,1.3,.4,1) 1.55s forwards, startBlink 1.1s ease-in-out 2.2s infinite}
+.intro .start:active{transform:scale(.94);box-shadow:none}
+@keyframes startBlink{0%,100%{opacity:1}50%{opacity:.12}}
+@media (prefers-reduced-motion:reduce){.intro .start{animation:none;opacity:1}}
 .start:focus-visible{outline:3px solid #3b5bdb;outline-offset:4px}
 @keyframes flyIn{60%{opacity:1}100%{opacity:1;transform:none}}
 @keyframes sweep{to{transform:scaleX(1)}}
@@ -875,10 +882,10 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
   <div class="intro-in">
     <h1 class="intro-title" id="introTitle" aria-label="틀린로직맞추기"><span class="w">틀린</span><span class="w hl static">로직</span><span class="w">맞추기</span></h1>
     <p class="intro-sub"><b>틀린그림</b> 찾고, <b>로직</b> 풀고, 그림 <b>맞추기</b></p>
-    <button class="start" id="startBtn" type="button">게임 스타트</button>
+    <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 1.7</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 1.8</span>
 </div>
 <div class="wrap">
   <header class="top">
