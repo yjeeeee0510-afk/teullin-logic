@@ -1097,8 +1097,10 @@ const $=s=>document.querySelector(s);
 let paused=false;
 /* 운영진 아이디: 랭킹 제외, 모든 라운드·화면 열람 */
 const ADMIN_ID='yjeeeee0510';
+// 운영진 아이디 목록 (랭킹 제외·모든 라운드 열림). 서버 트리거 leaderboard_skip_admin에도 같이 넣어야 함
+const ADMIN_IDS=[ADMIN_ID,'dhsb1234'];
 let adminLiftZ=-1;
-function isAdmin(){try{return RANK.account()===ADMIN_ID}catch(e){return false}}
+function isAdmin(){try{return ADMIN_IDS.includes(RANK.account())}catch(e){return false}}
 function openMax(){return isAdmin()?MAXR:P.unlocked}
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function rng(seed){let a=seed>>>0;return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -2593,7 +2595,7 @@ const RANK=(function(){
   }
   async function submit(newNick){
     const n=newNick||nick();if(!enabled||!n)return;
-    if(account()===ADMIN_ID){store.set('sekan-rank-pending',false);return}
+    if(ADMIN_IDS.includes(account())){store.set('sekan-rank-pending',false);return}
     const s=await auth();
     const row=Object.assign({id:s.user.id,nickname:n},mine());
     if(typeof P.avatar==='number')row.avatar=P.avatar;
@@ -3214,7 +3216,7 @@ function openPatchNotes(){
 function openAdmin(){
   if(!isAdmin())return;
   const g=(id,t)=>`<button class="btn" type="button" data-a="${id}">${t}</button>`;
-  const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> ${esc(ADMIN_ID)}</div><h3>모든 화면 보기</h3>
+  const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> ${esc(RANK.account()||ADMIN_ID)}</div><h3>모든 화면 보기</h3>
     <p class="lead">운영진 아이디는 랭킹에 올라가지 않고, 1~${MAXR}라운드가 모두 열려 있어요. 아래 버튼으로 각 화면을 바로 볼 수 있어요.</p>
     <div class="adm-list">
       <b>화면</b>

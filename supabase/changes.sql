@@ -103,3 +103,16 @@ $$;
 
 grant execute on function public.leaderboard_top(int) to anon, authenticated;
 grant execute on function public.leaderboard_players(int) to anon, authenticated;
+
+-- 2026-10-29 · dhsb1234도 운영진: 랭킹에서 지우고 앞으로도 막기
+delete from public.leaderboard
+where id in (select id from auth.users where email in ('yjeeeee0510@teullin.game','dhsb1234@teullin.game'));
+
+create or replace function public.leaderboard_skip_admin()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if exists (select 1 from auth.users where id = new.id and email in ('yjeeeee0510@teullin.game','dhsb1234@teullin.game')) then
+    return null;
+  end if;
+  return new;
+end $$;
