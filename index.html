@@ -184,7 +184,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .rlist .st{font-family:var(--f-mono);font-size:12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .rank-note{margin:0;font-size:12px;color:var(--muted)}
 .rank-empty{padding:20px 4px;text-align:center;color:var(--muted)}
-/* 라운드 지도: 1라운드가 맨 아래, 위로 올라갈수록 360라운드 */
+/* 라운드 지도: 1라운드가 맨 아래, 위로 올라갈수록 510라운드 */
 .map{position:relative;height:min(72vh,660px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:14px;border:1.5px solid var(--ink);
   background:var(--map-bg);scroll-behavior:auto}
 .map-inner{position:relative;width:100%}
@@ -225,6 +225,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .z-forest{background:radial-gradient(circle,rgba(43,138,62,.18) 0 3px,transparent 4px) 0 0/38px 38px,linear-gradient(#96f2a8,#69db7c 55%,#51cf66)}
 .z-mount{background:linear-gradient(#e5dbff,#d0ebff 50%,#e7f5ff)}
 .z-night{background:radial-gradient(circle,#fff 0 1.2px,transparent 2px) 0 0/53px 61px,radial-gradient(circle,#ffe066 0 1.6px,transparent 2.4px) 21px 30px/89px 97px,linear-gradient(#141c4a,#283a8f 55%,#5c7cfa)}
+.z-sky{background:linear-gradient(#bfe4ff,#e3f3ff 55%,#fff6fb)}
 .z-night .zname{background:rgba(255,255,255,.88)}
 .map .tier{position:absolute;transform:translateY(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:1px;
   background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:3px 10px 4px;border-radius:12px;white-space:nowrap}
@@ -463,6 +464,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .z-forest{background:radial-gradient(ellipse 12px 3px at 50% 50%,rgba(255,255,255,.45),transparent 70%) 0 0/34px 40px,linear-gradient(90deg,#1f86a8,#3ab0cc 10%,#3ab0cc 90%,#1f86a8)}
 .z-mount{background:radial-gradient(ellipse 12px 3px at 50% 50%,rgba(255,255,255,.8),transparent 70%) 0 0/34px 40px,linear-gradient(90deg,#7cc4ea,#b4e4f8 10%,#b4e4f8 90%,#7cc4ea)}
 .z-night{background:radial-gradient(circle,#fff 0 1.2px,transparent 2px) 0 0/23px 37px,radial-gradient(circle,#ffe066 0 1.4px,transparent 2.2px) 9px 17px/31px 53px,linear-gradient(90deg,#121845,#2a3488 10%,#2a3488 90%,#121845)}
+.z-sky{background:radial-gradient(ellipse 30px 12px at 50% 50%,rgba(255,255,255,.95),transparent 70%) 0 0/90px 70px,linear-gradient(90deg,#9fd3ff,#d6efff 10%,#d6efff 90%,#9fd3ff)}
 .map .deco{position:absolute;transform:translate(-50%,-100%);pointer-events:none;max-width:none;z-index:1;line-height:0}
 .map .deco svg{display:block;height:auto;filter:drop-shadow(0 2px 0 rgba(0,0,0,.08))}
 .map svg.road path{fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -781,6 +783,7 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 :root[data-theme="dark"]{--hud-bg:rgba(23,32,54,.88)}
 body.game-mode{background-color:#9fd4ff;background-image:var(--gbg,none);background-size:cover;background-position:center;background-repeat:no-repeat}
 body.game-mode[data-zone="3"]{background-color:#2a1f5c}
+body.game-mode[data-zone="4"]{background-color:#bfe2ff}
 body.game-mode .ghud{background:var(--hud-bg);border-radius:16px;padding:6px 6px 6px 12px;box-shadow:0 4px 14px rgba(20,30,60,.18);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 body.game-mode .gh-info .chip{background:var(--soft)}
 body.game-mode .gm-menu{box-shadow:0 2px 0 var(--ink)}
@@ -829,6 +832,38 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 .voyage .vy-skip{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:max(18px,calc(env(safe-area-inset-bottom,0px) + 14px));border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;font-size:14px;background:rgba(255,255,255,.9);color:#1b2742;cursor:pointer;z-index:5}
 @keyframes vyBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(7px) rotate(3deg)}}
 @keyframes vyPop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+/* 하늘섬 이동: 날개 달린 배가 위로 날아오름 (돌아갈 땐 반대로) */
+.voyage.flight{background:#151542;--ship:min(46vw,230px);--dur:4.6s}
+.flight .fl-world{position:absolute;left:0;right:0;top:0;height:300vh;transform:translateY(-200vh);will-change:transform;pointer-events:none}
+.flight.go .fl-world{animation:flCam var(--dur) cubic-bezier(.55,0,.35,1) .25s both}
+.flight.down .fl-world{transform:translateY(0)}
+.flight.down.go .fl-world{animation-direction:reverse}
+.flight .fl-sky{position:absolute;inset:0;background:linear-gradient(#7cc8ff 0%,#bfe6ff 18%,#ffe1ec 36%,#ffc29a 47%,#b48ae0 58%,#4a3aa8 72%,#221d63 86%,#151542 100%)}
+.flight .fl-stars{position:absolute;left:0;right:0;top:150vh;bottom:0;opacity:.9;
+  background:radial-gradient(circle,#fff 0 1.2px,transparent 2px) 0 0/53px 61px,radial-gradient(circle,#ffe066 0 1.6px,transparent 2.4px) 21px 30px/89px 97px;
+  -webkit-mask-image:linear-gradient(transparent,#000 30%);mask-image:linear-gradient(transparent,#000 30%)}
+.flight .fl-isl{position:absolute;left:50%;height:auto;transform:translateX(-50%);filter:drop-shadow(0 12px 14px rgba(20,20,80,.3))}
+.flight .fl-isl.it{top:30vh;width:min(92vw,520px)}
+.flight .fl-isl.ib{bottom:2vh;width:min(98vw,560px)}
+.flight .fl-moon{position:absolute;left:8%;top:212vh;width:min(20vw,100px);filter:drop-shadow(0 0 18px rgba(255,240,180,.8))}
+.flight .fl-c{position:absolute;height:auto;opacity:.96}
+.flight .fl-world.front{z-index:3}
+.flight .fl-ship{position:absolute;left:calc(50vw - var(--ship) / 2);top:0;width:var(--ship);z-index:2;will-change:transform}
+.flight.up .fl-ship{transform:translateY(var(--y0))}
+.flight.down .fl-ship{transform:translateY(var(--y1))}
+.flight.go .fl-ship{animation:flShip var(--dur) cubic-bezier(.45,0,.4,1) .25s both}
+.flight.down.go .fl-ship{animation-direction:reverse}
+.flight .fl-bob{position:relative;animation:flBob 1.4s ease-in-out infinite}
+.flight .fl-body{display:block;width:100%;height:auto;position:relative;z-index:1;filter:drop-shadow(0 10px 8px rgba(30,20,80,.25))}
+.flight .fl-wing{position:absolute;height:auto;transform-origin:91% 73%;animation:flFlap .52s ease-in-out infinite alternate}
+.flight .fl-wing.f{left:-43.8%;top:28.6%;width:56.5%;z-index:2}
+.flight .fl-wing.b{left:14.3%;top:20%;width:48%;z-index:0;filter:brightness(.88);animation-delay:-.18s}
+.flight.arrive .fl-wing{animation-duration:1.1s}
+@keyframes flCam{from{transform:translateY(-200vh)}to{transform:translateY(0)}}
+@keyframes flShip{0%{transform:translateY(var(--y0))}12%{transform:translateY(calc(var(--y0) - 6vh))}80%{transform:translateY(calc(var(--y1) - 14vh))}100%{transform:translateY(var(--y1))}}
+@keyframes flFlap{from{transform:rotate(-24deg)}to{transform:rotate(14deg)}}
+@keyframes flBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+
 
 /* 섬 바닥 그림, 조약돌 */
 .map .zone .ground{position:absolute;inset:0;background-repeat:repeat-y;background-size:100% auto;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:100% 100%;mask-size:100% 100%;z-index:0}
@@ -844,6 +879,8 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 .map .peb.shell img,.map .peb.mush img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 0 rgba(60,40,20,.25)) drop-shadow(0 0 1.5px #fff)}
 .map .peb.mush{width:30px;height:30px;margin:-20px 0 0 -15px}
 .map .peb.mush img{filter:drop-shadow(0 0 6px rgba(255,236,170,.9)) drop-shadow(0 2px 0 rgba(30,10,60,.35))}
+.map .peb.cloud{background:none;box-shadow:none;border-radius:0;width:40px;height:22px;margin:-11px 0 0 -20px}
+.map .peb.cloud img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(90,80,160,.3))}
 .map .peb.snow{width:22px;height:20px;margin:-10px 0 0 -11px;border-radius:50%;
   background:radial-gradient(circle at 36% 30%,#fff 0 30%,#eef4fc 48%,#c6d5ea 100%);box-shadow:0 4px 0 rgba(70,90,130,.28),0 5px 7px rgba(40,60,100,.18),0 0 0 1.5px rgba(255,255,255,.9)}
 @keyframes pebPop{0%{transform:rotate(var(--r)) translateY(-22px) scale(0);opacity:0}60%{opacity:1}100%{transform:rotate(var(--r)) scale(var(--s));opacity:1}}
@@ -912,13 +949,13 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.1</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.2</span>
 </div>
 <div class="wrap">
   <header class="top">
     <div class="brand">
       <h1>틀린<span>로직</span>맞추기</h1>
-      <p>틀린그림 찾기 → 네모네모 로직 → 퍼즐 맞추기가 라운드마다 번갈아 나와요. 한 라운드를 깨면 다음 라운드가 열리고, 아주 쉬움부터 어려움까지 4단계, 360라운드예요.</p>
+      <p>틀린그림 찾기 → 네모네모 로직 → 퍼즐 맞추기가 라운드마다 번갈아 나와요. 한 라운드를 깨면 다음 라운드가 열리고, 아주 쉬움부터 아주 어려움까지 5단계, 510라운드예요.</p>
     </div>
     <div class="stats">
       <div class="stat"><small>라운드</small><b id="sRound">–</b></div>
@@ -1021,10 +1058,17 @@ const STAGES=[
   {name:'네모네모 로직',desc:'줄 옆 숫자는 연속해서 칠할 칸의 길이입니다. 숫자 순서대로, 덩어리 사이엔 한 칸 이상 비워 두세요.'},
   {name:'퍼즐 맞추기',desc:'그림이 조각났어요. 조각 두 개를 차례로 누르면 자리가 바뀝니다.'}
 ];
-const MAXR=360,ZSIZE=90,TSIZE=30;
+// 지역마다 라운드 수가 다를 수 있음: 지역 z 는 ZSTART[z]+1 ~ ZSTART[z+1] 라운드
+const ZSTART=[0,90,180,270,360,510],MAXR=ZSTART[ZSTART.length-1],TSIZE=30;
 const typeOf=n=>(n-1)%3;
-const zoneOf=n=>Math.floor((Math.max(1,n)-1)/ZSIZE);
-// 난이도 4단계(90라운드씩), 각 단계 안에서 30라운드마다 조금씩 어려워짐
+const zoneOf=n=>{n=Math.max(1,Math.min(MAXR,n));let z=0;while(n>ZSTART[z+1])z++;return z};
+const zLo=z=>ZSTART[z]+1,zHi=z=>ZSTART[z+1],zLen=z=>ZSTART[z+1]-ZSTART[z];
+const isZoneEnd=n=>n<MAXR&&n===zHi(zoneOf(n));
+// 다음 지역으로 가려면 그 지역 별의 80%
+const ZONE_STAR_RATE=0.8;
+const zoneStars=z=>{let s=0;for(let n=zLo(z);n<=zHi(z);n++){const r=P.rounds[n];if(r)s+=(r.stars||1)}return s};
+const zoneNeed=z=>Math.ceil(zLen(z)*3*ZONE_STAR_RATE);
+// 난이도 5단계(90·90·90·90·150라운드), 각 단계 안에서 30라운드마다 조금씩 어려워짐
 // spot: 틀린 곳 개수, logic: 로직 칸 수(가로=세로), jig: 퍼즐 조각(가로=세로), dd: 틀린 곳이 얼마나 티 안 나는지(0 쉬움 ~ 1 어려움)
 const ZONE_DIFF=[
   {spot:4, logic:5,  jig:3, dd:0.00},  // 1–30    아주 쉬움
@@ -1038,7 +1082,12 @@ const ZONE_DIFF=[
   {spot:8, logic:10, jig:6, dd:0.60},  // 241–270
   {spot:9, logic:10, jig:6, dd:0.70},  // 271–300 어려움
   {spot:10,logic:12, jig:7, dd:0.80},  // 301–330
-  {spot:10,logic:12, jig:7, dd:0.90}   // 331–360
+  {spot:10,logic:12, jig:7, dd:0.90},  // 331–360
+  {spot:10,logic:12, jig:7, dd:0.92},  // 361–390 아주 어려움 (하늘섬)
+  {spot:11,logic:12, jig:8, dd:0.94},  // 391–420
+  {spot:11,logic:12, jig:8, dd:0.96},  // 421–450
+  {spot:12,logic:12, jig:8, dd:0.98},  // 451–480
+  {spot:12,logic:12, jig:9, dd:1.00}   // 481–510
 ];
 const ZD=r=>ZONE_DIFF[Math.min(ZONE_DIFF.length-1,Math.floor((Math.max(1,r)-1)/TSIZE))];
 const SIZE={spot:r=>ZD(r).spot,logic:r=>ZD(r).logic,jig:r=>ZD(r).jig};
@@ -1051,6 +1100,7 @@ if(!P||typeof P.unlocked!=='number'){const old=store.get('sekan-state',null);P={
 let S=store.get('sekan-run',null);
 if(S&&!(S.round>=1&&S.round<=P.unlocked))S=null;
 if(S)S.stage=typeOf(S.round);
+{const ids=Object.keys(P.rounds||{}).map(Number).filter(n=>n>=1&&n<MAXR);if(ids.length)P.unlocked=Math.max(P.unlocked,Math.max(...ids)+1)}
 if(typeof P.revealed!=='number')P.revealed=zoneOf(P.unlocked);
 P.revealed=Math.min(P.revealed,zoneOf(P.unlocked));
 let inGame=false,pendingNext=0,combo=0,lastHit=0,comboPts=0,shownScore=0;
@@ -1321,7 +1371,10 @@ const REGION_THEMES=[
    front:['snowmanRed','snowmanBlue','snowmanGreen','penguin','penguin','sled','snowBush','iceBlue','icePurple','snowballs','skiSign']},
   {name:'별빛 하늘',zone:3,bg:'nightsky',lights:['planetRing','starBig','moonCrescent'],sky:['starBig','starWish','planetRing','planetSmall','cloudNight','starWish'],night:true,
    back:['castleLilac','castleBlue','castlePink','observatory','lampYellow','lampBlue','treeNightPurple','treeNightTeal','lampYellow'],
-   front:['glowMushBlue','glowMushPink','glowMushGreen','gemPurple','gemBlue','gemPink','lanternOrange','lanternPink','bushNight','owlPost']}
+   front:['glowMushBlue','glowMushPink','glowMushGreen','gemPurple','gemBlue','gemPink','lanternOrange','lanternPink','bushNight','owlPost']},
+  {name:'하늘섬',zone:4,bg:'skyisland',backDY:22,lights:['sun','skyWhale','airship'],sky:['balloonRed','balloonBlue','kiteYellow','kiteGreen','airship','skyWhale','skyCloudA','skyCloudB','skyCloudC','skyCloudD','skyCloudE','skyCloudF'],
+   back:['skyHouse','bellTower','skyTree','rainbowBridge','weatherVane','birdHouse','skyHouse','skyTree','bellTower'],
+   front:['featherGold','featherPurple','starJar','pinwheelPink','pinwheelBlue','wingMail','featherGold','pinwheelPink','starJar']}
 ];
 // 새 그림 크기(그림 속 높이, 최소~최대)
 const ART_H={windmill:[190,215],cottageRed:[115,135],cottageBlue:[115,135],cottagePurple:[115,135],blossomPink:[165,195],blossomWhite:[165,195],blossomYellow:[165,195],treeRound:[150,175],
@@ -1331,15 +1384,19 @@ const ART_H={windmill:[190,215],cottageRed:[115,135],cottageBlue:[115,135],cotta
   cabinRed:[115,135],cabinBrown:[115,135],cabinGreen:[115,135],igloo:[75,90],pineSnowA:[165,195],pineSnowB:[155,180],pineSnowC:[160,190],
   snowmanRed:[95,110],snowmanBlue:[95,110],snowmanGreen:[95,110],penguin:[60,70],sled:[40,46],snowBush:[42,50],iceBlue:[55,65],icePurple:[55,65],snowballs:[34,40],skiSign:[80,92],
   castleLilac:[160,180],castleBlue:[160,180],castlePink:[160,180],observatory:[120,135],lampYellow:[120,140],lampBlue:[120,140],treeNightPurple:[150,175],treeNightTeal:[150,175],
+  skyHouse:[118,136],bellTower:[122,140],skyTree:[150,175],rainbowBridge:[92,106],weatherVane:[96,110],birdHouse:[106,122],
+  featherGold:[52,60],featherPurple:[52,60],starJar:[48,56],pinwheelPink:[62,72],pinwheelBlue:[62,72],wingMail:[56,64],
+  balloonRed:[70,82],balloonBlue:[70,82],kiteYellow:[58,68],kiteGreen:[58,68],airship:[46,54],skyWhale:[50,58],skyCloudA:[44,56],skyCloudB:[50,62],skyCloudC:[42,52],skyCloudD:[44,56],skyCloudE:[48,60],skyCloudF:[44,54],
   glowMushBlue:[50,58],glowMushPink:[50,58],glowMushGreen:[50,58],gemPurple:[56,66],gemBlue:[56,66],gemPink:[56,66],lanternOrange:[52,60],lanternPink:[52,60],bushNight:[40,48],owlPost:[84,96],
   puffA:[50,66],puffB:[46,60],puffC:[54,70],butterfly:[32,40],kite:[70,80],gull:[22,28],moonCrescent:[70,80],starBig:[46,54],starWish:[44,50],planetRing:[56,64],planetSmall:[46,54],cloudNight:[44,54]};
 // 좌우를 뒤집으면 달라 보이는 그림만 '뒤집기' 문제로 씀
-const ART_FLIP=new Set(['windmill','cottageRed','cottageBlue','cottagePurple','beehive','hayBale','mushroomRed','butterfly','palmA','palmB','beachHutBlue','beachHutPink','beachHutMint','umbrellaRed','umbrellaBlue','umbrellaYellow','bucketBlue','bucketGreen','gull','cabinRed','cabinBrown','cabinGreen','sled','skiSign','snowBush','observatory','glowMushBlue','glowMushPink','glowMushGreen','owlPost','planetRing','moonCrescent','cloudNight']);
+const ART_FLIP=new Set(['windmill','cottageRed','cottageBlue','cottagePurple','beehive','hayBale','mushroomRed','butterfly','palmA','palmB','beachHutBlue','beachHutPink','beachHutMint','umbrellaRed','umbrellaBlue','umbrellaYellow','bucketBlue','bucketGreen','gull','cabinRed','cabinBrown','cabinGreen','sled','skiSign','snowBush','observatory','glowMushBlue','glowMushPink','glowMushGreen','owlPost','planetRing','moonCrescent','cloudNight',
+  'skyHouse','skyTree','rainbowBridge','weatherVane','birdHouse','featherGold','featherPurple','pinwheelPink','pinwheelBlue','kiteYellow','kiteGreen','airship','skyWhale','skyCloudA','skyCloudB','skyCloudC','skyCloudD','skyCloudE','skyCloudF']);
 // 흰색·회색이라 색을 바꿔도 티가 안 나는 그림은 '색 바꾸기' 문제에서 뺌
-const ART_NOCOLOR=/^cloud|^moon|^puff|^gull$|^igloo$|^snowballs$|^fenceWhite$|^shellWhite$/;
+const ART_NOCOLOR=/^cloud|^moon|^puff|^gull$|^igloo$|^snowballs$|^fenceWhite$|^shellWhite$|^skyCloud/;
 // 지역마다 쓰는 그림 묶음 (아주 쉬움·보통은 예전 그림도 번갈아 씀)
-const BG_JPG=new Set(['flowerhill','beach','snowmount','nightsky']);
-const ZONE_THEME_NAMES=[['꽃 언덕','초원 마을'],['푸른 바다'],['눈 덮인 산','눈 덮인 들판'],['별빛 하늘']];
+const BG_JPG=new Set(['flowerhill','beach','snowmount','nightsky','skyisland']);
+const ZONE_THEME_NAMES=[['꽃 언덕','초원 마을'],['푸른 바다'],['눈 덮인 산','눈 덮인 들판'],['별빛 하늘'],['하늘섬']];
 const THEMES=[
   {name:'초원 마을',bg:'grass',lights:['sun'],
    back:['house1','house2','houseAlt1','houseAlt2','houseSmall1','houseSmallAlt2','tree','treeLong','tree','treeLong'],
@@ -1372,7 +1429,8 @@ const GROUPS=[
   ['beachHutBlue','beachHutPink','beachHutMint'],['palmA','palmB'],['umbrellaRed','umbrellaBlue','umbrellaYellow'],['shellPink','shellWhite'],['starfishOrange','starfishPink'],['bucketBlue','bucketGreen'],
   ['cabinRed','cabinBrown','cabinGreen'],['pineSnowA','pineSnowB','pineSnowC'],['snowmanRed','snowmanBlue','snowmanGreen'],['iceBlue','icePurple'],
   ['castleLilac','castleBlue','castlePink'],['lampYellow','lampBlue'],['treeNightPurple','treeNightTeal'],['glowMushBlue','glowMushPink','glowMushGreen'],['gemPurple','gemBlue','gemPink'],['lanternOrange','lanternPink'],
-  ['puffA','puffB','puffC'],['starBig','starWish'],['planetRing','planetSmall'],['moonCrescent','moonFull']
+  ['puffA','puffB','puffC'],['starBig','starWish'],['planetRing','planetSmall'],['moonCrescent','moonFull'],
+  ['balloonRed','balloonBlue'],['kiteYellow','kiteGreen'],['pinwheelPink','pinwheelBlue'],['featherGold','featherPurple'],['skyHouse','bellTower'],['skyCloudA','skyCloudB','skyCloudC','skyCloudD','skyCloudE','skyCloudF']
 ];
 const groupOf=n=>GROUPS.find(g=>g.includes(n));
 function spriteH(n,r){
@@ -1395,7 +1453,7 @@ function spriteH(n,r){
   return 80;
 }
 // 새로 자른 물건 그림은 WebP(부드러운 테두리), 예전 그림은 PNG
-const SPR_WEBP=new Set(["beachHutBlue", "beachHutMint", "beachHutPink", "beehive", "blossomPink", "blossomWhite", "blossomYellow", "boatBlue", "boatOrange", "boatPurple", "bucketBlue", "bucketGreen", "buoy", "bushNight", "butterfly", "cabinBrown", "cabinGreen", "cabinRed", "castleBlue", "castleLilac", "castlePink", "cloudNight", "cottageBlue", "cottagePurple", "cottageRed", "crab", "dock", "fenceWhite", "fish", "flowersBlue", "flowersPink", "flowersWhite", "flowersYellow", "gemBlue", "gemPink", "gemPurple", "glowMushBlue", "glowMushGreen", "glowMushPink", "gull", "hayBale", "iceBlue", "icePurple", "igloo", "kite", "lampBlue", "lampYellow", "lanternOrange", "lanternPink", "lighthouse", "moonCrescent", "moonFull", "mushroomRed", "observatory", "owlPost", "palmA", "palmB", "penguin", "pineSnowA", "pineSnowB", "pineSnowC", "planetRing", "planetSmall", "puffA", "puffB", "puffC", "rockBig", "rockMid", "rockSmall", "sandcastle", "shellPink", "shellWhite", "skiSign", "sled", "snowBush", "snowballs", "snowmanBlue", "snowmanGreen", "snowmanRed", "starBig", "starWish", "starfishOrange", "starfishPink", "sun", "swimRing", "treeNightPurple", "treeNightTeal", "treeRound", "tulipPurple", "tulipRed", "tulipYellow", "umbrellaBlue", "umbrellaRed", "umbrellaYellow", "windmill"]);
+const SPR_WEBP=new Set(["skyHouse","bellTower","skyTree","rainbowBridge","weatherVane","birdHouse","featherGold","featherPurple","starJar","pinwheelPink","pinwheelBlue","wingMail","balloonRed","balloonBlue","kiteYellow","kiteGreen","airship","skyWhale","skyCloudA","skyCloudB","skyCloudC","skyCloudD","skyCloudE","skyCloudF","pebCloudA","pebCloudB","pebCloudC","pebCloudD","wingShip","beachHutBlue", "beachHutMint", "beachHutPink", "beehive", "blossomPink", "blossomWhite", "blossomYellow", "boatBlue", "boatOrange", "boatPurple", "bucketBlue", "bucketGreen", "buoy", "bushNight", "butterfly", "cabinBrown", "cabinGreen", "cabinRed", "castleBlue", "castleLilac", "castlePink", "cloudNight", "cottageBlue", "cottagePurple", "cottageRed", "crab", "dock", "fenceWhite", "fish", "flowersBlue", "flowersPink", "flowersWhite", "flowersYellow", "gemBlue", "gemPink", "gemPurple", "glowMushBlue", "glowMushGreen", "glowMushPink", "gull", "hayBale", "iceBlue", "icePurple", "igloo", "kite", "lampBlue", "lampYellow", "lanternOrange", "lanternPink", "lighthouse", "moonCrescent", "moonFull", "mushroomRed", "observatory", "owlPost", "palmA", "palmB", "penguin", "pineSnowA", "pineSnowB", "pineSnowC", "planetRing", "planetSmall", "puffA", "puffB", "puffC", "rockBig", "rockMid", "rockSmall", "sandcastle", "shellPink", "shellWhite", "skiSign", "sled", "snowBush", "snowballs", "snowmanBlue", "snowmanGreen", "snowmanRed", "starBig", "starWish", "starfishOrange", "starfishPink", "sun", "swimRing", "treeNightPurple", "treeNightTeal", "treeRound", "tulipPurple", "tulipRed", "tulipYellow", "umbrellaBlue", "umbrellaRed", "umbrellaYellow", "windmill"]);
 const sprPath=n=>`img/sprites/${n}.${SPR_WEBP.has(n)?'webp':'png'}`;
 const ART={bg:{},spr:{}};
 let artReady=null;
@@ -1452,7 +1510,7 @@ function tinted(name,deg){
   tintCache.set(key,c);return c;
 }
 // 땅에 닿는 부드러운 그림자 색 (지역 땅색에 맞춤)
-const SHADOW_COL={flowerhill:'28,70,12',beach:'130,85,25',snowmount:'70,95,150',nightsky:'15,5,50'};
+const SHADOW_COL={flowerhill:'28,70,12',beach:'130,85,25',snowmount:'70,95,150',nightsky:'15,5,50',skyisland:'120,100,180'};
 function drawShadow(ctx,o,b,sc){
   const c=SHADOW_COL[sc.theme.bg]||'0,0,0',a=sc.theme.bg==='nightsky'?.55:sc.theme.bg==='snowmount'?.42:.45;
   const r=Math.max(12,Math.min(b.w*.58,b.h*1.1));
@@ -1463,48 +1521,99 @@ function drawShadow(ctx,o,b,sc){
   g=ctx.createRadialGradient(0,0,0,0,0,r*.55);g.addColorStop(0,`rgba(${c},${a})`);g.addColorStop(1,`rgba(${c},0)`);
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r*.55,0,Math.PI*2);ctx.fill();ctx.restore();
 }
-function drawScene(ctx,sc,objs){
+function drawScene(ctx,sc,objs,patches){
   ctx.drawImage(ART.bg[sc.theme.bg],0,0,SW,SH);
+  // 배경 속 차이: 배경의 한 조각을 옆 조각으로 덮음 (가장자리는 부드럽게)
+  if(patches)for(const p of patches){
+    const c=document.createElement('canvas');c.width=p.w;c.height=p.h;const x=c.getContext('2d');
+    x.drawImage(ART.bg[sc.theme.bg],p.sx*ART.bg[sc.theme.bg].naturalWidth/SW,p.sy*ART.bg[sc.theme.bg].naturalHeight/SH,p.w*ART.bg[sc.theme.bg].naturalWidth/SW,p.h*ART.bg[sc.theme.bg].naturalHeight/SH,0,0,p.w,p.h);
+    x.globalCompositeOperation='destination-in';
+    const g=x.createRadialGradient(p.w/2,p.h/2,0,p.w/2,p.h/2,p.w/2);g.addColorStop(0,'#000');g.addColorStop(.62,'#000');g.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=g;x.fillRect(0,0,p.w,p.h);
+    ctx.drawImage(c,p.dx,p.dy);
+  }
   for(const o of objs){
     if(o.gone)continue;
     const b=objBox(o),src=o.hue?tinted(o.spr,o.hue):ART.spr[o.spr];
     if(o.row!=='sky'&&sc.theme.zone!=null)drawShadow(ctx,o,b,sc);
-    ctx.save();ctx.translate(o.x,o.y);if(o.flip)ctx.scale(-1,1);
+    ctx.save();ctx.translate(o.x,o.y);if(o.rot)ctx.rotate(o.rot*Math.PI/180);if(o.flip)ctx.scale(-1,1);
     ctx.drawImage(src,-b.w/2,-b.h,b.w,b.h);ctx.restore();
   }
 }
-function sceneCanvas(sc,objs){const c=document.createElement('canvas');c.width=SW;c.height=SH;drawScene(c.getContext('2d'),sc,objs);return c}
+function sceneCanvas(sc,objs,patches){const c=document.createElement('canvas');c.width=SW;c.height=SH;drawScene(c.getContext('2d'),sc,objs,patches);return c}
 const sceneSeed=()=>S.seed+S.round*7919;
 
 /* ---------- stage 1: spot ---------- */
 let spot=null;
-function diffKinds(o){
+// 하늘섬(361~): 살짝 이동·하나 더 생김, 421~: 살짝 기울기·배경 속 차이
+const SPOT_PLUS=r=>r>=421?2:r>=361?1:0;
+// 481~510 틀린그림 라운드 중 9라운드마다: 오른쪽 그림이 좌우로 뒤집힌 '거울 라운드'
+const isMirror=r=>r>=481&&typeOf(r)===0&&(r-481)%9===0;
+function diffKinds(o,lv){
   const k=['gone','size'];
+  if(lv>=1)k.push('nudge','add');
+  if(lv>=2)k.push('tilt','tilt');
   if(groupOf(o.spr))k.push('swap','swap');
   if(/^cloud|^bush|^cactus|^house|^moon|treeDead|treePalm|^fence$/.test(o.spr)||ART_FLIP.has(o.spr))k.push('flip');
   if(!/^cloud|^moon/.test(o.spr)&&!ART_NOCOLOR.test(o.spr))k.push('color','color');
   return k;
 }
+// 배경 그림에서 눈에 띄는 조각을 골라, 옆 조각으로 덮을 자리를 찾음 (물건에 가리지 않는 곳)
+let bgPix=null;
+function bgPatch(sc,objs,r,diffs){
+  const im=ART.bg[sc.theme.bg];
+  try{
+    if(!bgPix||bgPix.bg!==sc.theme.bg){const c=document.createElement('canvas');c.width=SW;c.height=SH;const x=c.getContext('2d');x.drawImage(im,0,0,SW,SH);bgPix={bg:sc.theme.bg,d:x.getImageData(0,0,SW,SH).data}}
+  }catch(e){return null}
+  const D=bgPix.d,boxes=objs.filter(o=>!o.gone).map(o=>{const b=objBox(o);return [b.cx-b.w/2-10,b.cy-b.h/2-10,b.cx+b.w/2+10,b.cy+b.h/2+10]});
+  const diffAt=(ax,ay,bx,by,w,h)=>{let s=0,k=0;for(let y=0;y<h;y+=4)for(let x=0;x<w;x+=4){const i=((ay+y)*SW+ax+x)*4,j=((by+y)*SW+bx+x)*4;s+=Math.abs(D[i]-D[j])+Math.abs(D[i+1]-D[j+1])+Math.abs(D[i+2]-D[j+2]);k++}return s/k/3};
+  let best=null;
+  for(let t=0;t<60;t++){
+    const w=Math.round(64+r()*40),h=w,dx=Math.round(40+r()*(SW-80-w)),dy=Math.round(30+r()*(HORIZON+60-h));
+    const sx=dx+(r()<.5?-1:1)*(w+16+Math.round(r()*30)),sy=dy;
+    if(sx<0||sx+w>SW)continue;
+    if(boxes.some(b=>dx<b[2]&&dx+w>b[0]&&dy<b[3]&&dy+h>b[1]))continue;
+    if(diffs.some(d=>Math.hypot(d.x-(dx+w/2),d.y-(dy+h/2))<90))continue;
+    const v=diffAt(dx,dy,sx,sy,w,h);
+    if(v>=16&&v<=70&&(!best||Math.abs(v-32)<Math.abs(best.v-32)))best={dx,dy,sx,sy,w,h,v};
+  }
+  return best;
+}
 function initSpot(){
-  const sc=makeScene(sceneSeed()),r=rng(sceneSeed()+17),n=SIZE.spot(S.round),dd=DIFF(S.round);
-  const mod=sc.objs.map(o=>Object.assign({},o)),diffs=[],used=new Set();
-  const order=shuffle(r,sc.objs.slice());
-  for(const gap of [95,72,52])for(const o of order){
+  const sc=makeScene(sceneSeed()),r=rng(sceneSeed()+17),n=SIZE.spot(S.round),dd=DIFF(S.round),lv=SPOT_PLUS(S.round);
+  const mod=sc.objs.map(o=>Object.assign({},o)),diffs=[],used=new Set(),patches=[];
+  let order=shuffle(r,sc.objs.slice());
+  // 하늘섬: 작고 멀리 있는 물건에 먼저 숨김
+  if(lv){const key=new Map(order.map(o=>[o.id,o.h*(.55+r()*.9)]));order.sort((a,b)=>key.get(a.id)-key.get(b.id))}
+  // 421~: 배경 속 차이 1~2곳
+  if(lv>=2){const want=S.round>=481?2:1;for(let t=0;t<want;t++){const p=bgPatch(sc,mod,r,diffs);if(p){patches.push(p);diffs.push({x:p.dx+p.w/2,y:p.dy+p.h/2,rad:Math.max(34,p.w*.42),found:false})}}}
+  const GAPS=lv>=2?[70,54,42]:[95,72,52];
+  for(const gap of GAPS)for(const o of order){
     if(diffs.length>=n)break;
     if(used.has(o.id))continue;
     const b=objBox(o);
     if(diffs.some(d=>Math.hypot(d.x-b.cx,d.y-b.cy)<gap))continue;
     used.add(o.id);
-    const m=mod.find(x=>x.id===o.id),k=pick(r,diffKinds(o));
+    const m=mod.find(x=>x.id===o.id),k=pick(r,diffKinds(o,o.row==='sky'?Math.min(lv,0):lv));
     if(k==='gone')m.gone=true;
     else if(k==='size')m.k=o.row==='back'?lerp(0.72,0.84,dd):lerp(1.42,1.22,dd);
     else if(k==='flip')m.flip=!o.flip;
     else if(k==='color')m.hue=Math.round(lerp(90,40,dd)+Math.floor(r()*4)*lerp(45,14,dd));
     else if(k==='swap'){const g=groupOf(o.spr).filter(x=>x!==o.spr);m.spr=pick(r,g)}
+    else if(k==='nudge'){m.x+=(r()<.5?-1:1)*lerp(34,20,dd)}
+    else if(k==='tilt'){m.rot=(r()<.5?-1:1)*lerp(13,8,dd)}
+    else if(k==='add'){
+      // 옆에 작은 물건 하나가 새로 생김
+      const spr=pick(r,sc.theme.front),nx=Math.max(50,Math.min(SW-50,o.x+(r()<.5?-1:1)*(70+r()*40))),ny=Math.max(470,Math.min(585,o.y+(r()*40-20)));
+      const no={id:9000+diffs.length,spr,x:nx,y:ny,h:spriteH(spr,r)*.85,row:'front',k:1,flip:false,hue:0,gone:false};
+      if(diffs.some(d=>Math.hypot(d.x-no.x,d.y-(no.y-no.h/2))<gap)){used.delete(o.id);continue}
+      mod.push(no);mod.sort((a,b)=>(a.row==='sky'?0:1)-(b.row==='sky'?0:1)||a.y-b.y);
+      const nb=objBox(no);diffs.push({x:nb.cx,y:nb.cy,rad:Math.min(85,Math.max(34,Math.max(nb.w,nb.h)*0.5)),found:false});continue;
+    }
     const bb=objBox(k==='size'&&m.k>1?m:o);
     diffs.push({x:bb.cx,y:bb.cy,rad:Math.min(85,Math.max(34,Math.max(bb.w,bb.h)*0.5)),found:false});
   }
-  spot={sc,mod,diffs,miss:null,flash:null,baseL:sceneCanvas(sc,sc.objs),baseR:sceneCanvas(sc,mod)};
+  spot={sc,mod,diffs,miss:null,flash:null,mirror:isMirror(S.round),baseL:sceneCanvas(sc,sc.objs),baseR:sceneCanvas(sc,mod,patches)};
 }
 function drawMarks(ctx,side){
   ctx.lineCap='round';
@@ -1519,7 +1628,9 @@ function drawMarks(ctx,side){
 }
 function renderSpot(){
   for(const [id,base,side] of [['#picL',spot.baseL,'L'],['#picR',spot.baseR,'R']]){
-    const ctx=$(id).getContext('2d');ctx.drawImage(base,0,0);drawMarks(ctx,side);
+    const ctx=$(id).getContext('2d'),mir=side==='R'&&spot.mirror;
+    ctx.save();if(mir){ctx.translate(SW,0);ctx.scale(-1,1)}
+    ctx.drawImage(base,0,0);drawMarks(ctx,side);ctx.restore();
   }
   const f=spot.diffs.filter(d=>d.found).length;
   $('#spotCount').textContent=`찾은 곳 ${f} / ${spot.diffs.length}`;
@@ -1528,7 +1639,8 @@ function renderSpot(){
 function spotClick(e,side){
   if(!running||!spot)return;
   const rect=e.currentTarget.getBoundingClientRect();
-  const x=(e.clientX-rect.left)/rect.width*SW,y=(e.clientY-rect.top)/rect.height*SH;
+  let x=(e.clientX-rect.left)/rect.width*SW;const y=(e.clientY-rect.top)/rect.height*SH;
+  if(side==='R'&&spot.mirror)x=SW-x;
   const d=spot.diffs.find(d=>!d.found&&Math.hypot(d.x-x,d.y-y)<=d.rad+10);
   if(d){NATIVE.buzz('ok');d.found=true;spot.flash=null;spot.miss=null;renderSpot();
     const now=performance.now();combo=(now-lastHit<4000)?combo+1:1;lastHit=now;
@@ -1545,11 +1657,11 @@ function spotClick(e,side){
 const COMBO=[['좋아요!','#ffd43b'],['굿!','#69db7c'],['그레이트!','#4dabf7'],['엑설런트!','#b197fc'],['퍼펙트!','#ff6b9d'],['어메이징!','#ff922b']];
 function spotFx(d,c){
   for(const id of ['#picL','#picR']){
-    const cv=$(id),r=cv.getBoundingClientRect(),x=r.left+d.x/SW*r.width,y=r.top+d.y/SH*r.height;
+    const cv=$(id),r=cv.getBoundingClientRect(),dx=id==='#picR'&&spot.mirror?SW-d.x:d.x,x=r.left+dx/SW*r.width,y=r.top+d.y/SH*r.height;
     FX.burst(x,y,{count:12+Math.min(c,5)*4,speed:6+Math.min(c,5)*1.2,ringR:d.rad/SW*r.width+30});
     cv.classList.remove('hit');void cv.offsetWidth;cv.classList.add('hit');
   }
-  const R=$('#picR').getBoundingClientRect(),tx=R.left+d.x/SW*R.width,ty=R.top+d.y/SH*R.height-20;
+  const R=$('#picR').getBoundingClientRect(),tx=R.left+(spot.mirror?SW-d.x:d.x)/SW*R.width,ty=R.top+d.y/SH*R.height-20;
   const [label,color]=COMBO[Math.min(c,COMBO.length)-1];
   FX.text(c>=2?`${label}<small>${c} 콤보</small>`:label,Math.min(Math.max(tx,90),window.innerWidth-90),Math.max(ty,60),{size:30+Math.min(c,5)*4,color});
   FX.bump($('#spotCount'));
@@ -1773,11 +1885,12 @@ function buildSpot(){
     initSpot();
     $('#pDesc').textContent=`${spot.sc.theme.name} · ${STAGES[0].desc}`;
     tools.innerHTML=`<span class="chip" id="spotCount"></span><span class="chip warn" id="spotMiss"></span><button class="btn hint-btn" id="hintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
-    board.innerHTML=`<div class="pics"><figure class="pic"><figcaption>원본</figcaption><canvas class="frame" id="picL" width="800" height="600" aria-label="원본 그림"></canvas></figure><figure class="pic"><figcaption>다른 그림</figcaption><canvas class="frame" id="picR" width="800" height="600" aria-label="틀린 곳이 있는 그림"></canvas></figure></div>`;
+    board.innerHTML=`<div class="pics"><figure class="pic"><figcaption>원본</figcaption><canvas class="frame" id="picL" width="800" height="600" aria-label="원본 그림"></canvas></figure><figure class="pic${spot.mirror?' mirror':''}"><figcaption>${spot.mirror?'거울 그림 ⇄':'다른 그림'}</figcaption><canvas class="frame" id="picR" width="800" height="600" aria-label="틀린 곳이 있는 그림"></canvas></figure></div>`;
     $('#picL').addEventListener('click',e=>spotClick(e,'L'));
     $('#picR').addEventListener('click',e=>spotClick(e,'R'));
     $('#hintBtn').addEventListener('click',spotHint);
     renderSpot();gameDock();
+    if(spot.mirror)setTimeout(()=>{const q=$('#picR').getBoundingClientRect();FX.text('거울 라운드!<small>오른쪽 그림이 좌우로 뒤집혀 있어요</small>',q.left+q.width/2,q.top+q.height/2,{size:30,color:'#b197fc'})},900);
 }
 function buildJig(){
   const tools=$('#pTools'),board=$('#board');
@@ -1882,13 +1995,13 @@ function clearStage(){
     if(round<MAXR)P.unlocked=Math.max(P.unlocked,round+1);
     W().coins+=CLEAR_COIN;P.walletAt=Date.now();
     saveP();RANK.submitQuiet();
-    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}+${CLEAR_COIN}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&round%ZSIZE===0?`<dt>안개가 걷혔어요</dt><dd>${round+1}–${round+ZSIZE}라운드</dd>`:''}`;
+    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}+${CLEAR_COIN}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
     S=null;save();
-    const toDock=round<MAXR&&round%ZSIZE===0&&!isAdmin()&&P.revealed<zoneOf(round+1);
+    const toDock=isZoneEnd(round)&&!isAdmin()&&P.revealed<zoneOf(round+1);
     pendingNext=round<MAXR&&!toDock?round+1:0;
     if(toDock){store.set('sekan-viewz',zoneOf(round));dockFocus=true}
     $('#mEyebrow').textContent=`라운드 ${round} · ${STAGES[stageNo].name}`;
-    $('#mTitle').textContent=round===MAXR?'360라운드 완주!':'라운드 클리어!';
+    $('#mTitle').textContent=round===MAXR?`${MAXR}라운드 완주!`:'라운드 클리어!';
     $('#mNext').textContent=toDock?`선착장으로 가기 · ${ZONES[zoneOf(round+1)].name}`:round<MAXR?`라운드 ${round+1} 도전 · ${STAGES[typeOf(round+1)].name}`:'라운드 선택으로';
   }else{
     S.stage++;save();
@@ -1945,6 +2058,8 @@ const ZONES=[
   {name:'눈 덮인 산',lvl:'보통',cls:'z-mount',land:['#ffffff','#dce8f8'],patch:'#ffffff',cliff:['#a8bcdc','#7088b0'],road:['#6a7fa6','#9fb3d6','#c8d6ee'],
    big:['spine','snowman','igloo','spine','spine2','snowman','igloo','spine2','spine','snowman'],small:['ice','spine3','ice','spine3','rock','ice']},
   {name:'별빛 하늘',lvl:'어려움',cls:'z-night',land:['#f3efff','#c9bdf6'],patch:'#ffffff',cliff:['#9a8ae0','#6a5ac0'],road:['#c08a10','#f2c14a','#fff0a8'],
+   big:['castle','lamp','planet','castle','moon','lamp','planet','castle','lamp','moon'],small:['crystal','starS','crystal','starS','cloudS','crystal']},
+  {name:'하늘섬',lvl:'아주 어려움',cls:'z-sky',land:['#fffaf0','#ffe9f3'],patch:'#ffffff',cliff:['#e8d2b0','#c9a87c'],road:['#d9a13a','#f7d36a','#fff3c4'],
    big:['castle','lamp','planet','castle','moon','lamp','planet','castle','lamp','moon'],small:['crystal','starS','crystal','starS','cloudS','crystal']}
 ];
 /* 지도 장식 (직접 그린 SVG) */
@@ -2038,7 +2153,7 @@ function groundHTML(z,H,d){
   return `<div class="ground" style="background-image:url('${embedded(`img/map/zone${z}.jpg`)}');background-position:0 ${-(z*137)%400}px;-webkit-mask-image:${m};mask-image:${m}"></div>`;
 }
 function zoneDecor(z,height,top){
-  const Z=ZONES[z],lo=z*ZSIZE+1,hi=lo+ZSIZE-1;let out='',bi=0,si=0;
+  const Z=ZONES[z],lo=zLo(z),hi=zHi(z);let out='',bi=0,si=0;
   const put=(name,x,y)=>{out+=`<div class="deco" style="left:${x}%;top:${Math.round(y-top)}px">${MG.A[name]}</div>`};
   for(let n=lo;n<=hi;n++){
     const m=n%4,y=mapY(n);
@@ -2047,7 +2162,7 @@ function zoneDecor(z,height,top){
   }
   return out;
 }
-const MAP_BOATS=['boatOrange','boatBlue','boatPurple'];
+const MAP_BOATS=['boatOrange','boatBlue','boatPurple','wingShip'];
 // [그림, 가로 위치 %, 세로 위치(-1 위 섬 쪽 ~ 1 아래 섬 쪽), 너비 px, 움직임]
 const SEA_DECO=[
   [['rockBig',16,-.25,96],['rockSmall',84,.35,58],['buoy',80,-.45,48],['fish',22,.45,58]],
@@ -2061,11 +2176,11 @@ const MAP={STEP:80,GAP:0,PAD:120,SEA:480,ISL:110};
 const TYPE_ICON=['<svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12.5 12.5 L17 17" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>','<svg viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" fill="currentColor"/><rect x="11" y="3" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="11" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="11" y="11" width="6" height="6" fill="currentColor"/></svg>','<svg viewBox="0 0 20 20"><path d="M3 6h4a2.2 2.2 0 1 1 4 0h4v4a2.2 2.2 0 1 0 0 4v3H3z" fill="currentColor"/></svg>'];
 const TYPE_SHORT=['틀린그림','로직','퍼즐'];
 // 지도는 한 번에 한 지역(VIEWZ)만. 위쪽 바다(선착장)·땅·아래쪽 바다(돌아가는 선착장)
-let VIEWZ=0,arriveZ=-1,dockFocus=false;
+let VIEWZ=0,arriveZ=-1,dockFocus=false,dockMsg='';
 const MAP_TOP=z=>z<ZONES.length-1?300:24, MAP_BOT=z=>z>0?250:0;
-const mapY=n=>MAP_TOP(VIEWZ)+MAP.PAD+((VIEWZ+1)*ZSIZE-n)*MAP.STEP;
+const mapY=n=>MAP_TOP(VIEWZ)+MAP.PAD+(zHi(VIEWZ)-n)*MAP.STEP;
 // 섬(지역) 위·아래 끝, 선착장 길이
-const islTop=z=>MAP_TOP(z), islBot=z=>MAP_TOP(z)+MAP.PAD*2+(ZSIZE-1)*MAP.STEP;
+const islTop=z=>MAP_TOP(z), islBot=z=>MAP_TOP(z)+MAP.PAD*2+(zLen(z)-1)*MAP.STEP;
 const PIER=86;
 const mapX=n=>50-32*Math.cos(n*Math.PI/2)+4*Math.sin(n*1.7);
 function curvePath(pts){
@@ -2081,11 +2196,11 @@ function curvePath(pts){
 function roadPath(from,to){const pts=[];for(let n=from;n<=to;n++)pts.push([mapX(n),mapY(n)]);return curvePath(pts)}
 // 한 섬의 길: (아래 선착장에서) → 라운드들 → (위 선착장까지). upto 라운드까지만
 function islandRoad(z,upto){
-  const lo=z*ZSIZE+1,hi=Math.min(z*ZSIZE+ZSIZE,upto);
+  const lo=zLo(z),hi=Math.min(zHi(z),upto);
   const pts=[];
   if(z>0)pts.push([50,islBot(z)+6],[50,islBot(z)-36]);
   for(let n=lo;n<=hi;n++)pts.push([mapX(n),mapY(n)]);
-  if(hi===z*ZSIZE+ZSIZE&&z<ZONES.length-1&&upto>hi)pts.push([50,islTop(z)+36],[50,islTop(z)-6]);
+  if(hi===zHi(z)&&z<ZONES.length-1&&upto>hi)pts.push([50,islTop(z)+36],[50,islTop(z)-6]);
   return curvePath(pts);
 }
 
@@ -2094,7 +2209,7 @@ function showMenu(){
   inGame=false;paused=false;stageToken++;running=false;elapsedFrozen=0;spot=null;document.body.classList.remove('game-mode');
   $('#veil').hidden=true;$('#track').hidden=true;$('#menuBtn').hidden=true;
   $('#pTitle').textContent='라운드 선택';
-  $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 90라운드마다 난이도가 한 단계씩 올라가요(아주 쉬움 → 쉬움 → 보통 → 어려움). 지역의 마지막 라운드를 깨면 선착장에서 배를 타고 다음 지역으로 갈 수 있어요.';
+  $('#pDesc').textContent='라운드마다 틀린그림 → 로직 → 퍼즐이 번갈아 나와요. 지역마다 난이도가 한 단계씩 올라가요(아주 쉬움 → 쉬움 → 보통 → 어려움 → 아주 어려움). 지역의 마지막 라운드를 깨고 그 지역 별을 80% 모으면 선착장에서 다음 지역으로 갈 수 있어요.';
   const starsTotal=Object.values(P.rounds).reduce((a,x)=>a+(x.stars||1),0);
   $('#pTools').innerHTML='';
   MG.inject();document.body.classList.add('menu-mode');
@@ -2110,19 +2225,21 @@ function showMenu(){
   if(SHORE_TOP[VIEWZ]&&VIEWZ<ZONES.length-1)h+=`<div class="shore-top" style="height:${landTop+150}px;background-image:url('${embedded(SHORE_TOP[VIEWZ])}')"></div>`;
   // 아래쪽 끝(돌아가는 선착장)은 같은 바닷가 그림을 위아래로 뒤집어서
   if(SHORE_TOP[VIEWZ]&&VIEWZ>0)h+=`<div class="shore-bot" style="top:${landBot-150}px;height:${MAP_BOT(VIEWZ)+150}px;background-image:url('${embedded(SHORE_TOP[VIEWZ])}')"></div>`;
-  for(let g=VIEWZ*ZSIZE/10;g<(VIEWZ+1)*ZSIZE/10;g++){
+  for(let g=ZSTART[VIEWZ]/10;g<ZSTART[VIEWZ+1]/10;g++){
     const lo=g*10+1,hi=g*10+10;
-    const top_=hi%ZSIZE===0,y=top_?mapY(hi)-MAP.STEP*0.75:(mapY(hi)+mapY(hi+1))/2;
+    const top_=hi===zHi(VIEWZ),y=top_?mapY(hi)-MAP.STEP*0.75:(mapY(hi)+mapY(hi+1))/2;
     const ax=top_?mapX(hi):(mapX(hi)+mapX(hi+1))/2;
-    h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo%ZSIZE===1?`<small>${Z.lvl} · ${Z.name}</small>`:''}</div>`;
+    h+=`<div class="tier ${ax>50?'l':'r'}" style="top:${y}px" title="${tierText(lo,hi)}"><b>${lo}–${hi}</b>${lo===zLo(VIEWZ)?`<small>${Z.lvl} · ${Z.name}</small>`:''}</div>`;
   }
   // 조약돌 (깬 라운드에서 다음 라운드, 마지막 라운드에서 선착장까지)
   const PB=pebblesHTML(openZone,Math.max(320,$('#board').clientWidth||innerWidth));h+=PB.html;
   // 위쪽 선착장: 다음 지역으로
   if(VIEWZ<ZONES.length-1){
-    const nz=VIEWZ+1,ready=openMax()>=nz*ZSIZE+1,first=ready&&P.revealed<nz;
+    const nz=VIEWZ+1,cleared=openMax()>=zLo(nz),have=zoneStars(VIEWZ),need=zoneNeed(VIEWZ),
+      starOk=isAdmin()||P.revealed>=nz||have>=need,ready=cleared&&starOk,first=ready&&P.revealed<nz;
+    dockMsg=!cleared?`${zHi(VIEWZ)}라운드를 깨면 출발할 수 있어요`:!starOk?`별 ${need-have}개를 더 모으면 출발할 수 있어요`:'';
     h+=`<button type="button" class="dock-go up${ready?' can':' locked'}${first?' first':''}" id="dockUp" style="top:${landTop-118}px" aria-label="${ready?`${ZONES[nz].name}로 배 타고 가기`:'아직 잠긴 선착장'}">
-      <span class="dk-tag">${ready?`⛵ ${roName(ZONES[nz].name)} 출발`:`${LOCK} ${nz*ZSIZE}라운드를 깨면 출발`}</span>
+      <span class="dk-tag">${ready?`${nz===4?'☁️':'⛵'} ${roName(ZONES[nz].name)} 출발`:!cleared?`${LOCK} ${zHi(VIEWZ)}라운드를 깨면 출발`:`${LOCK} ★ ${have} / ${need} 모으면 출발`}</span>
       <img class="dk-dock" src="${embedded(sprPath('dock'))}" alt=""><img class="dk-boat" src="${embedded(sprPath(MAP_BOATS[VIEWZ]))}" alt=""></button>`;
     h+=`<div class="sea-deco" style="left:14%;top:${landTop-150}px;width:62px"><img src="${embedded(sprPath('rockSmall'))}" alt=""></div><div class="sea-deco" style="left:86%;top:${landTop-120}px;width:44px"><img src="${embedded(sprPath('buoy'))}" alt=""></div>`;
   }
@@ -2132,10 +2249,11 @@ function showMenu(){
     h+=`<button type="button" class="dock-go down can" id="dockDown" style="top:${landBot-8}px" aria-label="${ZONES[pz].name}로 돌아가기">
       <img class="dk-dock" src="${embedded(sprPath('dock'))}" alt=""><img class="dk-boat" src="${embedded(sprPath(MAP_BOATS[pz]))}" alt="">
       <span class="dk-tag">◀ ${roName(ZONES[pz].name)} 돌아가기</span></button>`;
-    h+=`<div class="sea-deco" style="left:82%;top:${landBot+150}px;width:70px"><img src="${embedded(sprPath('rockMid'))}" alt=""></div><div class="sea-deco" style="left:15%;top:${landBot+170}px;width:52px"><img src="${embedded(sprPath('fish'))}" alt=""></div>`;
+    h+=VIEWZ===4?`<div class="sea-deco" style="left:82%;top:${landBot+150}px;width:96px"><img src="${embedded(sprPath('skyCloudC'))}" alt=""></div><div class="sea-deco" style="left:15%;top:${landBot+170}px;width:80px"><img src="${embedded(sprPath('skyCloudF'))}" alt=""></div>`
+      :`<div class="sea-deco" style="left:82%;top:${landBot+150}px;width:70px"><img src="${embedded(sprPath('rockMid'))}" alt=""></div><div class="sea-deco" style="left:15%;top:${landBot+170}px;width:52px"><img src="${embedded(sprPath('fish'))}" alt=""></div>`;
   }
   // 라운드 칸
-  for(let n=(VIEWZ+1)*ZSIZE;n>VIEWZ*ZSIZE;n--){
+  for(let n=zHi(VIEWZ);n>=zLo(VIEWZ);n--){
     const rec=P.rounds[n],open=n<=openMax();
     const cls=rec?'clear':n===P.unlocked||(n<P.unlocked&&!isAdmin())?'next':open?'adm':'lock';
     const stars=rec?starRow(rec.stars||1):'';
@@ -2172,7 +2290,7 @@ function showMenu(){
   toCur();upd();requestAnimationFrame(()=>{toCur();upd();dockFocus=false});
   const du=$('#dockUp'),dd=$('#dockDown');
   if(du)du.addEventListener('click',()=>{
-    if(du.classList.contains('locked')){NATIVE.buzz('tick');const q=du.getBoundingClientRect();FX.text(`${(VIEWZ+1)*ZSIZE}라운드를 깨면 출발할 수 있어요`,q.left+q.width/2,q.top,{size:18,color:'#ffffff'});return}
+    if(du.classList.contains('locked')){NATIVE.buzz('tick');const q=du.getBoundingClientRect();FX.text(dockMsg,q.left+q.width/2,q.top,{size:18,color:'#ffffff'});return}
     NATIVE.buzz('ok');travel(VIEWZ,VIEWZ+1)});
   if(dd)dd.addEventListener('click',()=>{NATIVE.buzz('ok');travel(VIEWZ,VIEWZ-1)});
   // 새 지역에 처음 도착했을 때
@@ -2185,19 +2303,19 @@ function showMenu(){
 }
 /* ---------- 지역 이동 장면: 옆에서 본 바다를 배가 왼쪽 섬 → 오른쪽 섬으로 ---------- */
 const VOY={
-  sky:[['#6ec3ff','#d9f2ff'],['#3fa9f5','#c8ecff'],['#9dbdf5','#eef4ff'],['#1b1d56','#6a4bb8']],
-  sea:[['#43c3ef','#1b8fd0'],['#2fb3ea','#137fc4'],['#6fa8e0','#3f72b8'],['#3d3a99','#221d63']],
-  props:[['blossomPink','windmill','cottageRed'],['palmA','lighthouse','beachHutBlue'],['pineSnowA','cabinRed','snowmanRed'],['treeNightPurple','castleLilac','lampYellow']],
-  light:['sun','sun','sun','moonFull']
+  sky:[['#6ec3ff','#d9f2ff'],['#3fa9f5','#c8ecff'],['#9dbdf5','#eef4ff'],['#1b1d56','#6a4bb8'],['#8fd0ff','#e8f6ff']],
+  sea:[['#43c3ef','#1b8fd0'],['#2fb3ea','#137fc4'],['#6fa8e0','#3f72b8'],['#3d3a99','#221d63'],['#f4f9ff','#bfe2ff']],
+  props:[['blossomPink','windmill','cottageRed'],['palmA','lighthouse','beachHutBlue'],['pineSnowA','cabinRed','snowmanRed'],['treeNightPurple','castleLilac','lampYellow'],['skyTree','skyHouse','bellTower']],
+  light:['sun','sun','sun','moonFull','sun']
 };
 const VOY_BOAT=`<svg viewBox="0 0 160 130" aria-hidden="true"><path d="M78 8 V92" stroke="#7a4a2c" stroke-width="5" stroke-linecap="round"/><path d="M82 12 Q132 50 126 88 L82 88Z" fill="#fff"/><path d="M82 12 Q104 50 100 88 L82 88Z" fill="#e3eaf5"/><path d="M74 20 Q36 54 40 88 L74 88Z" fill="#ff6b6b"/><path d="M74 20 Q58 54 60 88 L74 88Z" fill="#e8484c"/><path d="M78 4 l20 6 l-20 6z" fill="#ffd43b"/><path d="M10 92 H150 Q140 120 112 122 H44 Q20 120 10 92Z" fill="#ffb44a"/><path d="M80 92 H150 Q140 120 112 122 H80Z" fill="#e8962e"/><path d="M10 92 H150" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${[42,78,114].map(x=>`<circle cx="${x}" cy="105" r="6" fill="#fff"/><circle cx="${x}" cy="105" r="3" fill="#7cc4ea"/>`).join('')}</svg>`;
 // '바다로', '산으로'처럼 받침에 맞춰 '로/으로'를 붙임 (ㄹ 받침은 '로')
 function roName(w){const c=w.charCodeAt(w.length-1)-0xAC00;if(c<0||c>11171)return w+'로';const j=c%28;return w+(j===0||j===8?'로':'으로')}
 // 조약돌: 라운드를 깨면 다음 라운드(또는 선착장)까지 3~4개가 놓임
-const PEB_KIND=['stone','shell','snow','mush'],PEB_PIC=[null,['shellPink','shellWhite','shellPink'],null,['glowMushPink','glowMushBlue','glowMushGreen']];
-const PEB_COL=[['#efe7da','#a99a82'],['#fff1d2','#c99a58'],['#e6eef9','#8ea3c4'],['#fff6c8','#b48ff0']];
+const PEB_KIND=['stone','shell','snow','mush','cloud'],PEB_PIC=[null,['shellPink','shellWhite','shellPink'],null,['glowMushPink','glowMushBlue','glowMushGreen'],['pebCloudA','pebCloudB','pebCloudC','pebCloudD']];
+const PEB_COL=[['#efe7da','#a99a82'],['#fff1d2','#c99a58'],['#e6eef9','#8ea3c4'],['#fff6c8','#b48ff0'],['#ffffff','#d8c8f0']];
 function pebbleSpots(z,W){
-  const lo=z*ZSIZE+1,hi=z*ZSIZE+ZSIZE,pts=[];
+  const lo=zLo(z),hi=zHi(z),pts=[];
   if(z>0)pts.push({x:50,y:islBot(z)-30,seg:lo-1,dock:1});
   for(let n=lo;n<=hi;n++)pts.push({x:mapX(n),y:mapY(n),seg:n});
   if(z<ZONES.length-1)pts.push({x:50,y:islTop(z)+30,dock:1});
@@ -2228,7 +2346,7 @@ function pebblesHTML(openZone,W){
       const isNew=fresh.includes(p.seg);
       // 꽃 언덕 조약돌 · 푸른 바다 조개 · 눈 덮인 산 눈덩이 · 별빛 하늘 빛나는 버섯
       const kind=PEB_KIND[z],pic=PEB_PIC[z]?`<img src="${embedded(sprPath(PEB_PIC[z][(pi++)%PEB_PIC[z].length]))}" alt="">`:'';
-      const rr=kind==='shell'?Math.round(rot*.6):kind==='mush'?Math.round(rot*.25):rot;
+      const rr=kind==='shell'?Math.round(rot*.6):kind==='mush'||kind==='cloud'?Math.round(rot*.2):rot;
       h+=`<i class="peb ${kind}${isNew?' new':''}" style="left:${p.x.toFixed(2)}%;top:${p.y.toFixed(1)}px;--s:${sz};--r:${rr}deg;--p0:${C[0]};--p1:${C[1]}${isNew?`;--d:${(.55+k++*.2).toFixed(2)}s`:''}">${pic}</i>`;
     }
   }
@@ -2236,7 +2354,7 @@ function pebblesHTML(openZone,W){
   return {html:h,count:k};
 }
 // 지역 위쪽 끝 바닷가 그림 (위에서 본 바다 → 땅). 없는 지역은 물결 선만
-const SHORE_TOP={0:'img/map/shore0.jpg',1:'img/map/shore1.jpg',2:'img/map/shore2.jpg',3:'img/map/shore3.jpg'};
+const SHORE_TOP={0:'img/map/shore0.jpg',1:'img/map/shore1.jpg',2:'img/map/shore2.jpg',3:'img/map/shore3.jpg',4:'img/map/shore4.jpg'};
 // 선착장에서 배를 타고 다른 지역으로
 function travel(from,to){
   playVoyage(from,to,()=>{
@@ -2256,8 +2374,42 @@ function landHTML(z,H){
   return `<div class="ground" style="background-image:url('${embedded(`img/map/zone${z}.jpg`)}');background-position:0 ${-(z*137)%400}px;-webkit-mask-image:${m};mask-image:${m}"></div>
     <svg class="shore" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true">${waveT?`<path d="${edge(yt)}" class="sh1" vector-effect="non-scaling-stroke"/><path d="${edge(x=>yt(x)-5)}" class="sh2" vector-effect="non-scaling-stroke"/>`:''}${waveB?`<path d="${edge(yb)}" class="sh1" vector-effect="non-scaling-stroke"/><path d="${edge(x=>yb(x)+5)}" class="sh2" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
 }
+/* 별빛 하늘 ↔ 하늘섬: 옆 바다 대신 위로 날아오르는 장면 */
+function playFlight(from,to,done){
+  if(FX.RM){done();return}
+  const up=to>from,img=p=>`<img src="${embedded(p)}" alt="">`;
+  const el=document.createElement('div');el.className=`voyage flight ${up?'up':'down'}`;el.setAttribute('role','dialog');el.setAttribute('aria-label',`${ZONES[to].name}로 이동`);
+  // 배 위치: 아래 섬(별빛 하늘) 위 ↔ 위 섬(하늘섬) 위. 화면 높이 기준
+  const vh=innerHeight/100,vw=innerWidth/100,shipW=Math.min(46*vw,230),shipH=shipW*1.19;
+  const botIslW=Math.min(98*vw,560),botIslH=botIslW*360/549,topIslW=Math.min(92*vw,520),topIslH=topIslW*420/473;
+  const yBot=100*vh-2*vh-botIslH*.86-shipH*.8;   // 시작 화면(세계 200~300vh) 안에서 아래 섬 위
+  const yTop=30*vh+topIslH*.62-shipH*.8;          // 끝 화면(세계 0~100vh) 안에서 위 섬 앞
+  el.style.setProperty('--y0',yBot+'px');el.style.setProperty('--y1',yTop+'px');  // 내려갈 때는 같은 움직임을 거꾸로 재생
+  const r=rng(4242),CL=['skyCloudA','skyCloudB','skyCloudC','skyCloudD','skyCloudE','skyCloudF'];
+  let back='',front='';
+  for(let i=0;i<16;i++){
+    const y=(95+r()*130).toFixed(1),x=(r()*110-25).toFixed(1),w=(34+r()*46).toFixed(0),c=CL[i%CL.length];
+    const tag=`<img class="fl-c" src="${embedded(sprPath(c))}" alt="" style="left:${x}vw;top:${y}vh;width:${w}vw">`;
+    if(i%3===0)front+=tag;else back+=tag;
+  }
+  el.innerHTML=`<div class="fl-world"><div class="fl-sky"></div><div class="fl-stars"></div>
+      <div class="fl-moon">${img(sprPath('moonFull'))}</div>${back}
+      <img class="fl-isl it" src="${embedded('img/voyage/islSky.webp')}" alt="">
+      <img class="fl-isl ib" src="${embedded('img/voyage/islNight.webp')}" alt=""></div>
+    <div class="fl-ship"><div class="fl-bob"><img class="fl-wing b" src="${embedded('img/voyage/vyWing.webp')}" alt=""><img class="fl-body" src="${embedded('img/voyage/vyShip.webp')}" alt=""><img class="fl-wing f" src="${embedded('img/voyage/vyWing.webp')}" alt=""></div></div>
+    <div class="fl-world front">${front}</div>
+    <div class="vy-title"><small>${ZONES[from].name} → ${ZONES[to].name}</small><b>${roName(ZONES[to].name)} 출발!</b></div>
+    <button type="button" class="vy-skip">건너뛰기 ›</button>`;
+  document.body.appendChild(el);
+  let ended=false;const end=()=>{if(ended)return;ended=true;el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
+  el.querySelector('.vy-skip').addEventListener('click',e=>{e.stopPropagation();NATIVE.buzz('tick');end()});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
+  setTimeout(()=>{const t=el.querySelector('.vy-title b');if(t){t.textContent=`${ZONES[to].name} 도착!`;el.classList.add('arrive');NATIVE.buzz('win')}},4700);
+  setTimeout(end,6000);
+}
 function playVoyage(from,to,done){
   if(FX.RM){done();return}
+  if(Math.max(from,to)===4){playFlight(from,to,done);return}
   const img=p=>`<img src="${embedded(p)}" alt="">`;
   const ISL=['islFlower','islSea','islSnow','islNight'],BOAT=['vyBoatOrange','vyBoatBlue','vyBoatPurple'];
   // 지역 분위기: 낮 → 낮 → 해 질 녘 → 밤 (바다 그림 위에 곱하기 색)
@@ -2280,7 +2432,7 @@ function playVoyage(from,to,done){
 }
 /* ---------- 인게임 화면: 위 상태줄 + 우측 상단 메뉴 + 우측 하단 버튼 ---------- */
 $('#gdock').appendChild($('#pTools'));
-const GAME_BG=['img/bg/zone0-flowerhill.jpg','img/bg/zone1-sea.jpg','img/bg/zone2-snow.jpg','img/bg/zone3-night.jpg'];
+const GAME_BG=['img/bg/zone0-flowerhill.jpg','img/bg/zone1-sea.jpg','img/bg/zone2-snow.jpg','img/bg/zone3-night.jpg','img/bg/zone4-sky.jpg'];
 function setGameBg(r){const z=Math.min(GAME_BG.length-1,zoneOf(r));document.body.dataset.zone=z;document.body.style.setProperty('--gbg',`url("${embedded(GAME_BG[z])}")`)}
 function gameDock(){
   const info=$('#ghInfo'),time=$('#ghTime');
@@ -2393,7 +2545,7 @@ const RANK=(function(){
         // 서버에 새 칸이 아직 없으면 그 칸만 빼고 다시 보냄 (avatar 먼저, 그래도 안 되면 clears·avg_time까지)
         delete row.avatar;try{await send(row)}catch(e2){if(e2&&(e2.code==='PGRST204'||/clears|avg_time|column/i.test(e2.message||''))){delete row.clears;delete row.avg_time;await send(row)}else throw e2}}
       // 서버 제한이 아직 예전(300라운드·별 900개)이면 그 안으로 맞춰서 다시 보냄
-      else if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))){row.best_round=Math.min(300,row.best_round);row.stars=Math.min(900,row.stars);await send(row)}
+      else if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))){row.best_round=Math.min(360,row.best_round);row.stars=Math.min(1080,row.stars);await send(row)}
       else throw e}
     store.set('sekan-rank-pending',false);
   }
@@ -2818,6 +2970,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.2','10월 29일','다섯 번째 지역 하늘섬',['구름 위 하늘섬 150라운드(361~510), 난이도 아주 어려움','별빛 하늘에서 날개 달린 배를 타고 위로 날아올라 하늘섬으로','다음 지역으로 가려면 그 지역 별의 80%를 모아야 해요 (이미 열린 지역은 그대로)','하늘섬 틀린그림: 살짝 이동·하나 더 생김·살짝 기울기·배경 속 차이, 작은 물건에 숨김','481라운드부터 9라운드마다 오른쪽 그림이 좌우로 뒤집힌 거울 라운드','하늘섬 물건 18가지, 구름 디딤돌','틀린 곳 최대 12개, 퍼즐 최대 9×9']],
   ['2.1','10월 29일','하트와 실패',['하트 생김: 최대 10개, 10분마다 1개씩 채워져요','라운드를 시작할 때 하트 1개를 걸고, 깨면 그대로예요','틀린그림·로직에서 실수 5번이면 실패, 하트 1개가 줄어요','중간에 그만두거나 처음부터 다시 하면 하트 1개가 줄어요','로직에서 틀린 칸을 칠하면 바로 알려 주고 맞는 표시로 고정해요','상점에서 하트 1개 100코인','하트가 없으면 라운드를 시작할 수 없어요']],
   ['2.0','10월 29일','힌트 충전 바꾸기',['힌트는 최대 10개까지 가질 수 있어요 (전에는 20개)','무료 힌트는 30분마다 1개씩 채워져요 (전에는 10분)','이미 10개보다 많이 가진 힌트는 그대로 쓸 수 있어요']],
   ['1.9','10월 29일','진행 중인 라운드로 바로',['게임을 켜면 지금 진행 중인 라운드가 있는 지역 지도가 바로 나와요','다른 지역을 보다가 껐어도 진행 중인 지역으로 맞춰서 열려요','지역 마지막 라운드를 깨고 아직 배를 안 탔으면 선착장이 보이게 열려요']],
@@ -2850,13 +3003,13 @@ function openAdmin(){
       <b>화면</b>
       <div class="adm-row">${g('intro','시작 화면')}${g('login','로그인')}${g('privacy','개인정보 동의')}${g('signup','아이디 만들기')}${g('nick','닉네임')}${g('profile','프로필')}${g('avatar','프로필 사진')}${g('shop','상점')}${g('rank','랭킹')}${g('round','라운드 시작 창')}${g('patch','패치 노트')}</div>
       <b>단계별 첫 라운드로 바로 시작</b>
-      <div class="adm-row">${ZONES.map((Z,z)=>[0,1,2].map(t=>{const n=z*ZSIZE+1+t;return g('play'+n,`${Z.lvl} · ${STAGES[t].name}`)}).join('')).join('')}</div>
+      <div class="adm-row">${ZONES.map((Z,z)=>[0,1,2].map(t=>{const n=zLo(z)+t;return g('play'+n,`${Z.lvl} · ${STAGES[t].name}`)}).join('')).join('')}</div>
       <b>단계별 마지막 라운드로 바로 시작</b>
-      <div class="adm-row">${ZONES.map((Z,z)=>[2,1,0].map(t=>{const n=(z+1)*ZSIZE-t;return g('play'+n,`${Z.lvl} · ${n}라운드`)}).join('')).join('')}</div>
+      <div class="adm-row">${ZONES.map((Z,z)=>[2,1,0].map(t=>{const n=zHi(z)-t;return g('play'+n,`${Z.lvl} · ${n}라운드`)}).join('')).join('')}</div>
       <b>안개 걷히는 장면</b>
       <div class="adm-row">${ZONES.slice(1).map((Z,i)=>g('fog'+(i+1),`${Z.name} 오픈`)).join('')}</div>
       <b>지도 위치로 이동</b>
-      <div class="adm-row">${ZONES.map((Z,z)=>g('go'+(z*ZSIZE+1),`${Z.lvl} (${z*ZSIZE+1}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
+      <div class="adm-row">${ZONES.map((Z,z)=>g('go'+zLo(z),`${Z.lvl} (${zLo(z)}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
     </div>
     <div class="row"><button class="btn primary" type="button" id="admClose">닫기</button></div>`);
   sh.querySelector('.card').classList.add('adm-card');

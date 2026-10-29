@@ -53,3 +53,9 @@ drop trigger if exists leaderboard_skip_admin on public.leaderboard;
 create trigger leaderboard_skip_admin
   before insert or update on public.leaderboard
   for each row execute function public.leaderboard_skip_admin();
+
+-- 2026-10-29 · 하늘섬(361~510라운드) 추가로 제한 넓힘 (라운드 510, 별 510×3)
+alter table public.leaderboard drop constraint if exists leaderboard_best_round_check;
+alter table public.leaderboard add constraint leaderboard_best_round_check check (best_round between 0 and 510);
+alter table public.leaderboard drop constraint if exists leaderboard_stars_check;
+alter table public.leaderboard add constraint leaderboard_stars_check check (stars between 0 and 1530);
