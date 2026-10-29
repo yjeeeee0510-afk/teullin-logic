@@ -59,10 +59,12 @@
 - 진행 기록 `P` (localStorage `sekan-progress`), 아이디 계정이면 Supabase `progress` 표와 동기화(`mergeP`).
 - 프로필: 좌측 상단 `#profBtn`, 십이지 친구 얼굴 선택(`P.avatar`), 이름은 `ZODIAC.NAMES`(찍찍이·음메·어흥이·깡총이·미르·스르르·다그닥·몽실이·끼끼·꼬꼬·멍멍이·꿀꿀이).
 - 지도 위 다른 플레이어(`OTHERS`): 서버 함수 `leaderboard_players`(아이디 계정만, 게스트 제외)로 받아 `best_round+1` 라운드 옆에 얼굴(최대 3개+N)과 닉네임, 누르면 그 라운드 목록. 1분 캐시, 함수가 없으면 아무것도 안 보임. 내 기록은 빼고 보임.
+- 접속 신호: 세션이 이미 있는 사람만 45초마다 `presence` 표에 upsert(`RANK.beat`), 화면을 숨기거나 닫으면 online=false. 운영진 설정 → '접속 중인 사람'(`openOnline`)이 서버 함수 `presence_online()`(운영진 이메일만, 90초 안 신호)으로 10초마다 목록을 받음. 표·함수가 없으면 조용히 멈춤.
 - 운영진: `ADMIN_IDS`(`yjeeeee0510`, `dhsb1234`) — 랭킹 제외, 모든 라운드 열림, 설정 → 운영진 도구(모든 화면 보기), 일시정지 메뉴의 바로 클리어.
 
 ## 랭킹 서버 (Supabase, 프로젝트 teullin-logic)
 - 표: `leaderboard`(닉네임·최고 라운드·별·점수·클리어 횟수·평균 시간·avatar·title), `progress`(아이디별 진행 기록 JSON).
+- 표 `presence`(id·nickname·avatar·online·since·last_seen, 시간은 트리거 `presence_touch`가 서버 시간으로). 함수 `presence_online()`.
 - 함수: `leaderboard_top(n)`, `leaderboard_me()`, `leaderboard_players(n)`(지도용, 아이디 계정만), `delete_my_account()`. 운영진 기록은 트리거 `leaderboard_skip_admin`이 막는다 (운영진 이메일 목록, 클라이언트 `ADMIN_IDS`와 맞출 것).
 - 아이디 로그인은 `아이디@teullin.game` 이메일 형식으로 Supabase Auth에 저장된다.
 - 운영 데이터베이스 변경(SQL)은 사용자가 Supabase SQL Editor에서 직접 실행한다. SQL을 만들어 주고, 실행 전에도 게임이 깨지지 않게 클라이언트에 대비 코드를 둔다.

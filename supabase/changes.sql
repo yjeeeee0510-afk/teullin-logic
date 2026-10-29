@@ -116,3 +116,48 @@ begin
   end if;
   return new;
 end $$;
+
+-- 2026-10-29 · 운영진 접속 중인 사람 보기
+-- 접속 중인 사람 보기 (운영진 전용)
+create table if not exists public.presence (
+  id uuid primary key references auth.users(id) on delete cascade,
+  nickname text,
+  avatar int,
+  online boolean not null default true,
+  since timestamptz not null default now(),
+  last_seen timestamptz not null default now()
+);
+alter table public.presence enable row level security;
+drop policy if exists presence_insert_own on public.presence;
+create policy presence_insert_own on public.presence for insert to authenticated with check (auth.uid() = id);
+drop policy if exists presence_update_own on public.presence;
+create policy presence_update_own on public.presence for update to authenticated using (auth.uid() = id) with check (auth.uid() = id);
+drop policy if exists presence_select_own on public.presence;
+create policy presence_select_own on public.presence for select to authenticated using (auth.uid() = id);
+
+-- 시간은 서버가 정한다. 2분 넘게 끊겼다가 다시 오면 접속 시작 시간을 새로
+create or replace function public.presence_touch() returns trigger language plpgsql as $$
+begin
+  if tg_op = 'INSERT' or old.last_seen < now() - interval '2 minutes' or not old.online then new.since := now();
+  else new.since := old.since; end if;
+  new.last_seen := now();
+  new.nickname := left(coalesce(new.nickname, ''), 30);
+  return new;
+end $$;
+drop trigger if exists presence_touch on public.presence;
+create trigger presence_touch before insert or update on public.presence for each row execute function public.presence_touch();
+
+-- 운영진만: 최근 90초 안에 신호가 온 사람
+create or replace function public.presence_online()
+returns table (nickname text, avatar int, account text, is_guest boolean, since timestamptz, last_seen timestamptz)
+language sql security definer set search_path = public as $$
+  select p.nickname, p.avatar,
+         case when u.is_anonymous then null else split_part(u.email, '@', 1) end,
+         coalesce(u.is_anonymous, true), p.since, p.last_seen
+  from public.presence p join auth.users u on u.id = p.id
+  where p.online and p.last_seen > now() - interval '90 seconds'
+    and (auth.jwt() ->> 'email') in ('yjeeeee0510@teullin.game', 'dhsb1234@teullin.game')
+  order by coalesce(u.is_anonymous, true), p.since;
+$$;
+revoke all on function public.presence_online() from public, anon;
+grant execute on function public.presence_online() to authenticated;

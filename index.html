@@ -759,6 +759,13 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 /* 운영진 */
 .adm-badge{display:inline-block;font-size:10.5px;font-weight:800;line-height:1;padding:3px 6px;border-radius:6px;background:#e03131;color:#fff;margin-right:4px;vertical-align:1px;letter-spacing:.02em}
 .btn.adm-btn{border-color:#e03131;color:#e03131}
+.on-list{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:52vh;overflow:auto;text-align:left}
+.on-list li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1.5px solid #e3e8f0;border-radius:12px;background:#f8fafc}
+.on-list .av{flex:none;width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--c);display:grid;place-items:center}
+.on-list .av svg,.on-list .av img{width:100%;height:100%}
+.on-nm{flex:1;min-width:0;display:flex;flex-direction:column}.on-nm b{font-size:15px;color:#1b2742;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.on-nm small{font-size:12px;color:#7a869a}
+.on-t{flex:none;font-size:12px;color:#2b8a3e;font-weight:700;display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.on-t i{width:8px;height:8px;border-radius:50%;background:#40c057;box-shadow:0 0 0 3px rgba(64,192,87,.25)}
 .pn-list{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow:auto;margin:6px 0 4px;text-align:left}
 .pn{border:1.5px solid #e3e8f0;border-radius:12px;background:#f8fafc;padding:0 12px}
 .pn[open]{background:#fff;border-color:#c5d0e0}
@@ -2639,7 +2646,7 @@ const RANK=(function(){
   const host=location.hostname||'';
   const onClaude=/(^|\.)claude\.ai$|claudeusercontent|claude\.site/.test(host);
   const enabled=!!(url&&key)&&!onClaude;
-  let session=store.get('sekan-auth',null);let noPlayers=false;
+  let session=store.get('sekan-auth',null);let noPlayers=false,noPresence=false;
   const nick=()=>store.get('sekan-nick','');
   const DOMAIN='teullin.game',toEmail=id=>String(id).toLowerCase()+'@'+DOMAIN;
   const isAcc=s=>!!(s&&s.user&&!s.user.is_anonymous&&s.user.email);
@@ -2742,6 +2749,14 @@ const RANK=(function(){
     async setNick(n){n=clean(n);store.set('sekan-nick',n);if(!enabled)return {name:n,synced:false,reason:onClaude?'claude':'config'};try{await submit(n);return {name:n,synced:true}}catch(e){store.set('sekan-rank-pending',true);return {name:n,synced:false,reason:'error',error:e}}},
     async top(n){const s=await auth();return api('/rest/v1/rpc/leaderboard_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})},
     async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
+    // 접속 신호: 이미 세션이 있는 사람만 (새 익명 계정을 만들지 않음). 표가 없으면 조용히 멈춤
+    async beat(online){if(!enabled||noPresence||!session||!session.access_token)return;let s;try{s=await auth()}catch(e){return}
+      const row={id:s.user.id,nickname:nick()||account()||null,online:!!online};if(typeof P.avatar==='number')row.avatar=P.avatar;
+      try{await fetch(url+'/rest/v1/presence?on_conflict=id',{method:'POST',keepalive:!online,headers:Object.assign({apikey:key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},bearer(s)),body:JSON.stringify(row)})
+        .then(r=>{if(r.status===404)noPresence=true})}catch(e){}},
+    // 운영진: 지금 접속 중인 사람 (서버 함수 presence_online, 없으면 null)
+    async online(){const s=await auth();try{return await api('/rest/v1/rpc/presence_online',{method:'POST',headers:bearer(s),body:'{}'})||[]}
+      catch(e){if(e&&(e.status===404||e.code==='PGRST202'||e.code==='42P01'||/presence/i.test(e.message||'')))return null;throw e}},
     // 아이디로 로그인해 랭킹에 있는 사람들 (서버 함수 leaderboard_players, 아직 없으면 빈 목록)
     async players(n){if(noPlayers)return [];const s=await auth();
       try{return await api('/rest/v1/rpc/leaderboard_players',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||300})})||[]}
@@ -3307,7 +3322,7 @@ function openAdmin(){
     <p class="lead">운영진 아이디는 랭킹에 올라가지 않고, 1~${MAXR}라운드가 모두 열려 있어요. 아래 버튼으로 각 화면을 바로 볼 수 있어요.</p>
     <div class="adm-list">
       <b>화면</b>
-      <div class="adm-row">${g('intro','시작 화면')}${g('login','로그인')}${g('privacy','개인정보 동의')}${g('signup','아이디 만들기')}${g('nick','닉네임')}${g('profile','프로필')}${g('avatar','프로필 사진')}${g('shop','상점')}${g('rank','랭킹')}${g('round','라운드 시작 창')}${g('patch','패치 노트')}</div>
+      <div class="adm-row">${g('intro','시작 화면')}${g('login','로그인')}${g('privacy','개인정보 동의')}${g('signup','아이디 만들기')}${g('nick','닉네임')}${g('profile','프로필')}${g('avatar','프로필 사진')}${g('shop','상점')}${g('rank','랭킹')}${g('round','라운드 시작 창')}${g('patch','패치 노트')}${g('online','접속 중인 사람')}</div>
       <b>단계별 첫 라운드로 바로 시작</b>
       <div class="adm-row">${ZONES.map((Z,z)=>[0,1,2].map(t=>{const n=zLo(z)+t;return g('play'+n,`${Z.lvl} · ${STAGES[t].name}`)}).join('')).join('')}</div>
       <b>단계별 마지막 라운드로 바로 시작</b>
@@ -3332,11 +3347,43 @@ function openAdmin(){
     if(a==='shop'){openShop();return}
     if(a==='rank'){closeSheet();openRank();return}
     if(a==='patch'){openPatchNotes();return}
+    if(a==='online'){openOnline();return}
     if(a==='round'){openRoundSheet(Math.max(1,P.unlocked));return}
     if(a.startsWith('play')){closeSheet();startRound(+a.slice(4));return}
     if(a.startsWith('fog')){closeSheet();const z=+a.slice(3);store.set('sekan-viewz',z-1);showMenu();travel(z-1,z);return}
     if(a.startsWith('go')){closeSheet();const n=+a.slice(2);store.set('sekan-viewz',zoneOf(n));showMenu();const m=$('#map');if(m)m.scrollTop=Math.max(0,mapY(n)-m.clientHeight*0.62);return}
   }));
+}
+/* ---------- 접속 신호 (운영진 '접속 중인 사람' 창용) ---------- */
+(function(){
+  const beat=()=>{if(!document.hidden)RANK.beat(true)};
+  setTimeout(beat,3000);setInterval(beat,45000);
+  document.addEventListener('visibilitychange',()=>RANK.beat(!document.hidden));
+  addEventListener('pagehide',()=>RANK.beat(false));
+})();
+function openOnline(){
+  if(!isAdmin())return;
+  const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> 접속 중인 사람</div><h3>지금 접속 중</h3>
+    <p class="lead" id="onSum">불러오는 중…</p>
+    <ul class="on-list" id="onList"></ul>
+    <p class="rank-note">90초 안에 게임에서 신호가 온 사람만 보여요. 10초마다 새로 고쳐요. 게스트는 닉네임을 정한 사람만 보여요.</p>
+    <div class="row"><button class="btn primary" type="button" id="onClose">닫기</button></div>`);
+  sh.querySelector('.card').classList.add('adm-card');
+  let timer=0;const stop=()=>clearInterval(timer);
+  sh.querySelector('#onClose').addEventListener('click',()=>{stop();closeSheet()});
+  const ago=t=>{const s=Math.max(0,Math.round((Date.now()-Date.parse(t))/1000));return s<60?'방금':s<3600?`${Math.floor(s/60)}분`:`${Math.floor(s/3600)}시간 ${Math.floor(s%3600/60)}분`};
+  const avOf=r=>Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname||'?');
+  async function load(){
+    if(!document.body.contains(sh)){stop();return}
+    let list;try{list=await RANK.online()}catch(e){sh.querySelector('#onSum').textContent=RANK.explain(e);return}
+    if(list===null){sh.querySelector('#onSum').textContent='서버 준비가 아직 안 됐어요. 운영진용 SQL을 SQL Editor에서 실행해 주세요.';return}
+    const acc=list.filter(r=>!r.is_guest).length;
+    sh.querySelector('#onSum').innerHTML=list.length?`<b>${list.length}명</b> 접속 중 · 아이디 ${acc}명 · 게스트 ${list.length-acc}명`:'지금 접속한 사람이 없어요.';
+    sh.querySelector('#onList').innerHTML=list.map(r=>`<li><span class="av" style="--c:${ZODIAC.COLORS[avOf(r)]}">${ZODIAC.face(avOf(r))}</span>
+      <span class="on-nm"><b>${esc(r.nickname||'(닉네임 없음)')}</b><small>${r.is_guest?'게스트':`아이디 ${esc(r.account||'')}`}${ADMIN_IDS.includes(r.account)?' · 운영진':''}</small></span>
+      <span class="on-t"><i></i>${ago(r.since)==='방금'?'방금 접속':ago(r.since)+'째'}</span></li>`).join('');
+  }
+  load();timer=setInterval(load,10000);
 }
 function openSettings(){
   const acc=RANK.account();
@@ -3346,7 +3393,7 @@ function openSettings(){
       ${RANK.enabled?(acc?`<button class="btn" type="button" id="stOut">로그아웃</button>`:`<button class="btn primary" type="button" id="stIn">로그인 · 아이디 만들기</button>`):''}
       <button class="btn" type="button" id="stNick">닉네임 ${RANK.nick()?'바꾸기 · '+esc(RANK.nick()):'정하기'}</button>
       <button class="btn" type="button" id="stSfx" data-sfx="none" aria-pressed="${SFX.on}">효과음 ${SFX.on?'켜짐 🔊':'꺼짐 🔇'}</button>
-      ${isAdmin()?'<button class="btn adm-btn" type="button" id="stAdmin">운영진 도구 · 모든 화면 보기</button><button class="btn adm-btn" type="button" id="stPatch">운영진 · 패치 노트</button>':''}
+      ${isAdmin()?'<button class="btn adm-btn" type="button" id="stAdmin">운영진 도구 · 모든 화면 보기</button><button class="btn adm-btn" type="button" id="stPatch">운영진 · 패치 노트</button><button class="btn adm-btn" type="button" id="stOnline">운영진 · 접속 중인 사람</button>':''}
       <button class="btn" type="button" id="stIntro">시작 화면으로</button>
       <button class="btn danger" type="button" id="stReset">기록 초기화</button>
       ${acc?`<button class="btn danger" type="button" id="stDel">회원 탈퇴</button>`:''}
@@ -3367,6 +3414,7 @@ function openSettings(){
   const sx=sh.querySelector('#stSfx');sx.addEventListener('click',()=>{SFX.set(!SFX.on);sx.textContent=`효과음 ${SFX.on?'켜짐 🔊':'꺼짐 🔇'}`;sx.setAttribute('aria-pressed',SFX.on)});
   const ad=sh.querySelector('#stAdmin');if(ad)ad.addEventListener('click',openAdmin);
   const pn=sh.querySelector('#stPatch');if(pn)pn.addEventListener('click',openPatchNotes);
+  const ol=sh.querySelector('#stOnline');if(ol)ol.addEventListener('click',openOnline);
   sh.querySelector('#stIntro').addEventListener('click',()=>{closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')});
   let arm=false;const rb=sh.querySelector('#stReset');
   rb.addEventListener('click',()=>{
