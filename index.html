@@ -982,7 +982,8 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
   -webkit-mask:linear-gradient(#000 calc(100% - 90px),transparent);mask:linear-gradient(#000 calc(100% - 90px),transparent)}
 
 /* 시작 화면 우측 하단 패치 버전 */
-.intro-ver{position:absolute;z-index:5;right:max(12px,env(safe-area-inset-right,0px));bottom:max(10px,calc(env(safe-area-inset-bottom,0px) + 8px));font-size:11px;font-weight:600;color:#fff;opacity:.9;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.45);pointer-events:none}
+.intro-ver{position:absolute;z-index:5;right:max(12px,env(safe-area-inset-right,0px));bottom:max(10px,calc(env(safe-area-inset-bottom,0px) + 8px));font-size:11px;font-weight:600;color:#d6dbe3;opacity:.95;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.45);pointer-events:none}
+.intro-made{position:absolute;z-index:5;left:0;right:0;bottom:max(10px,calc(env(safe-area-inset-bottom,0px) + 8px));text-align:center;font-size:11px;font-weight:600;color:#fff;opacity:.92;letter-spacing:.04em;text-shadow:0 1px 2px rgba(0,0,0,.5);pointer-events:none}
 </style>
 </head>
 <body>
@@ -1001,7 +1002,8 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.5</span>
+  <span class="intro-made" id="introMade">메이드 바이 중독 게임사</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.6</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -3186,6 +3188,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.6','10월 29일','시작 화면 글씨',['시작 화면 패치 번호를 연한 회색으로','시작 화면 아래 가운데에 \'메이드 바이 중독 게임사\'']],
   ['2.5','10월 29일','업적과 칭호',['지도 위쪽 메달 버튼에서 업적을 볼 수 있어요 (진행·지역·별·칭호·끈기)','업적을 달성하면 받기 버튼으로 코인·힌트를 받아요','게임 종류마다 별 3개로 깬 라운드 10·50·100·200개면 초보·중수·고수·달인 칭호','칭호는 프로필에서 고르고, 랭킹에도 보여요','지금까지 깬 기록도 바로 업적에 반영돼요']],
   ['2.4','10월 29일','별점에 따라 코인',['이전에 별 3개로 깬 라운드는 모자란 코인을 한 번 채워 드려요 (코인이 줄지는 않아요)','라운드를 깨면 별 1개 25코인, 2개 50코인, 3개 100코인을 받아요','같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요 (별 1개 → 2개: 25코인, 1개 → 3개: 75코인)','이미 받은 별점으로 다시 깨면 코인은 없어요']],
   ['2.3','10월 29일','지도에 친구들 표시',['아이디로 로그인해 랭킹에 있는 플레이어들의 프로필이 지도에서 그 사람이 지금 하고 있는 라운드 옆에 보여요','같은 라운드에 여러 명이면 겹쳐서 보이고, 누르면 누가 있는지 목록이 떠요']],
