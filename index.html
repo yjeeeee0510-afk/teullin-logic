@@ -885,7 +885,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 1.8</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 1.9</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2515,7 +2515,9 @@ function openShop(msg){
 }
 
 /* ---------- 로그인 · 아이디 만들기 ---------- */
-function enterGame(){const el=$('#intro');closeSheet();el.classList.add('out');setTimeout(()=>{el.hidden=true},460);showMenu()}
+function enterGame(){const el=$('#intro');closeSheet();
+  // 게임을 켜면 지금 진행 중인 라운드가 있는 지역·위치를 바로 보여 준다
+  store.set('sekan-viewz',zoneOf(Math.min(MAXR,P.unlocked||1)));el.classList.add('out');setTimeout(()=>{el.hidden=true},460);showMenu()}
 function backToIntro(){paused=false;closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')}
 const ID_RE=/^[a-z0-9_]{4,20}$/;
 function mergeP(a,b){
