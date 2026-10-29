@@ -1,5 +1,5 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v58';
+const CACHE='sekan-v59';
 const CORE=[
   './',
   'index.html',

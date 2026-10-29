@@ -1122,7 +1122,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.1</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.2</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -3103,13 +3103,14 @@ const CANDY=(function(){
       const sh=openSheet(`<div class="cd-done"><div class="eyebrow">${esc(g.title)}</div><h3>${title}</h3>
         ${g.daily?`<img class="cd-stamp" src="${img(STAMPS[dayIdx(new Date())%STAMPS.length])}" alt="">`:`<div class="stars cd-stars">${[0,1,2].map(k=>`<span class="s${k+1} ${k<g.st?'on':'off'}" style="--d:${.2+k*.2}s">${STAR_P}</span>`).join('')}</div>`}
         <dl class="cd-dl"><dt>걸린 시간</dt><dd>${fmtTime(secs)}</dd><dt>실수 · 힌트</dt><dd>${g.miss} · ${g.hints}</dd>${rows}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coin?`+${coin}`:'0'}</dd></dl>
-        <div class="row"><button class="btn" id="cdMap" type="button">과자 마을로</button>${next?`<button class="btn primary" id="cdNext" type="button">라운드 ${next} 도전</button>`:''}</div></div>`);
+        <div class="mbtns">${next?`<button class="btn primary" id="cdNext" type="button">라운드 ${next} 도전</button>`:''}<div class="mrow"><button class="btn" id="cdRe" type="button">↻ 재도전</button><button class="btn" id="cdMap" type="button">과자 마을로</button></div></div></div>`);
       sh.classList.add('cdsheet');
       G=null;
       const toMap=()=>{closeSheet();showMap()};
       sh.addEventListener('click',e=>{if(e.target===sh)toMap()});
       sh.querySelector('#cdMap').addEventListener('click',toMap);
       const nb=sh.querySelector('#cdNext');if(nb)nb.addEventListener('click',()=>{closeSheet();start(next)});
+      sh.querySelector('#cdRe').addEventListener('click',()=>{closeSheet();g.daily?start(0,true):start(g.n)});
       if(coin)setTimeout(()=>SFX.play('coin'),600);FX.confetti(50);updWalletUI();ui();
     },FX.RM?150:1000);
   }
@@ -3949,6 +3950,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['3.2','10월 30일','과자 나라 재도전',['과자 나라 클리어 창에도 \'재도전\' 버튼 (같은 라운드·오늘의 과자 다시 하기)']],
   ['3.1','10월 30일','과자 나라',['지도 오른쪽 가운데 과자 집 버튼으로 가는 새 게임 \'과자 나라\' 300라운드 (5×5~10×10)','가로줄·세로줄·과자 구역마다 친구 한 명, 친구끼리 옆·대각선으로 붙지 않게','과자 나라 전용 쿠키 하트(최대 10개·10분마다 1개, 상점 100코인)','매일 바뀌는 \'오늘의 과자\' 퍼즐과 도장 달력, 연속 보너스','본 게임 지역을 열면 과자 나라 구간이 열려요: 사탕 숲(처음부터)·쿠키 언덕(푸른 바다)·초콜릿 성(눈 덮인 산)','업적에 \'과자\' 탭과 칭호 \'과자 초보·중수·고수·달인\' 추가','랭킹에 \'과자 나라\' 탭']],
   ['3.0','10월 30일','재도전·프로필 테두리',['라운드 클리어 창에 \'재도전\' 버튼 (같은 라운드 다시 하기)','프로필 테두리 12가지: 업적 보상을 받으면 하나씩 열려요 (프로필 → 테두리 고르기)','랭킹 창의 이름 변경 버튼을 없앴어요 (닉네임은 프로필·설정에서 바꿀 수 있어요)']],
   ['2.9','10월 29일','배 출발 소리',['지역에서 지역으로 배를 타고 갈 때 파도를 가르는 물소리로 바꿨어요 (하늘섬 날갯짓 소리는 그대로)']],
