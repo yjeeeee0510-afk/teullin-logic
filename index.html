@@ -1099,6 +1099,9 @@ body.candy-play #board{flex-direction:column}
 .rk-tabs{display:flex;gap:6px;margin:4px 0 10px;background:#f1f3f7;border-radius:999px;padding:4px}
 .rk-tabs button{flex:1;border:0;border-radius:999px;padding:8px 10px;font:inherit;font-weight:800;font-size:14px;background:transparent;color:#5a6478;cursor:pointer}
 .rk-tabs button[aria-selected="true"]{background:#fff;color:#1b2742;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.cm-lock{position:absolute;left:50%;z-index:4;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:rgba(74,36,16,.88);color:#fff;border-radius:16px;padding:10px 16px;box-shadow:0 4px 0 #2e1608,0 8px 18px rgba(0,0,0,.25);text-align:center;width:max-content;max-width:80%}
+.cm-lock svg{width:18px;height:18px;color:#ffd43b}.cm-lock b{font-size:16px}.cm-lock small{font-size:12px;opacity:.9}
 @media (max-width:400px){.candy-go img,.candy-daily img{width:62px}.candy-back img{width:60px}.candy-go span,.candy-back span,.candy-daily span{font-size:11.5px;padding:2px 8px}}
 </style>
 </head>
@@ -2560,7 +2563,8 @@ function showMenu(){
   if(arriveZ===VIEWZ){
     arriveZ=-1;
     setTimeout(()=>{const r=map.getBoundingClientRect();FX.confetti(70);NATIVE.buzz('win');SFX.play('open');
-      FX.text(`${ZONES[VIEWZ].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'})},250);
+      FX.text(`${ZONES[VIEWZ].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
+      const cp=CANDY.partFor(VIEWZ);if(cp)setTimeout(()=>FX.text(`과자 나라 '${cp}'도 열렸어요!`,r.left+r.width/2,r.top+r.height*0.35+46,{size:20,color:'#ffb3c9'}),700)},250);
   }
   renderStats();
 }
@@ -2573,6 +2577,8 @@ const VOY={
 };
 const VOY_BOAT=`<svg viewBox="0 0 160 130" aria-hidden="true"><path d="M78 8 V92" stroke="#7a4a2c" stroke-width="5" stroke-linecap="round"/><path d="M82 12 Q132 50 126 88 L82 88Z" fill="#fff"/><path d="M82 12 Q104 50 100 88 L82 88Z" fill="#e3eaf5"/><path d="M74 20 Q36 54 40 88 L74 88Z" fill="#ff6b6b"/><path d="M74 20 Q58 54 60 88 L74 88Z" fill="#e8484c"/><path d="M78 4 l20 6 l-20 6z" fill="#ffd43b"/><path d="M10 92 H150 Q140 120 112 122 H44 Q20 120 10 92Z" fill="#ffb44a"/><path d="M80 92 H150 Q140 120 112 122 H80Z" fill="#e8962e"/><path d="M10 92 H150" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${[42,78,114].map(x=>`<circle cx="${x}" cy="105" r="6" fill="#fff"/><circle cx="${x}" cy="105" r="3" fill="#7cc4ea"/>`).join('')}</svg>`;
 // '바다로', '산으로'처럼 받침에 맞춰 '로/으로'를 붙임 (ㄹ 받침은 '로')
+// '바다를', '산을'처럼 받침에 맞춰 '을/를'
+function eulName(w){const c=w.charCodeAt(w.length-1)-0xAC00;if(c<0||c>11171)return w+'를';return w+(c%28?'을':'를')}
 function roName(w){const c=w.charCodeAt(w.length-1)-0xAC00;if(c<0||c>11171)return w+'로';const j=c%28;return w+(j===0||j===8?'로':'으로')}
 // 조약돌: 라운드를 깨면 다음 라운드(또는 선착장)까지 3~4개가 놓임
 const PEB_KIND=['stone','shell','snow','mush','cloud'],PEB_PIC=[null,['shellPink','shellWhite','shellPink'],null,['glowMushPink','glowMushBlue','glowMushGreen'],['pebCloudA','pebCloudB','pebCloudC','pebCloudD']];
@@ -2767,7 +2773,10 @@ const CANDY=(function(){
   const DECO=[['cdLollyTree','cdGummyBears','cdCandyFlower','cdJellyMush','cdCottonBush','cdCandyCane'],
               ['cdCookieHouse','cdCupcake','cdCake','cdDonut','cdCream','cdMacaronTower'],
               ['cdChocoCastle','cdChocoFountain','cdChocoBridge','cdTruffle','cdChocoTree','cdClockTower']];
-  const PART=[{lo:1,hi:100,name:'사탕 숲'},{lo:101,hi:200,name:'쿠키 언덕'},{lo:201,hi:300,name:'초콜릿 성'}];
+  // 본 게임 지역을 열 때마다 과자 나라 구간이 열린다: 사탕 숲은 처음부터, 쿠키 언덕은 푸른 바다, 초콜릿 성은 눈 덮인 산
+  const PART=[{lo:1,hi:100,name:'사탕 숲',z:0},{lo:101,hi:200,name:'쿠키 언덕',z:1},{lo:201,hi:300,name:'초콜릿 성',z:2}];
+  const partOpen=p=>isAdmin()||(P.revealed|0)>=p.z;
+  const capTo=()=>{let c=0;for(const p of PART)if(partOpen(p))c=p.hi;return c};
   const DAILY_N=[9,6,6,7,7,8,8];   // 일·월·화·수·목·금·토
   const WD=['일','월','화','수','목','금','토'];
   let view=false,G=null,timerT=0;
@@ -2788,7 +2797,7 @@ const CANDY=(function(){
     if(!c.months)c.months={};
     return c;
   }
-  const openTo=()=>isAdmin()?MAXC:Math.min(MAXC,C().unlocked);
+  const openTo=()=>isAdmin()?MAXC:Math.min(MAXC,C().unlocked,capTo());
   const heldCookie=()=>G&&G.held?1:0;
   const cap=()=>CK_MAX-heldCookie();
   function regen(){
@@ -2854,7 +2863,7 @@ const CANDY=(function(){
     const GEAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm9 3.5-2.1-.6a7 7 0 0 0-.7-1.7l1-1.9-1.9-1.9-1.9 1a7 7 0 0 0-1.7-.7L13.1 3h-2.2l-.6 2.1a7 7 0 0 0-1.7.7l-1.9-1-1.9 1.9 1 1.9a7 7 0 0 0-.7 1.7L3 10.9v2.2l2.1.6c.2.6.4 1.2.7 1.7l-1 1.9 1.9 1.9 1.9-1c.5.3 1.1.5 1.7.7l.6 2.1h2.2l.6-2.1c.6-.2 1.2-.4 1.7-.7l1.9 1 1.9-1.9-1-1.9c.3-.5.5-1.1.7-1.7l2.1-.6z" fill="currentColor"/></svg>';
     const TROPHY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.4A6 6 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A6 6 0 0 1 7.4 12H7a4 4 0 0 1-4-4V5h3zm0 4H5v1a2 2 0 0 0 1 1.7zm12 0v2.7A2 2 0 0 0 19 8V7z" fill="currentColor"/></svg>';
     const h0=H();
-    let h=`<div class="map-wrap candy-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>
+    let h=`<div class="map-wrap candy-wrap"><div class="map-bar"><button type="button" class="mb-prof" id="profBtn" aria-label="내 프로필">${profInner()}</button><span class="mb-sp"></span><span class="mb-chip coin" title="보유 코인">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span><button type="button" class="mb-btn ic ach-btn" id="achBtn" aria-label="업적">${ICON.medal}<i class="dot"></i></button><button type="button" class="mb-btn ic" id="setBtn" aria-label="설정">${GEAR}</button></div>
       <button type="button" class="candy-back" id="candyBack" aria-label="본 게임으로 돌아가기"><img src="${img('btnCookieBoat')}" alt=""><span>돌아가기</span></button>
       <button type="button" class="candy-daily${todayDone()?' done':''}" id="candyDaily" aria-label="오늘의 퍼즐"><img src="${img('btnCandyShop')}" alt=""><span>오늘의 과자</span><i class="dot"></i></button>
       <div class="map candy-map" id="map"><div class="map-inner" style="height:${h0}px;background-image:url('${img('candyFloor')}')">`;
@@ -2881,10 +2890,15 @@ const CANDY=(function(){
         h+=`<img class="cm-pad" src="${img(PADS[(k++)%PADS.length])}" alt="" style="left:${x.toFixed(2)}%;top:${y.toFixed(1)}px">`;
       }
     }
+    // 아직 안 열린 구간 앞 안내판
+    for(const p of PART)if(!partOpen(p)){
+      const y=(yOf(p.lo)+yOf(p.lo-1))/2;
+      h+=`<div class="cm-lock" style="top:${y}px">${LOCK}<b>${p.name}</b><small>본 게임에서 ${eulName(ZONES[p.z].name)} 열면 열려요</small></div>`;break;
+    }
     // 라운드 칸
     for(let n=MAXC;n>=1;n--){
       const rec=c.rounds[n],open=n<=top,N=roundN(n);
-      const cls=rec?'clear':n===cur?'next':open?'adm':'lock';
+      const cls=rec?'clear':n===cur&&open?'next':open?'adm':'lock';
       const label=rec?`과자 라운드 ${n}, 별 ${rec.stars}개`:open?`과자 라운드 ${n} 도전`:`과자 라운드 ${n} 잠김`;
       h+=`<div class="node ${cls}${n===MAXC?' final':''}" style="left:${xOf(n)}%;top:${yOf(n)}px;--c:${ZODIAC.COLORS[ZODIAC.idx(n)]}">${rec?starRow(rec.stars||1):''}
         <button type="button" class="nd" data-c="${n}" ${open?'':'disabled'} aria-label="${label}">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span>${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
@@ -2898,6 +2912,7 @@ const CANDY=(function(){
     $('#candyDaily').addEventListener('click',()=>{NATIVE.buzz('tick');openDaily()});
     $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
     $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
+    $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open('과자')});ACH.dot();
     $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
     $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');shop()});
     $('#cookieChip').addEventListener('click',()=>{NATIVE.buzz('tick');shop()});
@@ -3056,7 +3071,7 @@ const CANDY=(function(){
   function win(){
     if(!running)return;
     elapsedFrozen=performance.now()-t0;running=false;
-    const secs=Math.round(elapsedFrozen/1000),g=G,N=g.N,c=C();
+    const secs=Math.round(elapsedFrozen/1000),g=G,N=g.N,c=C(),achBefore=ACH.snapshot();
     if(g.held){g.held=false;c.hearts=Math.min(CK_MAX,c.hearts+1)}
     let rows='',title,next='',coin=0;
     if(g.daily){
@@ -3076,10 +3091,12 @@ const CANDY=(function(){
       if(g.n<MAXC)c.unlocked=Math.max(c.unlocked,g.n+1);
       rows+=`<dt>별점</dt><dd class="rstar">${'★'.repeat(st)}<span>${'★'.repeat(3-st)}</span></dd>${isAdmin()?'':`<dt>쿠키 하트</dt><dd class="heart-dd">${cookieIco(false)}그대로</dd>`}${opened?`<dt>새로 열림</dt><dd>라운드 ${g.n+1} · ${roundN(g.n+1)}×${roundN(g.n+1)}</dd>`:''}`;
       title=g.n===MAXC?'과자 나라 완주!':'라운드 클리어!';
-      if(g.n<MAXC)next=g.n+1;
+      if(g.n<MAXC&&g.n+1<=openTo())next=g.n+1;
+      else if(g.n<MAXC){const p=partOf(g.n+1);rows+=`<dt>다음 구간</dt><dd>${p.name} · 본 게임 ${eulName(ZONES[p.z].name)} 열면 열려요</dd>`}
       g.st=st;
     }
     if(coin){W().coins+=coin;P.walletAt=Date.now()}
+    const achNew=ACH.newSince(achBefore);if(achNew.length)rows+=`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`;
     saveP();RANK.submitQuiet();
     FX.stamp(title,'round');SFX.play('clear');NATIVE.buzz('win');
     setTimeout(()=>{
@@ -3234,7 +3251,7 @@ const CANDY=(function(){
     return o;
   }
   return {
-    isOn:()=>view,on(){view=true},off(){view=false},goBtn,enter,showMap,playing:()=>!!G,pause,resume,mine,merge,openRank:openRankCandy,tabs,bindTabs,
+    isOn:()=>view,on(){view=true},off(){view=false},partFor:z=>{const p=PART.find(x=>x.z===z&&x.lo>1);return p?p.name:''},goBtn,enter,showMap,playing:()=>!!G,pause,resume,mine,merge,openRank:openRankCandy,tabs,bindTabs,
     setMainRank(f){openRankMain=f},admin:{daily:()=>openDaily()}
   };
 })();
@@ -3428,10 +3445,16 @@ const ACH=(function(){
       rw:[C(100),C(200),C(300,1),C(500,2),C(1000,3)]},
     ...[0,1,2].map(t=>({id:'type'+t,cat:'칭호',name:`${TYPE_SHORT[t]} 별 3개`,tiers:[10,50,100,200],val:()=>three(t),max:()=>typeMax(t),
       titles:TITLE_LV.map(l=>`${TYPE_SHORT[t]} ${l}`),desc:v=>`${TYPE_SHORT[t]} 라운드 ${v}개를 별 3개로 깨기`,rw:[C(100),C(300,1),C(600,2),C(1000,3)]})),
+    {id:'candyClear',cat:'과자',name:'과자 라운드 정복',tiers:[10,50,100,200,300],val:()=>Object.keys((P.candy&&P.candy.rounds)||{}).length,desc:v=>`과자 나라 라운드 ${v}개 깨기`,
+      rw:[C(50),C(100),C(200,1),C(400,2),C(800,3)]},
+    {id:'candyStar',cat:'칭호',name:'과자 별 3개',tiers:[10,50,100,200],val:()=>Object.values((P.candy&&P.candy.rounds)||{}).filter(r=>(r.stars||0)>=3).length,max:()=>300,
+      titles:TITLE_LV.map(l=>`과자 ${l}`),desc:v=>`과자 나라 라운드 ${v}개를 별 3개로 깨기`,rw:[C(100),C(300,1),C(600,2),C(1000,3)]},
+    {id:'candyDaily',cat:'과자',name:'오늘의 과자',tiers:[1,7,30,100],val:()=>Object.keys((P.candy&&P.candy.daily)||{}).length,desc:v=>`오늘의 과자 ${v}일 풀기`,
+      rw:[C(30),C(150,1),C(500,2),C(1000,3)]},
     {id:'up',cat:'끈기',name:'별 올리기',tiers:[1,10,50],val:()=>A().c.up||0,desc:v=>`깬 라운드를 다시 해서 별 3개로 만들기 ${v}번`,rw:[C(50),C(150),C(400,2)]},
     {id:'back',cat:'끈기',name:'오뚝이',tiers:[1,10,50],val:()=>A().c.back||0,desc:v=>`실패한 라운드를 다시 깨기 ${v}번`,rw:[C(50),C(150),C(400,2)]},
   ];
-  const CATS=['진행','지역','별','칭호','끈기'];
+  const CATS=['진행','지역','별','칭호','과자','끈기'];
   const ROMAN=['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ'];
   const reached=a=>{const v=a.val(),mx=a.max?a.max():Infinity;let k=0;for(const t of a.tiers){if(t>mx||v<t)break;k++}return k};
   const got=a=>Math.min(a.tiers.length,A().got[a.id]|0);
@@ -3478,7 +3501,7 @@ const ACH=(function(){
   function openTitles(back){
     const ts=titles(),cur=P.title||'';
     const sh=openSheet(`<div class="eyebrow">칭호</div><h3>칭호 고르기</h3>
-      <p class="lead">게임 종류마다 별 3개로 깬 라운드가 10·50·100·200개면 초보·중수·고수·달인 칭호를 받아요. 업적에서 보상을 받으면 열려요. 랭킹에도 보여요.</p>
+      <p class="lead">틀린그림·로직·퍼즐·과자 나라마다 별 3개로 깬 라운드가 10·50·100·200개면 초보·중수·고수·달인 칭호를 받아요. 업적에서 보상을 받으면 열려요. 랭킹에도 보여요.</p>
       <div class="ttl-grid"><button type="button" class="ttl-pick${cur?'':' on'}" data-t="">칭호 없음</button>${ts.map(x=>`<button type="button" class="ttl-pick${x.t===cur?' on':''}${x.on?'':' off'}" data-t="${esc(x.t)}" ${x.on?'':'disabled'}><b>${esc(x.t)}</b>${x.on?'':`<small>${x.lock?'아직 열리지 않음':`별 3개 ${x.need}개`}</small>`}</button>`).join('')}</div>
       <div class="row"><button class="btn" type="button" id="ttlBack">돌아가기</button></div>`);
     sh.querySelectorAll('.ttl-pick:not([disabled])').forEach(b=>b.addEventListener('click',()=>{P.title=b.dataset.t;P.titleAt=Date.now();saveP();RANK.submitQuiet();NATIVE.buzz('ok');profRefresh();(back||openProfile)()}));
@@ -3926,7 +3949,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
-  ['3.1','10월 30일','과자 나라',['지도 오른쪽 가운데 과자 집 버튼으로 가는 새 게임 \'과자 나라\' 300라운드 (5×5~10×10)','가로줄·세로줄·과자 구역마다 친구 한 명, 친구끼리 옆·대각선으로 붙지 않게','과자 나라 전용 쿠키 하트(최대 10개·10분마다 1개, 상점 100코인)','매일 바뀌는 \'오늘의 과자\' 퍼즐과 도장 달력, 연속 보너스','랭킹에 \'과자 나라\' 탭']],
+  ['3.1','10월 30일','과자 나라',['지도 오른쪽 가운데 과자 집 버튼으로 가는 새 게임 \'과자 나라\' 300라운드 (5×5~10×10)','가로줄·세로줄·과자 구역마다 친구 한 명, 친구끼리 옆·대각선으로 붙지 않게','과자 나라 전용 쿠키 하트(최대 10개·10분마다 1개, 상점 100코인)','매일 바뀌는 \'오늘의 과자\' 퍼즐과 도장 달력, 연속 보너스','본 게임 지역을 열면 과자 나라 구간이 열려요: 사탕 숲(처음부터)·쿠키 언덕(푸른 바다)·초콜릿 성(눈 덮인 산)','업적에 \'과자\' 탭과 칭호 \'과자 초보·중수·고수·달인\' 추가','랭킹에 \'과자 나라\' 탭']],
   ['3.0','10월 30일','재도전·프로필 테두리',['라운드 클리어 창에 \'재도전\' 버튼 (같은 라운드 다시 하기)','프로필 테두리 12가지: 업적 보상을 받으면 하나씩 열려요 (프로필 → 테두리 고르기)','랭킹 창의 이름 변경 버튼을 없앴어요 (닉네임은 프로필·설정에서 바꿀 수 있어요)']],
   ['2.9','10월 29일','배 출발 소리',['지역에서 지역으로 배를 타고 갈 때 파도를 가르는 물소리로 바꿨어요 (하늘섬 날갯짓 소리는 그대로)']],
   ['2.8','10월 29일','지역 이동 별 70%',['다음 지역으로 가는 데 필요한 별을 80%에서 70%로 낮췄어요 (90라운드 지역은 별 189개)']],
