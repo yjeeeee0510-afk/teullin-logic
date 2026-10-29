@@ -777,6 +777,21 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 .adm-row .btn{font-size:13px;padding:6px 10px;border-radius:10px}
 .node.adm .nd{filter:saturate(.85)}
 
+/* 지도: 다른 플레이어가 지금 하고 있는 라운드 옆 프로필 */
+.others{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;padding:0;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
+.others.r{transform:translate(52px,-62%)}
+.others.l{transform:translate(calc(-100% - 52px),-62%)}
+.oth-avs{display:flex;align-items:center}
+.oth-av{width:38px;height:38px;border-radius:50%;background:#fff;border:2.5px solid var(--c,#fff);box-shadow:0 0 0 2px #fff,0 3px 6px rgba(20,30,10,.35);display:grid;place-items:center;overflow:hidden;animation:othBob 2.4s ease-in-out infinite}
+.oth-av+.oth-av{margin-left:-12px}
+.oth-av:nth-child(2){animation-delay:.3s}.oth-av:nth-child(3){animation-delay:.6s}
+.oth-av :is(svg,img){width:34px;height:34px;display:block;object-fit:contain}
+.oth-more{margin-left:-8px;min-width:26px;height:26px;padding:0 5px;border-radius:13px;background:#3a2a10;color:#fff;font-size:11.5px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;font-variant-numeric:tabular-nums}
+.oth-nm{max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:800;line-height:1.35;color:#3a2a10;background:rgba(255,255,255,.92);border-radius:999px;padding:0 7px;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.others:active .oth-avs{transform:scale(.94)}
+@keyframes othBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.oth-av{animation:none}}
+
 /* 인게임 지역 배경 사진 */
 :root{--hud-bg:rgba(255,255,255,.88)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--hud-bg:rgba(23,32,54,.88)}}
@@ -949,7 +964,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <button class="start" id="startBtn" type="button">게임시작</button>
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.2</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 2.3</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2266,6 +2281,7 @@ function showMenu(){
     <div class="map-foot"><div class="mf-chips"><button type="button" class="mb-chip heart-chip" id="heartChip" aria-label="보유 하트">${ICON.heart}<b data-hearts>${W().hearts}</b><small>/${HEART_MAX}</small><em data-heart-next>${heartNextTxt(false)}</em></button><button type="button" class="mb-chip hint-chip" id="hintChip" aria-label="보유 힌트">${ICON.bulb}<b data-hints>${W().hints}</b><small>/${HINT_MAX}</small><em data-hint-next></em></button></div><span class="mb-sp"></span>
     <button type="button" class="mb-btn shop" id="shopBtn">${ICON.cart}<span>상점</span></button><button type="button" class="mb-btn" id="rankBtn">${TROPHY}<span>랭킹</span></button></div></div>`;
   const board=$('#board');board.innerHTML=h;
+  OTHERS.show();
   $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
   $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
   $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
@@ -2495,7 +2511,7 @@ const RANK=(function(){
   const host=location.hostname||'';
   const onClaude=/(^|\.)claude\.ai$|claudeusercontent|claude\.site/.test(host);
   const enabled=!!(url&&key)&&!onClaude;
-  let session=store.get('sekan-auth',null);
+  let session=store.get('sekan-auth',null);let noPlayers=false;
   const nick=()=>store.get('sekan-nick','');
   const DOMAIN='teullin.game',toEmail=id=>String(id).toLowerCase()+'@'+DOMAIN;
   const isAcc=s=>!!(s&&s.user&&!s.user.is_anonymous&&s.user.email);
@@ -2595,7 +2611,49 @@ const RANK=(function(){
     pending:()=>store.get('sekan-rank-pending',false),
     async setNick(n){n=clean(n);store.set('sekan-nick',n);if(!enabled)return {name:n,synced:false,reason:onClaude?'claude':'config'};try{await submit(n);return {name:n,synced:true}}catch(e){store.set('sekan-rank-pending',true);return {name:n,synced:false,reason:'error',error:e}}},
     async top(n){const s=await auth();return api('/rest/v1/rpc/leaderboard_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})},
-    async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null}
+    async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
+    // 아이디로 로그인해 랭킹에 있는 사람들 (서버 함수 leaderboard_players, 아직 없으면 빈 목록)
+    async players(n){if(noPlayers)return [];const s=await auth();
+      try{return await api('/rest/v1/rpc/leaderboard_players',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||300})})||[]}
+      catch(e){if(e&&(e.status===404||e.code==='PGRST202'||/leaderboard_players/i.test(e.message||''))){noPlayers=true;return []}throw e}}
+  };
+})();
+// 지도: 다른 플레이어(아이디로 로그인해 랭킹에 있는 사람)의 프로필을 그 사람이 지금 하고 있는 라운드 옆에
+const OTHERS=(function(){
+  let list=null,at=0,busy=null;
+  const avOf=r=>Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname);
+  const curOf=r=>Math.max(1,Math.min(MAXR,(r.best_round|0)+1));
+  function load(){
+    if(!RANK.enabled)return Promise.resolve([]);
+    if(list&&Date.now()-at<60000)return Promise.resolve(list);
+    if(busy)return busy;
+    busy=RANK.players(300).then(r=>{list=(r||[]).filter(x=>!x.is_me&&x.nickname);at=Date.now();return list})
+      .catch(()=>{at=Date.now()-45000;return list||[]}).finally(()=>{busy=null});
+    return busy;
+  }
+  function byRound(){const m={};(list||[]).forEach(r=>{const n=curOf(r);(m[n]=m[n]||[]).push(r)});return m}
+  function paint(){
+    const inner=document.querySelector('#map .map-inner');if(!inner||inGame)return;
+    inner.querySelectorAll('.others').forEach(e=>e.remove());
+    const m=byRound(),z=VIEWZ;let h='';
+    for(const k in m){const n=+k;if(zoneOf(n)!==z)continue;
+      const ps=m[n].slice().sort((a,b)=>(b.stars|0)-(a.stars|0)),x=mapX(n),side=x>55?'l':'r',more=ps.length-3;
+      h+=`<button type="button" class="others ${side}" data-r="${n}" style="left:${x}%;top:${mapY(n)}px" aria-label="라운드 ${n}에 있는 친구 ${ps.length}명: ${esc(ps.map(p=>p.nickname).join(', '))}">
+        <span class="oth-avs">${ps.slice(0,3).map(p=>`<span class="oth-av" style="--c:${ZODIAC.COLORS[avOf(p)]}">${ZODIAC.face(avOf(p))}</span>`).join('')}${more>0?`<span class="oth-more">+${more}</span>`:''}</span>
+        <span class="oth-nm">${esc(ps[0].nickname)}${ps.length>1?` 외 ${ps.length-1}`:''}</span></button>`}
+    inner.insertAdjacentHTML('beforeend',h);
+    inner.querySelectorAll('.others').forEach(b=>b.addEventListener('click',()=>{NATIVE.buzz('tick');openList(+b.dataset.r)}));
+  }
+  function openList(n){
+    const ps=(byRound()[n]||[]).slice().sort((a,b)=>(a.rank|0)-(b.rank|0));
+    const sh=openSheet(`<div class="eyebrow">${ZONES[zoneOf(n)].name}</div><h3>라운드 ${n}에 있는 친구</h3>
+      <ul class="rlist">${ps.map(r=>`<li><span class="no">${r.rank||''}</span><span class="av">${ZODIAC.face(avOf(r))}</span><span class="nm">${esc(r.nickname)}</span><span class="st">★${r.stars|0}<br>${(r.best_round|0)}라운드 클리어</span></li>`).join('')}</ul>
+      <div class="row"><button class="btn primary" type="button" id="othClose">닫기</button></div>`);
+    sh.querySelector('#othClose').addEventListener('click',closeSheet);
+  }
+  return {
+    show(){if(list)paint();load().then(()=>paint())},
+    reset(){list=null;at=0}
   };
 })();
 function nickHash(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h%12}
@@ -2841,7 +2899,7 @@ function openLogin(msg){
     const v=id.value.trim().toLowerCase();
     if(!v||!pw.value){m.textContent='아이디와 비밀번호를 입력해 주세요.';return}
     go.disabled=true;go.textContent='로그인 중…';m.textContent='';
-    try{await RANK.login(v,pw.value);await afterLogin();NATIVE.buzz('win');enterGame();FX.text(`${esc(RANK.nick())} 님 반가워요!`,window.innerWidth/2,window.innerHeight*.3,{size:26,color:'#ffd43b'})}
+    try{await RANK.login(v,pw.value);OTHERS.reset();await afterLogin();NATIVE.buzz('win');enterGame();FX.text(`${esc(RANK.nick())} 님 반가워요!`,window.innerWidth/2,window.innerHeight*.3,{size:26,color:'#ffd43b'})}
     catch(e){m.textContent=RANK.authMsg(e);go.disabled=false;go.textContent='로그인';NATIVE.buzz('bad')}
   };
   go.addEventListener('click',run);
@@ -2901,7 +2959,7 @@ function openSignup(){
 async function doLogout(){
   const synced=!store.get('sekan-sync-pending',false);
   if(synced){P={unlocked:1,rounds:{},revealed:0};store.set('sekan-progress',P);S=null;save();store.set('sekan-nick','')}
-  await RANK.logout();backToIntro();
+  await RANK.logout();OTHERS.reset();backToIntro();
 }
 
 /* ---------- 라운드 기록 창 ---------- */
@@ -2970,6 +3028,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['2.3','10월 29일','지도에 친구들 표시',['아이디로 로그인해 랭킹에 있는 플레이어들의 프로필이 지도에서 그 사람이 지금 하고 있는 라운드 옆에 보여요','같은 라운드에 여러 명이면 겹쳐서 보이고, 누르면 누가 있는지 목록이 떠요']],
   ['2.2','10월 29일','다섯 번째 지역 하늘섬',['구름 위 하늘섬 150라운드(361~510), 난이도 아주 어려움','별빛 하늘에서 날개 달린 배를 타고 위로 날아올라 하늘섬으로','다음 지역으로 가려면 그 지역 별의 80%를 모아야 해요 (이미 열린 지역은 그대로)','하늘섬 틀린그림: 살짝 이동·하나 더 생김·살짝 기울기·배경 속 차이, 작은 물건에 숨김','481라운드부터 9라운드마다 오른쪽 그림이 좌우로 뒤집힌 거울 라운드','하늘섬 물건 18가지, 구름 디딤돌','틀린 곳 최대 12개, 퍼즐 최대 9×9']],
   ['2.1','10월 29일','하트와 실패',['하트 생김: 최대 10개, 10분마다 1개씩 채워져요','라운드를 시작할 때 하트 1개를 걸고, 깨면 그대로예요','틀린그림·로직에서 실수 5번이면 실패, 하트 1개가 줄어요','중간에 그만두거나 처음부터 다시 하면 하트 1개가 줄어요','로직에서 틀린 칸을 칠하면 바로 알려 주고 맞는 표시로 고정해요','상점에서 하트 1개 100코인','하트가 없으면 라운드를 시작할 수 없어요']],
   ['2.0','10월 29일','힌트 충전 바꾸기',['힌트는 최대 10개까지 가질 수 있어요 (전에는 20개)','무료 힌트는 30분마다 1개씩 채워져요 (전에는 10분)','이미 10개보다 많이 가진 힌트는 그대로 쓸 수 있어요']],

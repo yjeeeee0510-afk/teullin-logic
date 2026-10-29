@@ -59,3 +59,17 @@ alter table public.leaderboard drop constraint if exists leaderboard_best_round_
 alter table public.leaderboard add constraint leaderboard_best_round_check check (best_round between 0 and 510);
 alter table public.leaderboard drop constraint if exists leaderboard_stars_check;
 alter table public.leaderboard add constraint leaderboard_stars_check check (stars between 0 and 1530);
+
+-- 2026-10-29 · 지도에 다른 플레이어 표시용: 아이디로 로그인한 계정(게스트 제외)만 돌려주는 함수
+create or replace function public.leaderboard_players(n int default 300)
+returns table (rank bigint, nickname text, best_round int, stars int, avatar int, is_me boolean)
+language sql stable security definer set search_path = public as $$
+  select r.rank, r.nickname, r.best_round, r.stars, r.avatar, coalesce(r.id = auth.uid(), false) as is_me
+  from (select l.*, rank() over (order by l.best_round desc, l.stars desc, l.score desc) as rank from public.leaderboard l) r
+  join auth.users u on u.id = r.id
+  where coalesce(u.is_anonymous, false) = false and u.email like '%@teullin.game'
+  order by r.rank, r.updated_at
+  limit greatest(1, least(coalesce(n, 300), 500));
+$$;
+
+grant execute on function public.leaderboard_players(int) to anon, authenticated;
