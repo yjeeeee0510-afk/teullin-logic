@@ -1,0 +1,1186 @@
+{
+ "sheets": [
+  {
+   "id": "F1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "꽃 언덕",
+   "items": [
+    {
+     "id": "windmill",
+     "ko": "풍차"
+    },
+    {
+     "id": "cottageRed",
+     "ko": "빨간 지붕 집"
+    },
+    {
+     "id": "blossomPink",
+     "ko": "분홍 꽃나무"
+    },
+    {
+     "id": "blossomWhite",
+     "ko": "흰 꽃나무"
+    },
+    {
+     "id": "blossomYellow",
+     "ko": "노란 꽃나무"
+    },
+    {
+     "id": "treeRound",
+     "ko": "사과나무"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a windmill with a red cap, cream tower, brick base and four lattice blades | a small cream cottage with a red roof, chimney and flower boxes | a round tree covered in pink blossoms\nRow 2: the same round tree covered in white daisies (same shape) | the same round tree covered in yellow flowers (same shape) | the same round tree, green leaves with red apples (same shape)"
+  },
+  {
+   "id": "F2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "꽃 언덕",
+   "items": [
+    {
+     "id": "flowersPink",
+     "ko": "분홍 꽃 덤불"
+    },
+    {
+     "id": "flowersYellow",
+     "ko": "노란 꽃 덤불"
+    },
+    {
+     "id": "flowersWhite",
+     "ko": "흰 꽃 덤불"
+    },
+    {
+     "id": "tulipRed",
+     "ko": "빨간 튤립"
+    },
+    {
+     "id": "tulipYellow",
+     "ko": "노란 튤립"
+    },
+    {
+     "id": "tulipPurple",
+     "ko": "보라 튤립"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a low dome-shaped flower bush with pink flowers | the same flower bush with yellow flowers (same shape) | the same flower bush with white flowers (same shape)\nRow 2: a cluster of three red tulips with leaves | the same three tulips in yellow (same shape) | the same three tulips in purple (same shape)"
+  },
+  {
+   "id": "F3",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "꽃 언덕",
+   "items": [
+    {
+     "id": "mushroomRed",
+     "ko": "빨간 버섯"
+    },
+    {
+     "id": "fenceWhite",
+     "ko": "흰 울타리"
+    },
+    {
+     "id": "beehive",
+     "ko": "벌통"
+    },
+    {
+     "id": "hayBale",
+     "ko": "건초 더미"
+    },
+    {
+     "id": "butterfly",
+     "ko": "분홍 나비"
+    },
+    {
+     "id": "sun",
+     "ko": "해"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: two red mushrooms with white spots, one big one small | a short white picket fence with grass tufts at the base | a yellow beehive hanging from a wooden post with two little bees\nRow 2: three stacked hay bales tied with brown straps | a cute pink butterfly | a round yellow sun with orange rays, no face"
+  },
+  {
+   "id": "F4",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "꽃 언덕·하늘",
+   "items": [
+    {
+     "id": "cottageBlue",
+     "ko": "파란 지붕 집"
+    },
+    {
+     "id": "cottagePurple",
+     "ko": "보라 지붕 집"
+    },
+    {
+     "id": "kite",
+     "ko": "연"
+    },
+    {
+     "id": "puffA",
+     "ko": "흰 구름 A"
+    },
+    {
+     "id": "puffB",
+     "ko": "흰 구름 B"
+    },
+    {
+     "id": "puffC",
+     "ko": "흰 구름 C"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: the same cream cottage with a blue roof (same shape as the red-roof one) | the same cream cottage with a purple roof | a diamond kite in yellow and pink with a curly blue tail\nRow 2: a fluffy white cloud | a different fluffy white cloud | a third fluffy white cloud"
+  },
+  {
+   "id": "S1",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "푸른 바다",
+   "items": [
+    {
+     "id": "lighthouse",
+     "ko": "등대"
+    },
+    {
+     "id": "umbrellaRed",
+     "ko": "빨간 파라솔"
+    },
+    {
+     "id": "umbrellaBlue",
+     "ko": "파란 파라솔"
+    },
+    {
+     "id": "umbrellaYellow",
+     "ko": "노란 파라솔"
+    },
+    {
+     "id": "sandcastle",
+     "ko": "모래성"
+    },
+    {
+     "id": "gull",
+     "ko": "갈매기"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a red-and-white striped lighthouse with a glowing lamp | a red-and-white beach umbrella on a wooden pole | the same beach umbrella in blue and white\nRow 2: the same beach umbrella in yellow and white | a sandcastle with towers and a small red flag | a white seagull standing, grey wings, orange feet"
+  },
+  {
+   "id": "S2",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "푸른 바다",
+   "items": [
+    {
+     "id": "shellPink",
+     "ko": "분홍 조개"
+    },
+    {
+     "id": "shellWhite",
+     "ko": "흰 조개"
+    },
+    {
+     "id": "starfishOrange",
+     "ko": "주황 불가사리"
+    },
+    {
+     "id": "starfishPink",
+     "ko": "분홍 불가사리"
+    },
+    {
+     "id": "crab",
+     "ko": "게"
+    },
+    {
+     "id": "swimRing",
+     "ko": "튜브"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a pink scallop shell | the same scallop shell in white | an orange starfish with white dots\nRow 2: the same starfish in pink | a smiling red crab | a red-and-white life ring"
+  },
+  {
+   "id": "S3",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "푸른 바다",
+   "items": [
+    {
+     "id": "beachHutBlue",
+     "ko": "파란 오두막"
+    },
+    {
+     "id": "beachHutPink",
+     "ko": "분홍 오두막"
+    },
+    {
+     "id": "beachHutMint",
+     "ko": "민트 오두막"
+    },
+    {
+     "id": "bucketBlue",
+     "ko": "파란 양동이"
+    },
+    {
+     "id": "bucketGreen",
+     "ko": "초록 양동이"
+    },
+    {
+     "id": "flowersBlue",
+     "ko": "파란 꽃 덤불"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a beach hut on stilts with a straw thatched roof and light-blue walls | the same beach hut with pink walls | the same beach hut with mint walls\nRow 2: a blue sand bucket with a yellow shovel | the same sand bucket in green with a red shovel | the same low flower bush with blue flowers (like the pink one)"
+  },
+  {
+   "id": "S4",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "푸른 바다",
+   "items": [
+    {
+     "id": "palmA",
+     "ko": "야자수 A"
+    },
+    {
+     "id": "palmB",
+     "ko": "야자수 B"
+    },
+    {
+     "id": "sled",
+     "ko": "썰매"
+    },
+    {
+     "id": "skiSign",
+     "ko": "스키장 표지판"
+    },
+    {
+     "id": "featherGold",
+     "ko": "금색 깃털"
+    },
+    {
+     "id": "owlPost",
+     "ko": "부엉이 기둥"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a coconut palm tree leaning right | a different coconut palm tree leaning left | a red wooden sled\nRow 2: an orange wooden arrow sign with a mountain icon on a post with a little snow at the base | a golden feather with a small white cloud at the tip | a brown owl sitting on a wooden post with grass at the base"
+  },
+  {
+   "id": "S5",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "바다(물 위)",
+   "items": [
+    {
+     "id": "boatOrange",
+     "ko": "위에서 본 주황 배"
+    },
+    {
+     "id": "boatBlue",
+     "ko": "위에서 본 파란 배"
+    },
+    {
+     "id": "boatPurple",
+     "ko": "위에서 본 보라 배"
+    },
+    {
+     "id": "dock",
+     "ko": "나무 선착장"
+    },
+    {
+     "id": "buoy",
+     "ko": "부표"
+    },
+    {
+     "id": "fish",
+     "ko": "물고기"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a small sailboat seen from above, orange hull, white sail, sitting in a splash of water | the same boat from above, blue hull, yellow sail | the same boat from above, purple hull, purple sail with stars\nRow 2: a wooden dock seen from above with rope posts, in a little water | a red-and-white buoy with a flag in a little water | an orange clownfish jumping out of a water splash"
+  },
+  {
+   "id": "S6",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "바다(물 위)",
+   "items": [
+    {
+     "id": "rockBig",
+     "ko": "큰 바위섬"
+    },
+    {
+     "id": "rockMid",
+     "ko": "중간 바위"
+    },
+    {
+     "id": "rockSmall",
+     "ko": "작은 바위"
+    },
+    {
+     "id": "vyBoatOrange",
+     "ko": "옆에서 본 주황 배"
+    },
+    {
+     "id": "vyBoatBlue",
+     "ko": "옆에서 본 파란 배"
+    },
+    {
+     "id": "vyBoatPurple",
+     "ko": "옆에서 본 보라 배"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a big mossy rock island in a ring of water | a medium mossy rock in water | a small mossy rock in water\nRow 2: a side view sailboat with orange hull and white sail riding a blue wave | the same side view sailboat with blue hull and yellow sail on a wave | the same side view sailboat with purple hull and purple star sail on a wave"
+  },
+  {
+   "id": "W1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "눈 덮인 산",
+   "items": [
+    {
+     "id": "cabinRed",
+     "ko": "빨간 통나무집"
+    },
+    {
+     "id": "cabinBrown",
+     "ko": "갈색 통나무집"
+    },
+    {
+     "id": "cabinGreen",
+     "ko": "초록 통나무집"
+    },
+    {
+     "id": "pineSnowA",
+     "ko": "진한 초록 전나무"
+    },
+    {
+     "id": "pineSnowB",
+     "ko": "연두 전나무"
+    },
+    {
+     "id": "snowBush",
+     "ko": "눈 덮인 덤불"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a log cabin with red logs, snowy roof, chimney and glowing windows | the same log cabin with brown logs | the same log cabin with green logs\nRow 2: a dark green pine tree with snow on its layers | the same snowy pine tree in light green | a round green bush covered in snow"
+  },
+  {
+   "id": "W2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "눈 덮인 산",
+   "items": [
+    {
+     "id": "snowmanRed",
+     "ko": "빨간 목도리 눈사람"
+    },
+    {
+     "id": "snowmanBlue",
+     "ko": "파란 목도리 눈사람"
+    },
+    {
+     "id": "snowmanGreen",
+     "ko": "초록 목도리 눈사람"
+    },
+    {
+     "id": "snowballs",
+     "ko": "눈덩이 5개"
+    },
+    {
+     "id": "skyTree",
+     "ko": "구름 나무"
+    },
+    {
+     "id": "bushNight",
+     "ko": "빛나는 보라 꽃 덤불"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a snowman with a black top hat, red scarf and stick arms | the same snowman with a blue scarf and hat band | the same snowman with a green scarf and hat band\nRow 2: a group of five snowballs, two big and three small | a fantasy tree whose crown is pastel clouds with golden stars hanging, on a cloud base | a dome bush of purple glowing flowers"
+  },
+  {
+   "id": "W3",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "눈 덮인 산",
+   "items": [
+    {
+     "id": "igloo",
+     "ko": "이글루"
+    },
+    {
+     "id": "pineSnowC",
+     "ko": "파란 전나무"
+    },
+    {
+     "id": "penguin",
+     "ko": "펭귄"
+    },
+    {
+     "id": "iceBlue",
+     "ko": "파란 얼음 결정"
+    },
+    {
+     "id": "icePurple",
+     "ko": "보라 얼음 결정"
+    },
+    {
+     "id": "moonFull",
+     "ko": "보름달"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: an igloo with a warm glowing doorway | the same snowy pine tree in blue | a cute penguin\nRow 2: a cluster of blue ice crystals on a little snow | the same cluster of ice crystals in purple | a pale yellow full moon with craters"
+  },
+  {
+   "id": "N1",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "별빛 하늘",
+   "items": [
+    {
+     "id": "castleLilac",
+     "ko": "성"
+    },
+    {
+     "id": "castleBlue",
+     "ko": "청록 지붕 성"
+    },
+    {
+     "id": "castlePink",
+     "ko": "분홍 지붕 성"
+    },
+    {
+     "id": "observatory",
+     "ko": "천문대"
+    },
+    {
+     "id": "treeNightPurple",
+     "ko": "보라 빛나는 나무"
+    },
+    {
+     "id": "cloudNight",
+     "ko": "별 박힌 보라 구름"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a small fairy castle with three towers: blue, purple and pink cone roofs | the same castle with teal, blue and purple roofs | the same castle with purple, pink and orange roofs\nRow 2: a white dome observatory with a telescope | a round purple tree with glowing light dots | a purple cloud with glowing yellow stars"
+  },
+  {
+   "id": "N2",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "별빛 하늘",
+   "items": [
+    {
+     "id": "glowMushBlue",
+     "ko": "파란 버섯"
+    },
+    {
+     "id": "glowMushPink",
+     "ko": "분홍 버섯"
+    },
+    {
+     "id": "gemPurple",
+     "ko": "보라 보석"
+    },
+    {
+     "id": "gemBlue",
+     "ko": "파란 보석"
+    },
+    {
+     "id": "gemPink",
+     "ko": "분홍 보석"
+    },
+    {
+     "id": "starBig",
+     "ko": "웃는 별"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: two glowing blue mushrooms with white spots, big and small | the same two glowing mushrooms in pink | a cluster of purple crystals on small white stones\nRow 2: the same crystal cluster in blue | the same crystal cluster in pink | a cute smiling yellow star"
+  },
+  {
+   "id": "N3",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "별빛 하늘",
+   "items": [
+    {
+     "id": "lanternOrange",
+     "ko": "주황 등불"
+    },
+    {
+     "id": "lanternPink",
+     "ko": "분홍 등불"
+    },
+    {
+     "id": "moonCrescent",
+     "ko": "초승달"
+    },
+    {
+     "id": "starWish",
+     "ko": "반짝이"
+    },
+    {
+     "id": "planetRing",
+     "ko": "고리 행성"
+    },
+    {
+     "id": "featherPurple",
+     "ko": "보라 깃털"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a glowing orange paper lantern with a handle | the same paper lantern in pink | a yellow crescent moon\nRow 2: one big four-point sparkle with four small sparkles | an orange striped planet with a ring | a lavender feather with a small white cloud at the tip"
+  },
+  {
+   "id": "N4",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "별빛 하늘",
+   "items": [
+    {
+     "id": "lampYellow",
+     "ko": "노란 가로등"
+    },
+    {
+     "id": "lampBlue",
+     "ko": "파란 가로등"
+    },
+    {
+     "id": "treeNightTeal",
+     "ko": "청록 빛나는 나무"
+    },
+    {
+     "id": "glowMushGreen",
+     "ko": "초록 버섯"
+    },
+    {
+     "id": "planetSmall",
+     "ko": "초록 행성"
+    },
+    {
+     "id": "rainbowBridge",
+     "ko": "무지개 다리"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a street lamp with a warm yellow glow | the same street lamp with a cyan glow | the same round glowing tree in teal (same shape as the purple one)\nRow 2: the same two glowing mushrooms in green | a small mint green planet with craters | a pastel rainbow arch bridge between two small stone towers on clouds"
+  },
+  {
+   "id": "K1",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "하늘섬",
+   "items": [
+    {
+     "id": "balloonRed",
+     "ko": "빨간 열기구"
+    },
+    {
+     "id": "balloonBlue",
+     "ko": "파란 열기구"
+    },
+    {
+     "id": "kiteYellow",
+     "ko": "노란 연"
+    },
+    {
+     "id": "pinwheelPink",
+     "ko": "분홍 바람개비"
+    },
+    {
+     "id": "pinwheelBlue",
+     "ko": "파란 바람개비"
+    },
+    {
+     "id": "airship",
+     "ko": "비행선"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a hot air balloon, red and pink with a cloud trim and a star on top | the same hot air balloon in blue | a yellow diamond kite with clouds and a ribbon tail\nRow 2: a pink pinwheel on a stick with a star center and bow | the same pinwheel in blue | a cream airship with a star and blue fins"
+  },
+  {
+   "id": "K2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "하늘섬",
+   "items": [
+    {
+     "id": "skyHouse",
+     "ko": "구름 위 집"
+    },
+    {
+     "id": "bellTower",
+     "ko": "종탑"
+    },
+    {
+     "id": "weatherVane",
+     "ko": "닭 풍향계"
+    },
+    {
+     "id": "birdHouse",
+     "ko": "새집"
+    },
+    {
+     "id": "kiteGreen",
+     "ko": "초록 연"
+    },
+    {
+     "id": "wingMail",
+     "ko": "날개 우체통"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a cottage on a cloud with a pink roof and flowers | a small bell tower with a golden dome on a cloud | a golden rooster weather vane on a cloud\nRow 2: a birdhouse on a post with a blue bird, on a cloud | the same diamond kite in green | a red mailbox with white wings on a cloud"
+  },
+  {
+   "id": "K3",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "하늘섬",
+   "items": [
+    {
+     "id": "skyWhale",
+     "ko": "고래"
+    },
+    {
+     "id": "starJar",
+     "ko": "별 사탕 병"
+    },
+    {
+     "id": "vyShip",
+     "ko": "날개 없는 배"
+    },
+    {
+     "id": "vyWing",
+     "ko": "날개 1장"
+    },
+    {
+     "id": "vyWingShip",
+     "ko": "날개 달린 배"
+    }
+   ],
+   "prompt": "A game sprite sheet of 5 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a cute blue-purple whale with clouds on its back | a glass jar of star candies with a pink bow | a golden sailing ship hull with sails, no wings, side view\nRow 2: one big white angel wing | the same golden sailing ship with two white wings, flying"
+  },
+  {
+   "id": "K4",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "하늘섬",
+   "items": [
+    {
+     "id": "skyCloudA",
+     "ko": "큰 구름 A"
+    },
+    {
+     "id": "skyCloudB",
+     "ko": "큰 구름 B"
+    },
+    {
+     "id": "skyCloudC",
+     "ko": "큰 구름 C"
+    },
+    {
+     "id": "skyCloudD",
+     "ko": "큰 구름 D"
+    },
+    {
+     "id": "skyCloudE",
+     "ko": "큰 구름 E"
+    },
+    {
+     "id": "skyCloudF",
+     "ko": "큰 구름 F"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a big fluffy pastel cloud | a different big fluffy cloud | a third big cloud\nRow 2: a fourth big cloud | a fifth big cloud | a sixth big cloud"
+  },
+  {
+   "id": "K5",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "하늘섬",
+   "items": [
+    {
+     "id": "pebCloudA",
+     "ko": "구름 발판 A"
+    },
+    {
+     "id": "pebCloudB",
+     "ko": "구름 발판 B"
+    },
+    {
+     "id": "pebCloudC",
+     "ko": "구름 발판 C"
+    },
+    {
+     "id": "pebCloudD",
+     "ko": "구름 발판 D"
+    },
+    {
+     "id": "cookieFull",
+     "ko": "꽉 찬 쿠키 하트"
+    },
+    {
+     "id": "cookieEmpty",
+     "ko": "빈 쿠키 하트"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a flat oval cloud stepping stone with a soft rainbow sheen | a different flat rainbow cloud stepping stone | a third flat rainbow cloud stepping stone\nRow 2: a fourth flat rainbow cloud stepping stone | a heart-shaped chocolate chip cookie | an empty pale heart-shaped cookie plate with crumbs"
+  },
+  {
+   "id": "I1",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "섬",
+   "items": [
+    {
+     "id": "islFlower",
+     "ko": "꽃 언덕 섬"
+    },
+    {
+     "id": "islSea",
+     "ko": "바닷가 섬"
+    },
+    {
+     "id": "islSnow",
+     "ko": "눈 섬"
+    }
+   ],
+   "prompt": "A game sprite sheet of 3 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 1 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a small island seen from the side: grassy cliff with a cottage, windmill and flower trees, surrounded by blue water and waves | a beach island: palm trees, wooden hut, red-white lighthouse, small dock, blue water | a snowy island: log cabin, snowy pines, snowman, ice blocks in blue water"
+  },
+  {
+   "id": "I2",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "섬",
+   "items": [
+    {
+     "id": "islNight",
+     "ko": "별빛 섬"
+    },
+    {
+     "id": "islSky",
+     "ko": "하늘섬"
+    }
+   ],
+   "prompt": "A game sprite sheet of 2 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 1 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a purple night island: fairy castle, glowing purple trees, lamps, purple water | a floating sky island: castle with golden domes on clouds, waterfalls falling from the bottom"
+  },
+  {
+   "id": "C1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "cdLollyTree",
+     "ko": "막대사탕 나무"
+    },
+    {
+     "id": "cdGummyBears",
+     "ko": "곰젤리"
+    },
+    {
+     "id": "cdCandyFlower",
+     "ko": "사탕 꽃"
+    },
+    {
+     "id": "cdJellyMush",
+     "ko": "젤리 버섯"
+    },
+    {
+     "id": "cdCottonBush",
+     "ko": "솜사탕 덤불"
+    },
+    {
+     "id": "cdCandyCane",
+     "ko": "지팡이 사탕"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a tree made of swirl lollipops | three gummy bears, red yellow green | a flower made of candy with a candy stem\nRow 2: a red jelly mushroom with white spots and a small one | a bush of pink cotton candy with little flowers | two candy canes standing in cream"
+  },
+  {
+   "id": "C2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "cdCookieHouse",
+     "ko": "쿠키 집"
+    },
+    {
+     "id": "cdCupcake",
+     "ko": "컵케이크"
+    },
+    {
+     "id": "cdCake",
+     "ko": "조각 케이크"
+    },
+    {
+     "id": "cdDonut",
+     "ko": "도넛"
+    },
+    {
+     "id": "cdCream",
+     "ko": "생크림"
+    },
+    {
+     "id": "cdMacaronTower",
+     "ko": "마카롱 탑"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a gingerbread cookie house with icing | a cupcake with cream and a strawberry | a slice of strawberry shortcake\nRow 2: a pink frosted donut with sprinkles | a big swirl of whipped cream with sprinkles | a stack of pastel macarons"
+  },
+  {
+   "id": "C3",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "cdChocoCastle",
+     "ko": "초콜릿 성"
+    },
+    {
+     "id": "cdChocoFountain",
+     "ko": "초콜릿 분수"
+    },
+    {
+     "id": "cdChocoBridge",
+     "ko": "초콜릿 다리"
+    },
+    {
+     "id": "cdTruffle",
+     "ko": "트러플"
+    },
+    {
+     "id": "cdChocoTree",
+     "ko": "초콜릿 나무"
+    },
+    {
+     "id": "cdClockTower",
+     "ko": "초콜릿 시계탑"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a chocolate castle | a chocolate fountain | a chocolate bar bridge\nRow 2: a pile of chocolate truffles | a tree of chocolate balls | a chocolate clock tower"
+  },
+  {
+   "id": "C4",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "stampCookie",
+     "ko": "쿠키 도장"
+    },
+    {
+     "id": "stampMacaron",
+     "ko": "마카롱 도장"
+    },
+    {
+     "id": "stampDonut",
+     "ko": "도넛 도장"
+    },
+    {
+     "id": "stampCandy",
+     "ko": "사탕 도장"
+    },
+    {
+     "id": "stampJelly",
+     "ko": "젤리 도장"
+    },
+    {
+     "id": "stampCrown",
+     "ko": "왕관 도장"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a round cookie badge with a chocolate star | a pink macaron badge with a heart | a donut badge with a star\nRow 2: a round swirl candy badge | a red gummy bear badge with a scalloped edge | a cookie badge with a golden crown"
+  },
+  {
+   "id": "C5",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "padMacPink",
+     "ko": "분홍 마카롱"
+    },
+    {
+     "id": "padMacMint",
+     "ko": "민트 마카롱"
+    },
+    {
+     "id": "padMacYellow",
+     "ko": "노란 마카롱"
+    },
+    {
+     "id": "padJelly",
+     "ko": "빨간 젤리"
+    },
+    {
+     "id": "padBeanGreen",
+     "ko": "초록 젤리빈"
+    },
+    {
+     "id": "padBeanPurple",
+     "ko": "보라 젤리빈"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a pink macaron seen slightly from above | the same macaron in mint | the same macaron in yellow\nRow 2: a red jelly dome | a green jelly bean | the same jelly bean in purple"
+  },
+  {
+   "id": "C6",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "padMallow",
+     "ko": "마시멜로"
+    },
+    {
+     "id": "padCookie",
+     "ko": "초코칩 쿠키"
+    },
+    {
+     "id": "tileMatcha",
+     "ko": "말차 과자 칸"
+    },
+    {
+     "id": "tileMint",
+     "ko": "민트 과자 칸"
+    },
+    {
+     "id": "btnCandyHouse",
+     "ko": "과자 집 버튼"
+    },
+    {
+     "id": "btnCookieBoat",
+     "ko": "쿠키 배 버튼"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a white marshmallow | a chocolate chip cookie | a square matcha cracker tile with nuts\nRow 2: a square mint candy tile with a swirl | a candy house button with a lollipop on top | a cookie sailboat button"
+  },
+  {
+   "id": "C7",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "tileStrawberry",
+     "ko": "딸기 칸"
+    },
+    {
+     "id": "tileChoco",
+     "ko": "초콜릿 칸"
+    },
+    {
+     "id": "tileButter",
+     "ko": "버터 과자 칸"
+    },
+    {
+     "id": "tileBlueberry",
+     "ko": "블루베리 칸"
+    },
+    {
+     "id": "tileGrape",
+     "ko": "포도 칸"
+    },
+    {
+     "id": "tileOrange",
+     "ko": "오렌지 칸"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a square pink jelly tile with a strawberry | a square chocolate bar tile | a square butter cracker tile\nRow 2: a square blue tile with blueberries | a square purple jelly tile with grapes | a square orange jelly tile with an orange slice"
+  },
+  {
+   "id": "C8",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "과자 나라",
+   "items": [
+    {
+     "id": "tileWafer",
+     "ko": "웨하스 칸"
+    },
+    {
+     "id": "tileCherry",
+     "ko": "체리 칸"
+    },
+    {
+     "id": "btnCandyShop",
+     "ko": "과자 가게 버튼"
+    }
+   ],
+   "prompt": "A game sprite sheet of 3 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 1 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a square wafer tile | a square red jelly tile with cherries | a candy shop stall button with a striped awning"
+  }
+ ],
+ "bgs": [
+  {
+   "id": "BG01",
+   "file": "scene_flowerhill",
+   "region": "꽃 언덕",
+   "ko": "틀린그림 배경",
+   "prompt": "A wide landscape game background, horizontal 1536x1024: sunny flower meadow with soft rolling green hills, blue sky with a few puffy clouds; the horizon is about one third from the top and the lower two thirds is open grassy ground with only tiny flowers near the edges, leaving a large empty area for placing objects. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG02",
+   "file": "gamebg_flowerhill",
+   "region": "꽃 언덕",
+   "ko": "인게임 배경",
+   "prompt": "A vertical 1024x1536 game background: soft dreamy flower meadow and sky, very simple and slightly blurred in the middle so a puzzle board can sit on top, flowers only along the bottom corners. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG03",
+   "file": "mapfloor_flowerhill",
+   "region": "꽃 언덕",
+   "ko": "지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide light green grass path running from top to bottom through the middle, flowers, bushes, small rocks and logs along both sides. The top edge and bottom edge must match so the image tiles seamlessly vertically. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG04",
+   "file": "shore_flowerhill",
+   "region": "꽃 언덕",
+   "ko": "지도 끝 바닷가",
+   "prompt": "A horizontal 1536x1024 top-down view: clear blue sea with gentle waves in the top half meeting a sandy beach, and a grassy flower meadow in the bottom half with a sandy path in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG05",
+   "file": "scene_beach",
+   "region": "푸른 바다",
+   "ko": "틀린그림 배경",
+   "prompt": "A wide landscape game background, horizontal 1536x1024: sunny beach, turquoise sea and small islands on the horizon about one third from the top, the lower two thirds is open golden sand, leaving a large empty area for placing objects. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG06",
+   "file": "gamebg_sea",
+   "region": "푸른 바다",
+   "ko": "인게임 배경",
+   "prompt": "A vertical 1024x1536 game background: soft dreamy turquoise sea and sky with a sandy shore at the bottom, simple and slightly blurred in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG07",
+   "file": "mapfloor_sea",
+   "region": "푸른 바다",
+   "ko": "지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide sandy beach path down the middle with shells and starfish, shallow turquoise water, rocks and tropical plants along both sides. Top and bottom edges match for seamless vertical tiling. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG08",
+   "file": "shore_sea",
+   "region": "푸른 바다",
+   "ko": "지도 끝 바닷가",
+   "prompt": "A horizontal 1536x1024 top-down view: blue sea with waves in the top half meeting a beach, palm trees, rocks and flowers in the bottom half with sand in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG09",
+   "file": "scene_snow",
+   "region": "눈 덮인 산",
+   "ko": "틀린그림 배경",
+   "prompt": "A wide landscape game background, horizontal 1536x1024: snowy field with soft snow-capped mountains and small snowy pines on the horizon about one third from the top, gentle snowfall, the lower two thirds is open smooth snow, leaving a large empty area. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG10",
+   "file": "gamebg_snow",
+   "region": "눈 덮인 산",
+   "ko": "인게임 배경",
+   "prompt": "A vertical 1024x1536 game background: soft dreamy snowy landscape and pale blue sky, simple and slightly blurred in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG11",
+   "file": "mapfloor_snow",
+   "region": "눈 덮인 산",
+   "ko": "지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide smooth snow path down the middle, snowy pines, rocks, ice crystals, red berry bushes and wooden fences along both sides. Top and bottom edges match for seamless vertical tiling. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG12",
+   "file": "shore_snow",
+   "region": "눈 덮인 산",
+   "ko": "지도 끝 바닷가",
+   "prompt": "A horizontal 1536x1024 top-down view: icy blue sea with floating ice blocks in the top half meeting a snowy shore, snowy pines and rocks in the bottom half. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG13",
+   "file": "scene_night",
+   "region": "별빛 하늘",
+   "ko": "틀린그림 배경",
+   "prompt": "A wide landscape game background, horizontal 1536x1024: purple night with a big glowing full moon at upper left, a sparkling milky way, soft purple hills on the horizon about one third from the top, the lower two thirds is open purple meadow, leaving a large empty area. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG14",
+   "file": "gamebg_night",
+   "region": "별빛 하늘",
+   "ko": "인게임 배경",
+   "prompt": "A vertical 1024x1536 game background: dreamy purple starry night sky with a soft glow, simple and slightly blurred in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG15",
+   "file": "mapfloor_night",
+   "region": "별빛 하늘",
+   "ko": "지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide soft purple grass path down the middle with tiny glowing stars, glowing mushrooms, crystals, lanterns and purple flowers along both sides. Top and bottom edges match for seamless vertical tiling. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG16",
+   "file": "shore_night",
+   "region": "별빛 하늘",
+   "ko": "지도 끝 바닷가",
+   "prompt": "A horizontal 1536x1024 top-down view: deep blue-purple night sea with sparkling light in the top half meeting a sandy shore, glowing purple flower bushes with little stars in the bottom half. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG17",
+   "file": "scene_sky",
+   "region": "하늘섬",
+   "ko": "틀린그림 배경",
+   "prompt": "A wide landscape game background, horizontal 1536x1024: above the clouds, bright blue sky, pastel rainbows and small floating islands with waterfalls in the distance about one third from the top, the lower two thirds is a soft flat cloud floor, leaving a large empty area. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG18",
+   "file": "gamebg_sky",
+   "region": "하늘섬",
+   "ko": "인게임 배경",
+   "prompt": "A vertical 1024x1536 game background: dreamy bright sky with pastel clouds, rainbows and tiny floating islands, simple and slightly blurred in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG19",
+   "file": "mapfloor_sky",
+   "region": "하늘섬",
+   "ko": "지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide soft cloud path down the middle, cloud cliffs with flowers, golden feathers, stars, small rainbows and waterfalls along both sides. Top and bottom edges match for seamless vertical tiling. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG20",
+   "file": "shore_sky",
+   "region": "하늘섬",
+   "ko": "지도 끝 바닷가",
+   "prompt": "A horizontal 1536x1024 view from above: an endless sea of fluffy clouds in the top half meeting the edge of a cloud island with flowers, rainbows and small waterfalls in the bottom half. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG21",
+   "file": "voyage_sea",
+   "region": "기타",
+   "ko": "지역 이동 바다",
+   "prompt": "A horizontal 1536x1024 side view: wide open sparkling blue sea with gentle waves, bright blue sky with puffy clouds on both sides, horizon in the middle, no boats, no islands. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG22",
+   "file": "candy_bg",
+   "region": "기타",
+   "ko": "과자 나라 게임 배경",
+   "prompt": "A vertical 1024x1536 game background: dreamy candy land with pastel pink sky, cotton candy clouds and soft sweets at the bottom corners, simple and slightly blurred in the middle. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG23",
+   "file": "candy_floor",
+   "region": "기타",
+   "ko": "과자 나라 지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide pastel cream frosting path down the middle, lollipops, cookies, candy canes, gumdrops and chocolate along both sides. Top and bottom edges match for seamless vertical tiling. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG24",
+   "file": "candy_gate",
+   "region": "기타",
+   "ko": "과자 나라 마을 입구",
+   "prompt": "A horizontal 1536x1024 view: the entrance of a candy village with a candy arch gate, gingerbread houses, lollipop trees and a path leading in, pastel colors. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  }
+ ]
+}

@@ -1,28 +1,66 @@
-# 전체 그림 다시 만들기 — 장(sheet) 계획 (2026-10-30)
+# 전체 그림 다시 만들기 — 장 계획 (2026-10-30, 6개 이하 버전)
 
-ChatGPT에 물건 모음 16장 + 배경 24장을 요청. 각 장은 3줄×4칸(읽는 순서: 위 줄부터, 왼→오른).
-바탕: B = 파랑 #0047FF, G = 초록 #00B140, M = 마젠타 #FF00FF (물건 가장자리 색과 겹치지 않게 장마다 고름).
-받은 그림은 art-src/new/<장 이름>.png 로 저장하고, 이 순서대로 누끼를 딴다. wingShip 은 vyWingShip 을 복사.
+ChatGPT에 물건 모음 32장 + 배경 24장을 요청. 영어 요청문 전체는 `art-src/request.json`.
+받은 그림은 `art-src/new/<장 이름>.png`(예: F1.png, BG03.png)로 저장하고, 아래 칸 순서(1줄 왼→오른, 3칸씩)대로 누끼를 딴다. wingShip 은 vyWingShip 을 복사.
 
-| 장 | 바탕 | 물건 (읽는 순서) |
+| 장 | 바탕 | 칸 순서 |
 |---|---|---|
-| B1 | 파랑 | windmill cottageRed blossomPink blossomWhite blossomYellow treeRound beehive hayBale |
-| B2 | 파랑 | flowersPink flowersYellow flowersWhite tulipRed tulipYellow tulipPurple mushroomRed fenceWhite butterfly puffA puffB puffC |
-| B3 | 파랑 | palmA palmB cabinRed cabinBrown cabinGreen pineSnowA pineSnowB snowmanRed snowmanBlue snowmanGreen snowBush snowballs |
-| B4 | 파랑 | skyHouse bellTower weatherVane birdHouse skyTree kiteGreen owlPost bushNight sled skiSign featherGold sun |
-| B5 | 파랑 | cdLollyTree cdGummyBears cdCandyFlower cdJellyMush cdCottonBush cdCandyCane cdCookieHouse cdCupcake cdCake cdDonut cdCream cdMacaronTower |
-| B6 | 파랑 | cdChocoCastle cdChocoFountain cdChocoBridge cdTruffle cdChocoTree cdClockTower stampCookie stampMacaron stampDonut stampCandy stampJelly stampCrown |
-| B7 | 파랑 | padMacPink padMacMint padMacYellow padJelly padBeanGreen padBeanPurple padMallow padCookie tileMatcha tileMint btnCandyHouse btnCookieBoat |
-| G1 | 초록 | cottageBlue cottagePurple kite lighthouse umbrellaRed umbrellaBlue umbrellaYellow sandcastle shellPink shellWhite starfishOrange starfishPink |
-| G2 | 초록 | crab swimRing gull igloo pineSnowC penguin iceBlue icePurple moonFull moonCrescent starBig starWish |
-| G3 | 초록 | castleLilac castleBlue castlePink observatory treeNightPurple glowMushBlue glowMushPink gemPurple gemBlue gemPink lanternOrange lanternPink |
-| G4 | 초록 | balloonRed balloonBlue kiteYellow pinwheelPink pinwheelBlue airship wingMail skyWhale featherPurple starJar planetRing cloudNight |
-| G5 | 초록 | skyCloudA skyCloudB skyCloudC skyCloudD skyCloudE skyCloudF pebCloudA pebCloudB pebCloudC pebCloudD vyShip vyWing |
-| G6 | 초록 | tileStrawberry tileChoco tileButter tileBlueberry tileGrape tileOrange tileWafer tileCherry cookieFull cookieEmpty btnCandyShop vyWingShip |
-| M1 | 마젠타 | beachHutBlue beachHutPink beachHutMint bucketBlue bucketGreen flowersBlue planetSmall lampYellow lampBlue treeNightTeal glowMushGreen rainbowBridge |
-| M2 | 마젠타 | boatOrange boatBlue boatPurple dock rockBig rockMid rockSmall buoy fish vyBoatOrange vyBoatBlue vyBoatPurple |
-| M3 | 마젠타 | islFlower islSea islSnow islNight islSky (위 3개, 아래 2개) |
+| F1 | 파랑 #0047FF | windmill cottageRed blossomPink blossomWhite blossomYellow treeRound |
+| F2 | 파랑 #0047FF | flowersPink flowersYellow flowersWhite tulipRed tulipYellow tulipPurple |
+| F3 | 파랑 #0047FF | mushroomRed fenceWhite beehive hayBale butterfly sun |
+| F4 | 초록 #00B140 | cottageBlue cottagePurple kite puffA puffB puffC |
+| S1 | 초록 #00B140 | lighthouse umbrellaRed umbrellaBlue umbrellaYellow sandcastle gull |
+| S2 | 초록 #00B140 | shellPink shellWhite starfishOrange starfishPink crab swimRing |
+| S3 | 마젠타 #FF00FF | beachHutBlue beachHutPink beachHutMint bucketBlue bucketGreen flowersBlue |
+| S4 | 파랑 #0047FF | palmA palmB sled skiSign featherGold owlPost |
+| S5 | 마젠타 #FF00FF | boatOrange boatBlue boatPurple dock buoy fish |
+| S6 | 마젠타 #FF00FF | rockBig rockMid rockSmall vyBoatOrange vyBoatBlue vyBoatPurple |
+| W1 | 파랑 #0047FF | cabinRed cabinBrown cabinGreen pineSnowA pineSnowB snowBush |
+| W2 | 파랑 #0047FF | snowmanRed snowmanBlue snowmanGreen snowballs skyTree bushNight |
+| W3 | 초록 #00B140 | igloo pineSnowC penguin iceBlue icePurple moonFull |
+| N1 | 초록 #00B140 | castleLilac castleBlue castlePink observatory treeNightPurple cloudNight |
+| N2 | 초록 #00B140 | glowMushBlue glowMushPink gemPurple gemBlue gemPink starBig |
+| N3 | 초록 #00B140 | lanternOrange lanternPink moonCrescent starWish planetRing featherPurple |
+| N4 | 마젠타 #FF00FF | lampYellow lampBlue treeNightTeal glowMushGreen planetSmall rainbowBridge |
+| K1 | 초록 #00B140 | balloonRed balloonBlue kiteYellow pinwheelPink pinwheelBlue airship |
+| K2 | 파랑 #0047FF | skyHouse bellTower weatherVane birdHouse kiteGreen wingMail |
+| K3 | 초록 #00B140 | skyWhale starJar vyShip vyWing vyWingShip |
+| K4 | 초록 #00B140 | skyCloudA skyCloudB skyCloudC skyCloudD skyCloudE skyCloudF |
+| K5 | 초록 #00B140 | pebCloudA pebCloudB pebCloudC pebCloudD cookieFull cookieEmpty |
+| I1 | 마젠타 #FF00FF | islFlower islSea islSnow |
+| I2 | 마젠타 #FF00FF | islNight islSky |
+| C1 | 파랑 #0047FF | cdLollyTree cdGummyBears cdCandyFlower cdJellyMush cdCottonBush cdCandyCane |
+| C2 | 파랑 #0047FF | cdCookieHouse cdCupcake cdCake cdDonut cdCream cdMacaronTower |
+| C3 | 파랑 #0047FF | cdChocoCastle cdChocoFountain cdChocoBridge cdTruffle cdChocoTree cdClockTower |
+| C4 | 파랑 #0047FF | stampCookie stampMacaron stampDonut stampCandy stampJelly stampCrown |
+| C5 | 파랑 #0047FF | padMacPink padMacMint padMacYellow padJelly padBeanGreen padBeanPurple |
+| C6 | 파랑 #0047FF | padMallow padCookie tileMatcha tileMint btnCandyHouse btnCookieBoat |
+| C7 | 초록 #00B140 | tileStrawberry tileChoco tileButter tileBlueberry tileGrape tileOrange |
+| C8 | 초록 #00B140 | tileWafer tileCherry btnCandyShop |
 
-배경 24장(지역 5 × 4종 + 바다 1 + 과자 나라 3): 지역마다 scene(틀린그림 배경, 가로 1536×1024) · gamebg(인게임 배경, 세로 1024×1536) ·
-mapfloor(지도 바닥, 세로 1024×1536, 위아래 이어짐) · shore(지도 끝 바닷가, 가로 1536×1024), voyage sea(옆에서 본 바다, 가로),
-candy bg(세로)·floor(세로, 위아래 이어짐)·gate(가로).
+| 배경 | 파일 | 용도 |
+|---|---|---|
+| BG01 | scene_flowerhill | 꽃 언덕 틀린그림 배경 |
+| BG02 | gamebg_flowerhill | 꽃 언덕 인게임 배경 |
+| BG03 | mapfloor_flowerhill | 꽃 언덕 지도 바닥 |
+| BG04 | shore_flowerhill | 꽃 언덕 지도 끝 바닷가 |
+| BG05 | scene_beach | 푸른 바다 틀린그림 배경 |
+| BG06 | gamebg_sea | 푸른 바다 인게임 배경 |
+| BG07 | mapfloor_sea | 푸른 바다 지도 바닥 |
+| BG08 | shore_sea | 푸른 바다 지도 끝 바닷가 |
+| BG09 | scene_snow | 눈 덮인 산 틀린그림 배경 |
+| BG10 | gamebg_snow | 눈 덮인 산 인게임 배경 |
+| BG11 | mapfloor_snow | 눈 덮인 산 지도 바닥 |
+| BG12 | shore_snow | 눈 덮인 산 지도 끝 바닷가 |
+| BG13 | scene_night | 별빛 하늘 틀린그림 배경 |
+| BG14 | gamebg_night | 별빛 하늘 인게임 배경 |
+| BG15 | mapfloor_night | 별빛 하늘 지도 바닥 |
+| BG16 | shore_night | 별빛 하늘 지도 끝 바닷가 |
+| BG17 | scene_sky | 하늘섬 틀린그림 배경 |
+| BG18 | gamebg_sky | 하늘섬 인게임 배경 |
+| BG19 | mapfloor_sky | 하늘섬 지도 바닥 |
+| BG20 | shore_sky | 하늘섬 지도 끝 바닷가 |
+| BG21 | voyage_sea | 기타 지역 이동 바다 |
+| BG22 | candy_bg | 기타 과자 나라 게임 배경 |
+| BG23 | candy_floor | 기타 과자 나라 지도 바닥 |
+| BG24 | candy_gate | 기타 과자 나라 마을 입구 |
