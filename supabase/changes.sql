@@ -234,3 +234,33 @@ where l.id = (select id from t);
 alter table public.leaderboard enable trigger leaderboard_keep_best;
 commit;
 -- 결과: test1 최고 90라운드·별 270·점수 65861·라운드 90개, 열린 라운드 91·지역 1
+
+-- ============================================================
+-- 2026-10-30 랭킹 정리 (실행 완료)
+begin;
+-- 1) 게스트 '중독군'·'호랑이' 랭킹 기록 삭제 (4줄)
+delete from public.leaderboard where id in (
+  '1fe9d08f-c6da-492d-84f4-ccbb2f725349','8a262c16-91b9-45c3-8cde-8a52c0057e73',
+  '863a0002-3ab5-4588-bc29-b34980d7b7f3','dca67f98-2484-4305-bd72-723bbbda6a8b');
+-- 2) test1 과자 나라·칭호에 섞인 운영진 기록 정리 (운영진과 같은 과자 라운드 20개·오늘의 과자·도장·과자 업적·칭호·테두리)
+with t as (select id from auth.users where email='test1@teullin.game'),
+a as (select p.data->'candy'->'rounds' r from public.progress p join auth.users u on u.id=p.id where u.email='yjeeeee0510@teullin.game')
+update public.progress p set data =
+  ((((p.data #- '{ach,got,candyStar}') #- '{ach,got,candyClear}') #- '{ach,got,candyDaily}') - 'frame')
+  || jsonb_build_object('candy', (p.data->'candy') || jsonb_build_object(
+       'rounds', coalesce((select jsonb_object_agg(k,v) from jsonb_each(p.data->'candy'->'rounds') e(k,v) where v is distinct from (select r->k from a)),'{}'::jsonb),
+       'unlocked',4,'daily','{}'::jsonb,'months','{}'::jsonb),
+     'title',null,'titleAt',(extract(epoch from now())*1000)::bigint,'frameAt',(extract(epoch from now())*1000)::bigint),
+  updated_at = now()
+where p.id=(select id from t);
+-- 3) test1 랭킹의 과자 나라 기록·칭호 다시 계산
+with t as (select id from auth.users where email='test1@teullin.game'),
+r as (select k::int rk, v from public.progress p, jsonb_each(p.data->'candy'->'rounds') e(k,v) where p.id=(select id from t))
+update public.leaderboard l set
+  candy_round = coalesce((select max(rk) from r),0),
+  candy_stars = coalesce((select sum(coalesce((v->>'stars')::int,1)) from r),0),
+  candy_time  = coalesce((select round(avg((v->>'time')::numeric)) from r where (v->>'time')::numeric>0),0),
+  title = null
+where l.id=(select id from t);
+commit;
+-- 결과: 랭킹 9명, test1 과자 나라 3라운드·별 9, 칭호 없음
