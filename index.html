@@ -1122,7 +1122,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.2</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.3</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2238,8 +2238,9 @@ function clearStage(){
   let extra='';
   $('#mMenu').hidden=!wasLast;
   if(wasLast){
-    if(S.held){S.held=false;refundHeart()}
     const prev=P.rounds[round];
+    // 처음 깬 라운드만 건 하트를 돌려줌 (이미 깬 라운드를 다시 하면 하트 1개를 씀)
+    const heartSpent=!!(S.held&&prev);if(S.held){S.held=false;if(!prev)refundHeart()}
     const isBest=!prev||S.score>prev.best;
     const got=S.stars.filter(x=>x>0),rs=Math.max(1,Math.min(3,Math.round(got.reduce((a,b)=>a+b,0)/Math.max(1,got.length))));
     const prevStars=prev&&prev.stars||0;
@@ -2253,7 +2254,7 @@ function clearStage(){
     if(coinGot){W().coins+=coinGot;P.walletAt=Date.now()}
     const achNew=ACH.newSince(achBefore);
     saveP();RANK.submitQuiet();
-    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}그대로</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${achNew.length?`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`:''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
+    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}${heartSpent?'−1 <small>(다시 하기)</small>':'그대로'}</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${achNew.length?`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`:''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
     S=null;save();
     const toDock=isZoneEnd(round)&&!isAdmin()&&P.revealed<zoneOf(round+1);
     pendingNext=round<MAXR&&!toDock?round+1:0;
@@ -2934,7 +2935,7 @@ const CANDY=(function(){
     const sh=openSheet(`<div class="eyebrow">과자 나라 · 라운드 ${n}</div><h3>${N}×${N} 과자 판</h3>
       <div class="cd-rule"><span class="cd-rf">${ZODIAC.face(ZODIAC.idx(n))}</span><p>가로줄·세로줄·과자 구역마다 <b>친구 한 명</b>씩 앉혀요. 친구끼리는 옆이나 대각선으로 <b>붙으면 안 돼요</b>.</p></div>
       ${rec?`<p class="lead">최고 기록 · ${'★'.repeat(rec.stars||1)}${'☆'.repeat(3-(rec.stars||1))} · ${fmtTime(rec.time||0)}</p>`:''}
-      ${adm?'':`<div class="rs-heart">${cookieIco(false)}<span>쿠키 하트 1개를 걸고 도전해요<br><small>깨면 그대로, 실수 ${CMISS}번이면 1개 줄어요 · 남은 쿠키 <b data-cookies>${C().hearts}</b>개</small></span></div>`}
+      ${adm?'':`<div class="rs-heart">${cookieIco(false)}<span>쿠키 하트 1개를 걸고 도전해요<br><small>${rec?'이미 깬 라운드라 다시 하면 쿠키 1개를 써요':`깨면 그대로, 실수 ${CMISS}번이면 1개 줄어요`} · 남은 쿠키 <b data-cookies>${C().hearts}</b>개</small></span></div>`}
       <div class="row"><button class="btn" id="crNo" type="button">닫기</button><button class="btn primary" id="crGo" type="button">도전!</button></div>`);
     sh.querySelector('#crNo').addEventListener('click',closeSheet);
     sh.querySelector('#crGo').addEventListener('click',()=>{closeSheet();start(n)});
@@ -3072,7 +3073,8 @@ const CANDY=(function(){
     if(!running)return;
     elapsedFrozen=performance.now()-t0;running=false;
     const secs=Math.round(elapsedFrozen/1000),g=G,N=g.N,c=C(),achBefore=ACH.snapshot();
-    if(g.held){g.held=false;c.hearts=Math.min(CK_MAX,c.hearts+1)}
+    const ckSpent=!!(g.held&&!g.daily&&c.rounds[g.n]);
+    if(g.held){g.held=false;if(!ckSpent)c.hearts=Math.min(CK_MAX,c.hearts+1)}
     let rows='',title,next='',coin=0;
     if(g.daily){
       const key=dkey(new Date()),first=!c.daily[key];
@@ -3089,7 +3091,7 @@ const CANDY=(function(){
       c.rounds[g.n]={stars:Math.max(st,prev?prev.stars:0),cs:Math.max(st,paid),time:prev&&prev.time?Math.min(prev.time,secs):secs,plays:(prev&&prev.plays||0)+1,last:Date.now()};
       const opened=g.n<MAXC&&c.unlocked<g.n+1;
       if(g.n<MAXC)c.unlocked=Math.max(c.unlocked,g.n+1);
-      rows+=`<dt>별점</dt><dd class="rstar">${'★'.repeat(st)}<span>${'★'.repeat(3-st)}</span></dd>${isAdmin()?'':`<dt>쿠키 하트</dt><dd class="heart-dd">${cookieIco(false)}그대로</dd>`}${opened?`<dt>새로 열림</dt><dd>라운드 ${g.n+1} · ${roundN(g.n+1)}×${roundN(g.n+1)}</dd>`:''}`;
+      rows+=`<dt>별점</dt><dd class="rstar">${'★'.repeat(st)}<span>${'★'.repeat(3-st)}</span></dd>${isAdmin()?'':`<dt>쿠키 하트</dt><dd class="heart-dd">${cookieIco(false)}${ckSpent?'−1 <small>(다시 하기)</small>':'그대로'}</dd>`}${opened?`<dt>새로 열림</dt><dd>라운드 ${g.n+1} · ${roundN(g.n+1)}×${roundN(g.n+1)}</dd>`:''}`;
       title=g.n===MAXC?'과자 나라 완주!':'라운드 클리어!';
       if(g.n<MAXC&&g.n+1<=openTo())next=g.n+1;
       else if(g.n<MAXC){const p=partOf(g.n+1);rows+=`<dt>다음 구간</dt><dd>${p.name} · 본 게임 ${eulName(ZONES[p.z].name)} 열면 열려요</dd>`}
@@ -3869,7 +3871,7 @@ function openRoundSheet(n){
     <h3>라운드 ${n}</h3>
     <div class="rs-type"><i class="ty t${t}">${TYPE_ICON[t]}</i><span>${STAGES[t].name}</span><em>${sz}</em></div>
     ${recHtml}
-    ${isAdmin()?'':`<p class="rs-heart">${ICON.heart}<span>${resumeHere?'하트 1개를 걸고 하던 판이에요':`하트 1개를 걸고 시작해요 · 지금 <b data-hearts>${W().hearts}</b>개`}<br><small>${t===2?'깨면 그대로, 중간에 그만두면 1개 줄어요':`깨면 그대로, 실수 ${MISS_MAX}번이거나 그만두면 1개 줄어요`}</small></span></p>`}
+    ${isAdmin()?'':`<p class="rs-heart">${ICON.heart}<span>${resumeHere?'하트 1개를 걸고 하던 판이에요':`하트 1개를 걸고 시작해요 · 지금 <b data-hearts>${W().hearts}</b>개`}<br><small>${rec?'이미 깬 라운드라 다시 하면 하트 1개를 써요':t===2?'깨면 그대로, 중간에 그만두면 1개 줄어요':`깨면 그대로, 실수 ${MISS_MAX}번이거나 그만두면 1개 줄어요`}</small></span></p>`}
     <div class="row"><button class="btn" type="button" id="rsNo">닫기</button><button class="btn primary rs-go" type="button" id="rsGo">${resumeHere?'이어하기':'라운드 시작'}</button></div></div>`);
   sh.classList.add('rsheet');
   sh.querySelector('#rsNo').addEventListener('click',()=>{NATIVE.buzz('tick');closeSheet()});
@@ -3950,6 +3952,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['3.3','10월 30일','다시 하기는 하트를 써요',['이미 깬 라운드를 다시 하면 깨도 하트 1개가 줄어요 (과자 나라는 쿠키 1개)','처음 깨는 라운드는 지금처럼 깨면 그대로예요','오늘의 과자는 그대로 쿠키를 안 써요']],
   ['3.2','10월 30일','과자 나라 재도전',['과자 나라 클리어 창에도 \'재도전\' 버튼 (같은 라운드·오늘의 과자 다시 하기)']],
   ['3.1','10월 30일','과자 나라',['지도 오른쪽 가운데 과자 집 버튼으로 가는 새 게임 \'과자 나라\' 300라운드 (5×5~10×10)','가로줄·세로줄·과자 구역마다 친구 한 명, 친구끼리 옆·대각선으로 붙지 않게','과자 나라 전용 쿠키 하트(최대 10개·10분마다 1개, 상점 100코인)','매일 바뀌는 \'오늘의 과자\' 퍼즐과 도장 달력, 연속 보너스','본 게임 지역을 열면 과자 나라 구간이 열려요: 사탕 숲(처음부터)·쿠키 언덕(푸른 바다)·초콜릿 성(눈 덮인 산)','업적에 \'과자\' 탭과 칭호 \'과자 초보·중수·고수·달인\' 추가','랭킹에 \'과자 나라\' 탭']],
   ['3.0','10월 30일','재도전·프로필 테두리',['라운드 클리어 창에 \'재도전\' 버튼 (같은 라운드 다시 하기)','프로필 테두리 12가지: 업적 보상을 받으면 하나씩 열려요 (프로필 → 테두리 고르기)','랭킹 창의 이름 변경 버튼을 없앴어요 (닉네임은 프로필·설정에서 바꿀 수 있어요)']],
