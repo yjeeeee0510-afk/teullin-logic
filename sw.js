@@ -1,5 +1,7 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v69';
+const CACHE='sekan-v70';
+// 그림 주소 뒤 ?v= (index.html ASSET_V와 같게)
+const AV='42';
 const CORE=[
   './',
   'index.html',
@@ -231,7 +233,7 @@ const CORE=[
   'img/ui/icoTrophy.webp'
 ];
 self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE.map(u=>new Request(u.startsWith('img/')?u+'?v='+AV:u,{cache:'reload'})))).then(()=>self.skipWaiting()));
 });
 self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));

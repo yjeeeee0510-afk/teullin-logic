@@ -1149,7 +1149,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.2</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.3</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1170,7 +1170,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
   <main class="panel" id="panel">
     <div class="ghud" id="ghud">
       <div class="gh-l"><div class="gh-t" id="ghTitle"></div><div class="gh-info" id="ghInfo"><span class="chip gh-time" id="ghTime">0:00</span><span class="chip gh-score" id="ghScore">0점</span></div></div>
-      <button class="gm-menu" id="gmMenu" type="button" aria-label="메뉴 열기"><img class="uico" src="img/ui/icoMenu.webp" alt="" aria-hidden="true" draggable="false"></button>
+      <button class="gm-menu" id="gmMenu" type="button" aria-label="메뉴 열기"><img class="uico" src="img/ui/icoMenu.webp?v=42" alt="" aria-hidden="true" draggable="false"></button>
     </div>
     <div class="phead">
       <div><h2 id="pTitle"></h2><p id="pDesc"></p></div>
@@ -1708,7 +1708,9 @@ const SPR_WEBP=new Set(["skyHouse","bellTower","skyTree","rainbowBridge","weathe
 const sprPath=n=>`img/sprites/${n}.${SPR_WEBP.has(n)?'webp':'png'}`;
 const ART={bg:{},spr:{}};
 let artReady=null;
-const embedded=src=>(window.SEKAN_EMBED&&window.SEKAN_EMBED[src])||src;
+// 그림을 바꾸면 ASSET_V를 올린다 (sw.js의 AV와 같게) — 휴대폰에 남은 예전 그림 대신 새 그림을 받게 함
+const ASSET_V='42';
+const embedded=src=>(window.SEKAN_EMBED&&window.SEKAN_EMBED[src])||(/^img\//.test(src)?src+'?v='+ASSET_V:src);
 const UI=(n,cls)=>`<img class="uico${cls?' '+cls:''}" src="${embedded('img/ui/'+n+'.webp')}" alt="" aria-hidden="true" draggable="false">`;
 function loadImg(src){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error(src));im.src=embedded(src)})}
 function ensureArt(){
@@ -3986,6 +3988,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['4.3','10월 31일','새 그림 바로 보이게',['휴대폰에 남아 있던 예전 그림 대신 4.2 새 그림을 바로 받아 오게 고쳤어요']],
   ['4.2','10월 30일','그림 전체 새로',['물건 그림 182개를 새로 그린 그림으로 모두 바꿨어요 (테두리 깨끗하게)','지역 배경·지도 바닥·바닷가·과자 나라 배경도 새 그림으로','하트·코인·힌트·별·메뉴 같은 화면 속 아이콘도 그림으로 바꿨어요']],
   ['4.1','10월 30일','퍼즐 조각 네모로',['퍼즐 맞추기 조각을 직소 모양에서 다시 네모 칸으로 바꿨어요 (정사각형 그림 크기는 그대로)']],
   ['4.0','10월 30일','틀린그림 글씨 밖으로',['틀린그림 찾기의 \'원본\'·\'다른 그림\' 글씨가 그림을 가리지 않게 그림 바깥 위로 옮겼어요']],
