@@ -717,8 +717,9 @@ body.game-mode #pTools .seg button{min-height:45px;padding:8px 14px;font-size:15
 body.game-mode #pTools .hint-btn .ico{width:20px;height:20px}
 body.game-mode .pics{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%}
 body.game-mode .pics.side{flex-direction:row}
-body.game-mode .pic{position:relative;flex:none}
-body.game-mode .pic figcaption{position:absolute;left:6px;top:6px;z-index:2;background:rgba(27,39,66,.78);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px;letter-spacing:.02em;pointer-events:none}
+body.game-mode .pic{position:relative;flex:none;gap:3px}
+/* '원본'·'다른 그림' 글씨는 그림 위가 아니라 그림 바깥 왼쪽 위에 */
+body.game-mode .pic figcaption{align-self:flex-start;height:19px;line-height:19px;background:rgba(27,39,66,.78);color:#fff;border-radius:6px;padding:0 8px;font-size:11px;letter-spacing:.02em;pointer-events:none}
 body.game-mode .pic canvas.frame{width:var(--picw,100%)}
 body.game-mode .jig-area{width:100%;height:100%;align-items:center}
 body.game-mode .jig{width:var(--jigw,100%)}
@@ -1147,7 +1148,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.9</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.0</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2793,7 +2794,7 @@ function fitBoard(){
   const pics=b.querySelector('.pics');
   if(pics){
     const side=W>H*1.25;pics.classList.toggle('side',side);
-    const w=side?Math.min((W-8)/2,H*4/3):Math.min(W,(H-8)/2*4/3);
+    const CAP=22,w=side?Math.min((W-8)/2,(H-CAP)*4/3):Math.min(W,(H-8-2*CAP)/2*4/3);
     pics.style.setProperty('--picw',Math.floor(w)+'px');
   }
   const jg=b.querySelector('.jig');
@@ -4040,6 +4041,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['4.0','10월 30일','틀린그림 글씨 밖으로',['틀린그림 찾기의 \'원본\'·\'다른 그림\' 글씨가 그림을 가리지 않게 그림 바깥 위로 옮겼어요']],
   ['3.9','10월 30일','계정 기록 섞임 고침',['한 기기에서 아이디를 바꿔 로그인해도 다른 아이디 기록이 섞이지 않아요','로그아웃할 때 아직 안 올라간 기록을 먼저 서버에 올려요']],
   ['3.8','10월 30일','로직 색·직소 퍼즐',['로직을 다 풀면 칠한 칸이 그림 색으로 바뀌어요 (도형은 어울리는 색, 무늬는 무지개 색)','퍼즐 그림이 정사각형으로 커져서 화면을 꽉 채워요','퍼즐 조각이 볼록·오목 이음새가 있는 진짜 조각 퍼즐 모양이 됐어요']],
   ['3.7','10월 30일','지도 보기 편하게',['라운드 십이지 얼굴을 작게','지금 내 차례인 라운드 위에 내 프로필과 \'나\' 표시 (본 게임·과자 나라 지도)']],
