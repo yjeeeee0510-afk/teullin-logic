@@ -2,3 +2,4 @@ dist/
 node_modules/
 tools/art/out/
 tools/ai_art/out/
+tools/matting/out/
