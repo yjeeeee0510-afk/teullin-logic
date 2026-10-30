@@ -86,29 +86,52 @@ def matte(rgb):
 
 
 def split_cells(rgba, n):
-    """물건 n개를 줄×3칸으로 나눔. 덩어리의 무게중심이 든 칸으로 모음."""
+    """물건 n개를 줄(3개씩, 마지막 줄은 나머지)로 나눠 읽는 순서대로. 줄은 세로 빈 띠로, 줄 안에서는 가로 빈 틈으로 나누고,
+    작은 조각(벌·더듬이·반짝이)은 가장 가까운 큰 덩어리에 붙임. 한 줄짜리 넓은 그림(2172×724)도 같은 방법."""
     a = rgba[..., 3] > 20
     H, W = a.shape
     rows = (n + 2) // 3
-    lab, k = ndimage.label(ndimage.binary_dilation(a, iterations=2))
-    cen = ndimage.center_of_mass(a, lab, range(1, k + 1))
-    sizes = ndimage.sum(a, lab, range(1, k + 1))
-    cells = {}
-    for i, ((cy, cx), sz) in enumerate(zip(cen, sizes), 1):
-        if sz < 30: continue
-        r = min(rows - 1, int(cy / (H / rows))); c = min(2, int(cx / (W / 3)))
-        cells.setdefault(r * 3 + c, []).append(i)
+    per = [3] * (rows - 1) + [n - 3 * (rows - 1)]
+    # 줄 나누기: 가로 투영의 빈 띠 중 가장 넓은 rows-1 곳
+    pr = a.sum(1)
+    if rows == 1:
+        bands = [(0, H)]
+    else:
+        gaps = []; run = None
+        for y in range(H):
+            if pr[y] == 0:
+                run = y if run is None else run
+            elif run is not None:
+                gaps.append((y - run, run, y)); run = None
+        inner = [g for g in gaps if g[1] > 0 and g[2] < H]
+        cuts = sorted([(g[1] + g[2]) // 2 for g in sorted(inner, reverse=True)[:rows - 1]])
+        if len(cuts) < rows - 1: cuts = [round(H * (i + 1) / rows) for i in range(rows - 1)]
+        ys = [0] + cuts + [H]; bands = list(zip(ys[:-1], ys[1:]))
     out = []
-    for idx in range(n):
-        ids = cells.get(idx, [])
-        m = np.isin(lab, ids) & a
-        if not m.any(): out.append(None); continue
-        ys, xs = np.where(m)
-        y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
-        sub = rgba[y0:y1, x0:x1].copy()
-        keep = np.isin(lab[y0:y1, x0:x1], ids)
-        sub[..., 3] = np.where(keep, sub[..., 3], 0)
-        out.append(Image.fromarray(sub, 'RGBA'))
+    lab, k = ndimage.label(ndimage.binary_dilation(a, iterations=2))
+    for (y0, y1), cnt in zip(bands, per):
+        L = lab[y0:y1]; A = a[y0:y1]
+        ids = [i for i in np.unique(L[A]) if i]
+        comps = []
+        for i in ids:
+            m = (L == i) & A
+            ys_, xs_ = np.where(m)
+            comps.append([xs_.min(), xs_.max() + 1, int(m.sum()), [i]])
+        comps.sort(key=lambda c: -c[2])
+        big = comps[:cnt]
+        for c in comps[cnt:]:
+            cx = (c[0] + c[1]) / 2
+            t = min(big, key=lambda g: 0 if g[0] <= cx <= g[1] else min(abs(cx - g[0]), abs(cx - g[1])))
+            t[0] = min(t[0], c[0]); t[1] = max(t[1], c[1]); t[3] += c[3]
+        big.sort(key=lambda g: g[0])
+        for g in big:
+            m = np.isin(L, g[3]) & A
+            ys_, xs_ = np.where(m)
+            yy0, yy1, xx0, xx1 = ys_.min(), ys_.max() + 1, xs_.min(), xs_.max() + 1
+            sub = rgba[y0 + yy0:y0 + yy1, xx0:xx1].copy()
+            sub[..., 3] = np.where(m[yy0:yy1, xx0:xx1], sub[..., 3], 0)
+            out.append(Image.fromarray(sub, 'RGBA'))
+        out += [None] * (cnt - len(big))
     return out
 
 
