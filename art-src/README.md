@@ -23,5 +23,22 @@
 | sky | map_floor.png / map_shore.png | – | img/map/zone4.jpg / shore4.jpg (지도 바닥·바닷가) | – |
 | misc | mixed.png | 흰색 | 섞인 모음: 하늘섬·날개 배·꽃 언덕 섬·성·집·열기구·비행선·오두막·통나무집·꽃나무·게·나비·보석·깃털·빛나는 버섯 | – |
 
-아직 없는 원본: 꽃 언덕(flower)·푸른 바다(sea·sea2)·눈 덮인 산(snow)·별빛 하늘(night) 물건 모음, 하늘섬 구름(sky/clouds.png, 초록 바탕),
-지역 이동 섬 4개(islFlower·islNight·islSea·islSnow)와 배(vyBoat*), 꽃 언덕~별빛 하늘 배경·지도 그림.
+| sky | clouds.png | 초록 | skyCloudA~F(구름 6)·pebCloudA~D(구름 발판 4) | matting/sky.py |
+| flower | flower.png | 흰색 | windmill·cottageRed/Blue/Purple·blossomPink/White/Yellow·treeRound·flowersPink/Yellow/Blue/White·tulipRed/Yellow/Purple·mushroomRed·fenceWhite·beehive·hayBale·butterfly·kite | matting/matte3.py |
+| flower | scene.png | – | img/scenes/flowerhill.jpg (틀린그림·퍼즐 배경) | – |
+| flower | map_floor.png / map_shore.png | – | img/map/zone0.jpg / shore0.jpg | – |
+| sea | sea.png | 흰색 | lighthouse·beachHutBlue/Pink/Mint·palmA/B·umbrellaRed/Blue/Yellow·sandcastle·shellPink/White·starfishOrange/Pink·crab·bucketBlue/Green·swimRing·gull (게임에 쓰는 버전) | matting/matte3.py |
+| sea | sea_v1.png | 흰색 | 같은 물건의 다른 시안(오두막에 튜브) — 안 씀 | – |
+| sea | sea2.png | 흰색 | boatOrange/Blue/Purple(위에서 본 배)·dock·rockBig/Mid/Small·buoy·fish | matting/matte3.py |
+| sea | scene.png | – | img/scenes/beach.jpg | – |
+| sea | map_floor.png / map_shore.png | – | img/map/zone1.jpg / shore1.jpg | – |
+| snow | scene.png | – | img/scenes/snowmount.jpg | – |
+| snow | map_floor.png / map_shore.png | – | img/map/zone2.jpg / shore2.jpg | – |
+| night | map_floor.png / map_shore.png | – | img/map/zone3.jpg / shore3.jpg | – |
+| voyage | isl4.png | 흰색 | islFlower·islSea·islSnow·islNight (지역 이동 섬) | – |
+| voyage | boats.png | 투명 | vyBoatOrange·vyBoatBlue·vyBoatPurple | – |
+| voyage | sea.png | – | img/voyage/sea.jpg (옆에서 본 바다) | – |
+
+아직 없는 원본: 눈 덮인 산 물건 모음(snow.png: 통나무집·전나무·눈사람·썰매·눈 덤불·눈덩이·이글루·얼음·표지판·펭귄),
+별빛 하늘 물건 모음(night.png: 성·천문대·가로등·밤 나무·빛나는 버섯·보석·등불·부엉이 우체통·별·행성·달·밤 구름·덤불)과 별빛 하늘 배경(night/scene.png),
+지역별 인게임 배경(img/bg/zone0~4 — 하늘섬 것은 sky/game_bg.png).
