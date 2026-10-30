@@ -117,17 +117,12 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* stage 3 */
 .jig-area{display:flex;justify-content:center}
-.jig{position:relative;width:min(100%,600px);aspect-ratio:1/1;max-width:100%;display:grid;gap:0;background:rgba(30,40,70,.55);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.tile{border:0;padding:0;background:none;transition:transform .15s ease,filter .15s;touch-action:manipulation;position:relative;z-index:1}
-/* 직소 조각: 칸보다 사방 JIG_TAB만큼 큰 판에 조각 모양(clip-path)으로 그림을 자름, 테두리 그림자는 바깥 .jpw에 */
-.tile .jpw{position:absolute;inset:-30%;pointer-events:none;filter:drop-shadow(0 0 .6px rgba(20,25,45,.9)) drop-shadow(0 1.5px 1.5px rgba(0,0,0,.28))}
-.tile .jpc{position:absolute;inset:0;background-image:var(--img);background-repeat:no-repeat}
-.tile.sel{z-index:3;transform:scale(.92)}
-.tile.sel .jpw{filter:drop-shadow(0 0 2px var(--mark)) drop-shadow(0 0 2px var(--mark)) drop-shadow(0 8px 10px rgba(0,0,0,.35))}
-.tile.ok::after{content:"";position:absolute;right:8%;bottom:8%;z-index:2;width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px #fff}
+.jig{position:relative;width:min(100%,600px);aspect-ratio:1/1;max-width:100%;display:grid;gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
+.tile{border:0;padding:0;background-image:var(--img);background-repeat:no-repeat;transition:transform .15s ease,filter .15s;touch-action:manipulation;position:relative}
+.tile.sel{z-index:2;transform:scale(.92);box-shadow:0 0 0 4px var(--mark),0 8px 18px rgba(0,0,0,.35)}
+.tile.ok::after{content:"";position:absolute;right:4px;bottom:4px;width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px #fff}
 .jig.won{gap:0}
 .jig.won .tile::after{display:none}
-.jig.won .tile .jpw{filter:none}
 .peek{position:absolute;inset:0;background-image:var(--img);background-size:100% 100%;z-index:3}
 
 /* modal */
@@ -1148,7 +1143,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.0</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.1</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2123,37 +2118,14 @@ function initJig(){
   do{order=shuffle(r,[...Array(n*n).keys()])}while(order.filter((v,i)=>v===i).length>Math.floor(n*n/4));
   jig={n,order,sel:-1,uri,peek:false};
 }
-// 직소 조각 모양: 이웃끼리 맞물리는 볼록(+1)·오목(-1) 이음새. 조각마다 자기 모양을 가지고 다님
-const JIG_TAB=.3;
-function jigEdges(n){
-  const r=rng(sceneSeed()+71),f=()=>r()<.5?1:-1;
-  return {h:Array.from({length:n},()=>Array.from({length:n-1},f)),v:Array.from({length:n-1},()=>Array.from({length:n},f))};
-}
-function jigPath(p,n,E){
-  const x=p%n,y=Math.floor(p/n),a=JIG_TAB/(1+2*JIG_TAB),b=1-a,L=b-a;
-  const sg=[y>0?-E.v[y-1][x]:0, x<n-1?E.h[y][x]:0, y<n-1?E.v[y][x]:0, x>0?-E.h[y][x-1]:0];
-  const C=[[a,a],[b,a],[b,b],[a,b]],N=[[0,-1],[1,0],[0,1],[-1,0]];
-  const T=[[.34,0],[.40,0],[.42,.05],[.38,.12],[.32,.22],[.40,.30],[.50,.30],[.60,.30],[.68,.22],[.62,.12],[.58,.05],[.60,0],[.66,0]];
-  const f=v=>+v.toFixed(4);
-  let d=`M${f(a)} ${f(a)}`;
-  for(let e=0;e<4;e++){
-    const P0=C[e],P1=C[(e+1)%4],nx=N[e][0],ny=N[e][1],s=sg[e];
-    const pt=([u,v])=>{const X=P0[0]+(P1[0]-P0[0])*u+nx*v*L*s,Y=P0[1]+(P1[1]-P0[1])*u+ny*v*L*s;return `${f(X)} ${f(Y)}`};
-    if(s){d+=` L${pt(T[0])}`;for(let k=1;k<T.length-1;k+=3)d+=` C${pt(T[k])} ${pt(T[k+1])} ${pt(T[k+2])}`}
-    d+=` L${f(P1[0])} ${f(P1[1])}`;
-  }
-  return d+'Z';
-}
 function renderJig(){
   const {n,order,sel}=jig,el=$('#jig');
-  if(!jig.edges)jig.edges=jigEdges(n);
   el.style.setProperty('--img',`url("${jig.uri}")`);
-  const K=1+2*JIG_TAB,bs=(n/K*100).toFixed(3),bp=v=>((JIG_TAB-v)/(K-n)*100).toFixed(3);
   el.style.gridTemplateColumns=`repeat(${n},1fr)`;el.style.gridTemplateRows=`repeat(${n},1fr)`;
-  let h=`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${order.map((_,p)=>`<clipPath id="jp${p}" clipPathUnits="objectBoundingBox"><path d="${jigPath(p,n,jig.edges)}"/></clipPath>`).join('')}</defs></svg>`;
+  let h='';
   order.forEach((p,i)=>{
     const px=p%n,py=Math.floor(p/n);
-    h+=`<button type="button" class="tile${i===sel?' sel':''}${p===i?' ok':''}" data-i="${i}" aria-label="조각 ${i+1}"><div class="jpw"><div class="jpc" style="clip-path:url(#jp${p});background-size:${bs}% ${bs}%;background-position:${bp(px)}% ${bp(py)}%"></div></div></button>`;
+    h+=`<button type="button" class="tile${i===sel?' sel':''}${p===i?' ok':''}" data-i="${i}" aria-label="조각 ${i+1}" style="background-size:${n*100}% ${n*100}%;background-position:${px/(n-1)*100}% ${py/(n-1)*100}%"></button>`;
   });
   if(jig.peek)h+='<div class="peek"></div>';
   el.innerHTML=h;
@@ -4041,6 +4013,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['4.1','10월 30일','퍼즐 조각 네모로',['퍼즐 맞추기 조각을 직소 모양에서 다시 네모 칸으로 바꿨어요 (정사각형 그림 크기는 그대로)']],
   ['4.0','10월 30일','틀린그림 글씨 밖으로',['틀린그림 찾기의 \'원본\'·\'다른 그림\' 글씨가 그림을 가리지 않게 그림 바깥 위로 옮겼어요']],
   ['3.9','10월 30일','계정 기록 섞임 고침',['한 기기에서 아이디를 바꿔 로그인해도 다른 아이디 기록이 섞이지 않아요','로그아웃할 때 아직 안 올라간 기록을 먼저 서버에 올려요']],
   ['3.8','10월 30일','로직 색·직소 퍼즐',['로직을 다 풀면 칠한 칸이 그림 색으로 바뀌어요 (도형은 어울리는 색, 무늬는 무지개 색)','퍼즐 그림이 정사각형으로 커져서 화면을 꽉 채워요','퍼즐 조각이 볼록·오목 이음새가 있는 진짜 조각 퍼즐 모양이 됐어요']],
