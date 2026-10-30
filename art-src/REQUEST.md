@@ -37,6 +37,11 @@ ChatGPT에 물건 모음 32장 + 배경 24장을 요청. 영어 요청문 전체
 | C6 | 파랑 #0047FF | padMallow padCookie tileMatcha tileMint btnCandyHouse btnCookieBoat |
 | C7 | 초록 #00B140 | tileStrawberry tileChoco tileButter tileBlueberry tileGrape tileOrange |
 | C8 | 초록 #00B140 | tileWafer tileCherry btnCandyShop |
+| U1 | 파랑 #0047FF | icoHeart icoCoin icoHint icoStar icoLock icoMedal |
+| U2 | 마젠타 #FF00FF | icoTrophy icoGear icoCart icoSpot icoLogic icoPuzzle |
+| U3 | 초록 #00B140 | icoMenu icoStarEmpty icoHeartEmpty |
+
+화면 아이콘(U1~U3)은 index.html 의 ICON·TYPE_ICON·TROPHY·GEAR·LOCK·STAR 와 메뉴 버튼 SVG를 대체한다(64px WebP).
 
 | 배경 | 파일 | 용도 |
 |---|---|---|

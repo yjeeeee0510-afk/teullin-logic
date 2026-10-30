@@ -1011,6 +1011,93 @@
     }
    ],
    "prompt": "A game sprite sheet of 3 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 1 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors, light from the top-left, same art style as the attached reference images. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a square wafer tile | a square red jelly tile with cherries | a candy shop stall button with a striped awning"
+  },
+  {
+   "id": "U1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "화면 아이콘",
+   "items": [
+    {
+     "id": "icoHeart",
+     "ko": "하트"
+    },
+    {
+     "id": "icoCoin",
+     "ko": "코인"
+    },
+    {
+     "id": "icoHint",
+     "ko": "힌트 전구"
+    },
+    {
+     "id": "icoStar",
+     "ko": "별점 별"
+    },
+    {
+     "id": "icoLock",
+     "ko": "자물쇠"
+    },
+    {
+     "id": "icoMedal",
+     "ko": "업적 메달"
+    }
+   ],
+   "prompt": "A game icon sheet of 6 separate icons, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every icon centered in its own cell, front view, each icon fills about 60% of its cell, wide even spacing, nothing touching. No ground, no cast shadows, no glow outside the icons. Glossy cute 3D game UI icon style, bold simple rounded silhouette that stays readable at very small size (24 px), thick shapes, no thin details, same toy-like pastel look as the attached reference images. No text, no numbers, no letters. Image size 1536x1024.\nRow 1: a red heart | a gold coin with a star stamped in the middle | a yellow glowing light bulb\nRow 2: a gold five-point star | a small grey padlock | a gold medal with a red-blue ribbon"
+  },
+  {
+   "id": "U2",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "화면 아이콘",
+   "items": [
+    {
+     "id": "icoTrophy",
+     "ko": "랭킹 트로피"
+    },
+    {
+     "id": "icoGear",
+     "ko": "설정 톱니바퀴"
+    },
+    {
+     "id": "icoCart",
+     "ko": "상점 카트"
+    },
+    {
+     "id": "icoSpot",
+     "ko": "틀린그림 돋보기"
+    },
+    {
+     "id": "icoLogic",
+     "ko": "로직 칸"
+    },
+    {
+     "id": "icoPuzzle",
+     "ko": "퍼즐 조각"
+    }
+   ],
+   "prompt": "A game icon sheet of 6 separate icons, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 2 rows x 3 columns, every icon centered in its own cell, front view, each icon fills about 60% of its cell, wide even spacing, nothing touching. No ground, no cast shadows, no glow outside the icons. Glossy cute 3D game UI icon style, bold simple rounded silhouette that stays readable at very small size (24 px), thick shapes, no thin details, same toy-like pastel look as the attached reference images. No text, no numbers, no letters. Image size 1536x1024.\nRow 1: a gold trophy cup | a grey-blue gear | a small orange shopping cart\nRow 2: a magnifying glass with a blue lens | a 3x3 grid of square tiles, some filled dark navy, some white | a green jigsaw puzzle piece"
+  },
+  {
+   "id": "U3",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "화면 아이콘",
+   "items": [
+    {
+     "id": "icoMenu",
+     "ko": "메뉴"
+    },
+    {
+     "id": "icoStarEmpty",
+     "ko": "빈 별"
+    },
+    {
+     "id": "icoHeartEmpty",
+     "ko": "빈 하트"
+    }
+   ],
+   "prompt": "A game icon sheet of 3 separate icons, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 1 rows x 3 columns, every icon centered in its own cell, front view, each icon fills about 60% of its cell, wide even spacing, nothing touching. No ground, no cast shadows, no glow outside the icons. Glossy cute 3D game UI icon style, bold simple rounded silhouette that stays readable at very small size (24 px), thick shapes, no thin details, same toy-like pastel look as the attached reference images. No text, no numbers, no letters. Image size 1536x1024.\nRow 1: three rounded white horizontal bars stacked (menu icon) on a small navy rounded square | the same five-point star but empty: pale grey, slightly transparent look | the same heart but empty: pale grey"
   }
  ],
  "bgs": [
