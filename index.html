@@ -117,12 +117,17 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* stage 3 */
 .jig-area{display:flex;justify-content:center}
-.jig{position:relative;width:min(100%,420px);aspect-ratio:2/3;max-width:100%;display:grid;gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.tile{border:0;padding:0;background-image:var(--img);background-repeat:no-repeat;transition:transform .15s ease,filter .15s;touch-action:manipulation;position:relative}
-.tile.sel{z-index:2;transform:scale(.92);box-shadow:0 0 0 4px var(--mark),0 8px 18px rgba(0,0,0,.35)}
-.tile.ok::after{content:"";position:absolute;right:4px;bottom:4px;width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px #fff}
+.jig{position:relative;width:min(100%,600px);aspect-ratio:1/1;max-width:100%;display:grid;gap:0;background:rgba(30,40,70,.55);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
+.tile{border:0;padding:0;background:none;transition:transform .15s ease,filter .15s;touch-action:manipulation;position:relative;z-index:1}
+/* 직소 조각: 칸보다 사방 JIG_TAB만큼 큰 판에 조각 모양(clip-path)으로 그림을 자름, 테두리 그림자는 바깥 .jpw에 */
+.tile .jpw{position:absolute;inset:-30%;pointer-events:none;filter:drop-shadow(0 0 .6px rgba(20,25,45,.9)) drop-shadow(0 1.5px 1.5px rgba(0,0,0,.28))}
+.tile .jpc{position:absolute;inset:0;background-image:var(--img);background-repeat:no-repeat}
+.tile.sel{z-index:3;transform:scale(.92)}
+.tile.sel .jpw{filter:drop-shadow(0 0 2px var(--mark)) drop-shadow(0 0 2px var(--mark)) drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+.tile.ok::after{content:"";position:absolute;right:8%;bottom:8%;z-index:2;width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px #fff}
 .jig.won{gap:0}
 .jig.won .tile::after{display:none}
+.jig.won .tile .jpw{filter:none}
 .peek{position:absolute;inset:0;background-image:var(--img);background-size:100% 100%;z-index:3}
 
 /* modal */
@@ -1749,20 +1754,20 @@ function mixTheme(seed){
   return {name:pool.map(t=>t.name).join(' · '),zone:bgT.zone,bg:bgT.bg,backDY:bgT.backDY,night:bgT.night,lights:bgT.lights,
     sky:bgT.night?bgT.sky:uniq(pool.flatMap(t=>t.sky)),back:uniq(pool.flatMap(t=>t.back)),front:uniq(pool.flatMap(t=>t.front))};
 }
-// tall: 퍼즐용 세로 그림(2:3)(가운데 JIG_X~JIG_X+JIG_W만 잘라 씀) — 물건을 그 띠 안에만 놓음
-const JIG_X=200,JIG_W=400;
+// tall: 퍼즐용 정사각형 그림(1:1)(가운데 JIG_X~JIG_X+JIG_W만 잘라 씀) — 물건을 그 띠 안에만 놓음
+const JIG_X=100,JIG_W=600;
 function makeScene(seed,tall){
   const r=rng(seed),theme=mixTheme(seed),o=[];let id=0;
   const X0=tall?JIG_X:0,XW=tall?JIG_W:SW;
   const add=(spr,x,y,row)=>o.push({id:id++,spr,x,y,h:spriteH(spr,r),row,k:1,flip:r()<0.3&&(/^cloud|^bush|^cactus|^house/.test(spr)||ART_FLIP.has(spr)),hue:0,gone:false});
   // 하늘: 해/달 하나 + 구름 셋
   const sky=shuffle(r,tall?[pick(r,theme.lights),'c','c']:[pick(r,theme.lights),'c','c','c']);
-  sky.forEach((t,i)=>{let x=tall?X0+60+i*140+(r()*30-15):100+i*200+(r()*60-30);
+  sky.forEach((t,i)=>{let x=tall?X0+90+i*210+(r()*40-20):100+i*200+(r()*60-30);
     if(!tall&&theme.bg==='nightsky'&&x<300)x+=180;  // 배경의 보름달(왼쪽 위)과 겹치지 않게
     if(t==='c')add(theme.sky?pick(r,theme.sky):'cloud'+(1+Math.floor(r()*8)),x,95+r()*110,'sky');
     else add(t,x,120+r()*40,'sky');});
   // 뒷줄: 지평선 위 건물·큰 나무 5개
-  const nb=tall?3:5+(S.round>=90?1:0),nf=tall?4+(S.round>=150?1:0):6+(S.round>=60?1:0)+(S.round>=150?1:0);
+  const nb=tall?4:5+(S.round>=90?1:0),nf=tall?5+(S.round>=150?1:0):6+(S.round>=60?1:0)+(S.round>=150?1:0);
   const back=shuffle(r,theme.back.slice()).slice(0,nb);
   back.forEach((n,i)=>add(n,X0+(i+.5)*XW/nb+(r()*20-10),HORIZON+28+(theme.backDY||0)+r()*26,'back'));
   // 앞줄: 덤불·울타리·작은 나무 (라운드가 오를수록 늘어남)
@@ -2117,14 +2122,37 @@ function initJig(){
   do{order=shuffle(r,[...Array(n*n).keys()])}while(order.filter((v,i)=>v===i).length>Math.floor(n*n/4));
   jig={n,order,sel:-1,uri,peek:false};
 }
+// 직소 조각 모양: 이웃끼리 맞물리는 볼록(+1)·오목(-1) 이음새. 조각마다 자기 모양을 가지고 다님
+const JIG_TAB=.3;
+function jigEdges(n){
+  const r=rng(sceneSeed()+71),f=()=>r()<.5?1:-1;
+  return {h:Array.from({length:n},()=>Array.from({length:n-1},f)),v:Array.from({length:n-1},()=>Array.from({length:n},f))};
+}
+function jigPath(p,n,E){
+  const x=p%n,y=Math.floor(p/n),a=JIG_TAB/(1+2*JIG_TAB),b=1-a,L=b-a;
+  const sg=[y>0?-E.v[y-1][x]:0, x<n-1?E.h[y][x]:0, y<n-1?E.v[y][x]:0, x>0?-E.h[y][x-1]:0];
+  const C=[[a,a],[b,a],[b,b],[a,b]],N=[[0,-1],[1,0],[0,1],[-1,0]];
+  const T=[[.34,0],[.40,0],[.42,.05],[.38,.12],[.32,.22],[.40,.30],[.50,.30],[.60,.30],[.68,.22],[.62,.12],[.58,.05],[.60,0],[.66,0]];
+  const f=v=>+v.toFixed(4);
+  let d=`M${f(a)} ${f(a)}`;
+  for(let e=0;e<4;e++){
+    const P0=C[e],P1=C[(e+1)%4],nx=N[e][0],ny=N[e][1],s=sg[e];
+    const pt=([u,v])=>{const X=P0[0]+(P1[0]-P0[0])*u+nx*v*L*s,Y=P0[1]+(P1[1]-P0[1])*u+ny*v*L*s;return `${f(X)} ${f(Y)}`};
+    if(s){d+=` L${pt(T[0])}`;for(let k=1;k<T.length-1;k+=3)d+=` C${pt(T[k])} ${pt(T[k+1])} ${pt(T[k+2])}`}
+    d+=` L${f(P1[0])} ${f(P1[1])}`;
+  }
+  return d+'Z';
+}
 function renderJig(){
   const {n,order,sel}=jig,el=$('#jig');
+  if(!jig.edges)jig.edges=jigEdges(n);
   el.style.setProperty('--img',`url("${jig.uri}")`);
+  const K=1+2*JIG_TAB,bs=(n/K*100).toFixed(3),bp=v=>((JIG_TAB-v)/(K-n)*100).toFixed(3);
   el.style.gridTemplateColumns=`repeat(${n},1fr)`;el.style.gridTemplateRows=`repeat(${n},1fr)`;
-  let h='';
+  let h=`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${order.map((_,p)=>`<clipPath id="jp${p}" clipPathUnits="objectBoundingBox"><path d="${jigPath(p,n,jig.edges)}"/></clipPath>`).join('')}</defs></svg>`;
   order.forEach((p,i)=>{
     const px=p%n,py=Math.floor(p/n);
-    h+=`<button type="button" class="tile${i===sel?' sel':''}${p===i?' ok':''}" data-i="${i}" aria-label="조각 ${i+1}" style="background-size:${n*100}% ${n*100}%;background-position:${px/(n-1)*100}% ${py/(n-1)*100}%"></button>`;
+    h+=`<button type="button" class="tile${i===sel?' sel':''}${p===i?' ok':''}" data-i="${i}" aria-label="조각 ${i+1}"><div class="jpw"><div class="jpc" style="clip-path:url(#jp${p});background-size:${bs}% ${bs}%;background-position:${bp(px)}% ${bp(py)}%"></div></div></button>`;
   });
   if(jig.peek)h+='<div class="peek"></div>';
   el.innerHTML=h;
@@ -2769,7 +2797,7 @@ function fitBoard(){
     pics.style.setProperty('--picw',Math.floor(w)+'px');
   }
   const jg=b.querySelector('.jig');
-  if(jg)jg.style.setProperty('--jigw',Math.floor(Math.min(W,H*2/3,560))+'px');
+  if(jg)jg.style.setProperty('--jigw',Math.floor(Math.min(W,H,600))+'px');
 }
 function pauseGame(){if(inGame&&running){elapsedFrozen=performance.now()-t0;running=false;paused=true}}
 function resumeGame(){if(!paused)return;if(CANDY.playing()){CANDY.resume();return}paused=false;if(!inGame||!S)return;t0=performance.now()-elapsedFrozen;running=true}
