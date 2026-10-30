@@ -1122,7 +1122,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.3</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.4</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1721,8 +1721,16 @@ function ensureArt(){
   artReady.catch(()=>{artReady=null});
   return artReady;
 }
+// 틀린그림·퍼즐 장면: 배경 지역 하나 + 다른 지역 2곳의 물건을 섞음 (낮 배경엔 별빛 하늘 물건을 쓰지 않음, 예전 그림은 안 씀)
+function mixTheme(seed){
+  const r=rng(seed^0x5bd1e995),bgT=pick(r,REGION_THEMES);
+  const others=shuffle(r,REGION_THEMES.filter(t=>t!==bgT&&(bgT.night||!t.night))).slice(0,2),pool=[bgT,...others];
+  const uniq=a=>[...new Set(a)];
+  return {name:pool.map(t=>t.name).join(' · '),zone:bgT.zone,bg:bgT.bg,backDY:bgT.backDY,night:bgT.night,lights:bgT.lights,
+    sky:bgT.night?bgT.sky:uniq(pool.flatMap(t=>t.sky)),back:uniq(pool.flatMap(t=>t.back)),front:uniq(pool.flatMap(t=>t.front))};
+}
 function makeScene(seed){
-  const r=rng(seed),theme=themeFor(S.round),o=[];let id=0;
+  const r=rng(seed),theme=mixTheme(seed),o=[];let id=0;
   const add=(spr,x,y,row)=>o.push({id:id++,spr,x,y,h:spriteH(spr,r),row,k:1,flip:r()<0.3&&(/^cloud|^bush|^cactus|^house/.test(spr)||ART_FLIP.has(spr)),hue:0,gone:false});
   // 하늘: 해/달 하나 + 구름 셋
   const sky=shuffle(r,[pick(r,theme.lights),'c','c','c']);
@@ -1732,10 +1740,10 @@ function makeScene(seed){
     else add(t,x,120+r()*40,'sky');});
   // 뒷줄: 지평선 위 건물·큰 나무 5개
   const nb=5+(S.round>=90?1:0),nf=6+(S.round>=60?1:0)+(S.round>=150?1:0);
-  const back=shuffle(r,theme.back.concat(theme.back)).slice(0,nb);
+  const back=shuffle(r,theme.back.slice()).slice(0,nb);
   back.forEach((n,i)=>add(n,(i+.5)*SW/nb+(r()*20-10),HORIZON+28+(theme.backDY||0)+r()*26,'back'));
   // 앞줄: 덤불·울타리·작은 나무 (라운드가 오를수록 늘어남)
-  const front=shuffle(r,theme.front.concat(theme.front)).slice(0,nf);
+  const front=shuffle(r,theme.front.slice()).slice(0,nf);
   front.forEach((n,i)=>add(n,(i+.5)*SW/nf+(r()*24-12),495+r()*80,'front'));
   o.sort((a,b)=>(a.row==='sky'?0:1)-(b.row==='sky'?0:1)||a.y-b.y);
   return {theme,objs:o};
@@ -3952,6 +3960,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['3.4','10월 30일','그림이 더 다양해져요',['틀린그림·퍼즐 그림이 지역에 상관없이 다섯 지역 배경 중 하나로 나와요','한 그림에 세 지역의 물건이 섞여 나와요 (낮 배경엔 밤 물건은 안 나와요)','한 그림 안에 같은 물건은 두 번 나오지 않아요']],
   ['3.3','10월 30일','다시 하기는 하트를 써요',['이미 깬 라운드를 다시 하면 깨도 하트 1개가 줄어요 (과자 나라는 쿠키 1개)','처음 깨는 라운드는 지금처럼 깨면 그대로예요','오늘의 과자는 그대로 쿠키를 안 써요']],
   ['3.2','10월 30일','과자 나라 재도전',['과자 나라 클리어 창에도 \'재도전\' 버튼 (같은 라운드·오늘의 과자 다시 하기)']],
   ['3.1','10월 30일','과자 나라',['지도 오른쪽 가운데 과자 집 버튼으로 가는 새 게임 \'과자 나라\' 300라운드 (5×5~10×10)','가로줄·세로줄·과자 구역마다 친구 한 명, 친구끼리 옆·대각선으로 붙지 않게','과자 나라 전용 쿠키 하트(최대 10개·10분마다 1개, 상점 100코인)','매일 바뀌는 \'오늘의 과자\' 퍼즐과 도장 달력, 연속 보너스','본 게임 지역을 열면 과자 나라 구간이 열려요: 사탕 숲(처음부터)·쿠키 언덕(푸른 바다)·초콜릿 성(눈 덮인 산)','업적에 \'과자\' 탭과 칭호 \'과자 초보·중수·고수·달인\' 추가','랭킹에 \'과자 나라\' 탭']],
