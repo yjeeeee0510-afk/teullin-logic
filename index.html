@@ -1105,6 +1105,24 @@ body.candy-play #board{flex-direction:column}
   background:rgba(74,36,16,.88);color:#fff;border-radius:16px;padding:10px 16px;box-shadow:0 4px 0 #2e1608,0 8px 18px rgba(0,0,0,.25);text-align:center;width:max-content;max-width:80%}
 .cm-lock svg{width:18px;height:18px;color:#ffd43b}.cm-lock b{font-size:16px}.cm-lock small{font-size:12px;opacity:.9}
 @media (max-width:400px){.candy-go img,.candy-daily img{width:62px}.candy-back img{width:60px}.candy-go span,.candy-back span,.candy-daily span{font-size:11.5px;padding:2px 8px}}
+
+/* 라운드 십이지 작게 + 내 위치 핀 (패치 3.7) */
+.nd{width:60px;height:60px}
+.node.next .nd{width:70px;height:70px}
+.node.final .nd{width:74px;height:74px}
+.nd .num{font-size:11.5px;bottom:-9px;padding:0 6px}
+.nd .ty{width:20px;height:20px;left:-5px;bottom:1px}.nd .ty svg{width:11px;height:11px}
+.nd .lk{width:19px;height:19px}.nd .lk svg{width:10px;height:10px}
+.nstars svg{width:14px;height:14px}.nstars .s2 svg{width:17px;height:17px}
+.others.r{transform:translate(42px,-62%)}
+.others.l{transform:translate(calc(-100% - 42px),-62%)}
+.me-pin{position:absolute;left:50%;bottom:calc(100% - 4px);transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;pointer-events:none;animation:meBob 1.4s ease-in-out infinite}
+.me-av{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;border:3px solid #ff3d7f;box-shadow:0 0 0 3px #fff,0 0 14px 4px rgba(255,61,127,.55),0 6px 10px rgba(0,0,0,.3)}
+.me-av :is(svg,img){width:40px;height:40px;display:block;object-fit:contain}
+.me-pin b{margin-top:-7px;position:relative;font-size:11.5px;font-weight:900;line-height:1;color:#fff;background:#ff3d7f;border:2px solid #fff;border-radius:999px;padding:3px 9px 2px;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.me-pin::after{content:"";width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid #ff3d7f;margin-top:-1px;filter:drop-shadow(0 2px 1px rgba(0,0,0,.2))}
+@keyframes meBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-6px)}}
+@media (prefers-reduced-motion:reduce){.me-pin{animation:none}}
 </style>
 </head>
 <body>
@@ -1124,7 +1142,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.6</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.7</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2533,7 +2551,7 @@ function showMenu(){
     const label=rec?`라운드 ${n}, 별 ${rec.stars||1}개, 최고 ${rec.best.toLocaleString()}점`:open?`라운드 ${n} 도전`:`라운드 ${n} 잠김`;
     h+=`<div class="node ${cls}${n===MAXR?' final':''}" style="left:${mapX(n)}%;top:${mapY(n)}px;--c:${ZODIAC.COLORS[ZODIAC.idx(n)]}">${stars}
       <button type="button" class="nd" data-r="${n}" ${open?'':'disabled'} aria-label="${label} (${ZODIAC.NAMES[ZODIAC.idx(n)]})">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span><i class="ty t${typeOf(n)}" title="${STAGES[typeOf(n)].name}">${TYPE_ICON[typeOf(n)]}</i>${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
-      ${cls==='next'?`<span class="tag">도전 · ${TYPE_SHORT[typeOf(n)]}</span>`:n===MAXR&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
+      ${cls==='next'?`${mePin()}<span class="tag">도전 · ${TYPE_SHORT[typeOf(n)]}</span>`:n===MAXR&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
   }
   h+=`</div></div><div class="map-hint"><button type="button" id="toCur">↓ 지금 라운드로</button></div>
     <div class="map-foot"><div class="mf-chips"><button type="button" class="mb-chip heart-chip" id="heartChip" aria-label="보유 하트">${ICON.heart}<b data-hearts>${W().hearts}</b><small>/${HEART_MAX}</small><em data-heart-next>${heartNextTxt(false)}</em></button><button type="button" class="mb-chip hint-chip" id="hintChip" aria-label="보유 힌트">${ICON.bulb}<b data-hints>${W().hints}</b><small>/${HINT_MAX}</small><em data-hint-next></em></button></div><span class="mb-sp"></span>
@@ -2913,7 +2931,7 @@ const CANDY=(function(){
       const label=rec?`과자 라운드 ${n}, 별 ${rec.stars}개`:open?`과자 라운드 ${n} 도전`:`과자 라운드 ${n} 잠김`;
       h+=`<div class="node ${cls}${n===MAXC?' final':''}" style="left:${xOf(n)}%;top:${yOf(n)}px;--c:${ZODIAC.COLORS[ZODIAC.idx(n)]}">${rec?starRow(rec.stars||1):''}
         <button type="button" class="nd" data-c="${n}" ${open?'':'disabled'} aria-label="${label}">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span>${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
-        ${cls==='next'?`<span class="tag">도전 · ${N}×${N}</span>`:n===MAXC&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
+        ${cls==='next'?`${mePin()}<span class="tag">도전 · ${N}×${N}</span>`:n===MAXC&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
     }
     h+=`</div></div><div class="map-hint"><button type="button" id="toCur">↓ 지금 라운드로</button></div>
       <div class="map-foot"><div class="mf-chips"><button type="button" class="mb-chip heart-chip cookie-chip" id="cookieChip" aria-label="보유 쿠키 하트">${cookieIco(false)}<b data-cookies>${c.hearts}</b><small>/${CK_MAX}</small><em data-cookie-next>${nextTxt(false)}</em></button><button type="button" class="mb-chip hint-chip" id="hintChip" aria-label="보유 힌트">${ICON.bulb}<b data-hints>${W().hints}</b><small>/${HINT_MAX}</small></button></div><span class="mb-sp"></span>
@@ -3935,6 +3953,8 @@ const FRAMES=[
 const frameOk=f=>isAdmin()||f.ok();
 function myFrame(){const f=FRAMES.find(x=>x.id===P.frame);return f&&frameOk(f)?f.id:'none'}
 const frCls=()=>' fr fr-'+myFrame();
+// 지도에서 지금 내 차례인 라운드 위에 내 프로필 핀
+function mePin(){return `<span class="me-pin" aria-hidden="true"><span class="me-av${frCls()}">${profFace()}</span><b>나</b></span>`}
 function openFrames(){
   const cur=myFrame();
   const sh=openSheet(`<div class="eyebrow">프로필 테두리</div><h3>테두리 고르기</h3>
@@ -3962,6 +3982,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['3.7','10월 30일','지도 보기 편하게',['라운드 십이지 얼굴을 작게','지금 내 차례인 라운드 위에 내 프로필과 \'나\' 표시 (본 게임·과자 나라 지도)']],
   ['3.6','10월 30일','과자 나라 어렵게',['과자 나라 300라운드를 전체적으로 두 단계 이상 어렵게: 6×6에서 시작해 10×10까지, 뒤쪽은 여러 구역을 묶어 봐야 풀리는 판','오늘의 과자도 한 단계씩 크게 (월·화 7×7 · 수·목 8×8 · 금·토 9×9 · 일 10×10)','판이 어려워진 만큼 별 3개 시간 기준을 넉넉하게']],
   ['3.5','10월 30일','과자 판 보기 편하게',['친구 때문에 못 쓰는 칸의 점을 더 크고 진하게 (흰 테두리)','과자 칸 색을 연하게']],
   ['3.4','10월 30일','그림이 더 다양해져요',['틀린그림·퍼즐 그림이 지역에 상관없이 다섯 지역 배경 중 하나로 나와요','한 그림에 세 지역의 물건이 섞여 나와요 (낮 배경엔 밤 물건은 안 나와요)','한 그림 안에 같은 물건은 두 번 나오지 않아요']],
