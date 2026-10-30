@@ -205,3 +205,32 @@ language sql stable security definer set search_path = public as $$
   limit greatest(1, least(coalesce(n, 300), 500));
 $$;
 grant execute on function public.leaderboard_players(int) to anon, authenticated;
+
+-- ============================================================
+-- 2026-10-30 test1 계정에 섞인 운영진(yjeeeee0510) 기록 정리 (실행 완료)
+-- 원인: 한 기기에서 아이디를 바꿔 로그인할 때 기기 기록이 합쳐짐 → 패치 3.9에서 고침
+-- 1) 운영진 기록과 똑같은 라운드(151·212·355·360·361)만 지우고 열린 라운드 91·열린 지역 1(푸른 바다)
+with t as (select id from auth.users where email='test1@teullin.game'),
+a as (select p.data->'rounds' r from public.progress p join auth.users u on u.id=p.id where u.email='yjeeeee0510@teullin.game')
+update public.progress p
+set data = jsonb_set(jsonb_set(jsonb_set(p.data,'{rounds}',
+      coalesce((select jsonb_object_agg(k,v) from jsonb_each(p.data->'rounds') e(k,v)
+                where not (k in ('151','212','355','360','361') and v = (select r->k from a))),'{}'::jsonb)),
+    '{unlocked}','91'::jsonb),'{revealed}','1'::jsonb),
+    updated_at = now()
+where p.id = (select id from t);
+-- 2) 랭킹 다시 계산 (leaderboard_keep_best 트리거가 낮추는 걸 막으므로 이번 한 번만 끄고 다시 켬)
+begin;
+alter table public.leaderboard disable trigger leaderboard_keep_best;
+with t as (select id from auth.users where email='test1@teullin.game'),
+r as (select (k)::int rk, v from public.progress p, jsonb_each(p.data->'rounds') e(k,v) where p.id=(select id from t))
+update public.leaderboard l set
+  best_round = coalesce((select max(rk) from r),0),
+  stars = coalesce((select sum(coalesce((v->>'stars')::int,1)) from r),0),
+  score = coalesce((select sum(coalesce((v->>'best')::int,0)) from r),0),
+  clears = coalesce((select sum(coalesce((v->>'plays')::int,1)) from r),0),
+  avg_time = coalesce((select round(avg((v->>'time')::numeric)) from r where (v->>'time')::numeric>0),0)
+where l.id = (select id from t);
+alter table public.leaderboard enable trigger leaderboard_keep_best;
+commit;
+-- 결과: test1 최고 90라운드·별 270·점수 65861·라운드 90개, 열린 라운드 91·지역 1
