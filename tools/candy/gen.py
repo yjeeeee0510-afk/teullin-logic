@@ -195,19 +195,19 @@ def encode(N, reg, sol):
     return ''.join(str(k) for k in reg) + ''.join(str(q) for q in sol)
 
 # 라운드 구성: (크기, 개수, 기법 조건)
+# 라운드 구성: (크기, 개수, 기법 조건)  — 2026-10-30 전체적으로 두 단계 이상 어렵게
+#  lv1 한 줄에 갇힌 구역, lv2 앞서 보기, lv3 두·세 구역 묶어 보기
 PLAN = [
-    (5, 30, lambda lv, sc, ez: lv == 0 and ez),
-    (6, 30, lambda lv, sc, ez: lv <= 1),
-    (6, 20, lambda lv, sc, ez: lv >= 1),
-    (7, 20, lambda lv, sc, ez: lv >= 1),
-    (7, 40, lambda lv, sc, ez: lv >= 1),
-    (8, 60, lambda lv, sc, ez: lv >= 1),
-    (8, 25, lambda lv, sc, ez: lv >= 2),
-    (9, 25, lambda lv, sc, ez: lv >= 2),
-    (9, 25, lambda lv, sc, ez: lv >= 2),
-    (10, 25, lambda lv, sc, ez: lv >= 2),
+    (6, 20, lambda lv, sc, ez: lv >= 1),    # 1~20
+    (7, 30, lambda lv, sc, ez: lv >= 1),    # 21~50
+    (7, 40, lambda lv, sc, ez: lv >= 2),    # 51~90
+    (8, 50, lambda lv, sc, ez: lv >= 2),    # 91~140
+    (9, 50, lambda lv, sc, ez: lv >= 2),    # 141~190
+    (9, 50, lambda lv, sc, ez: lv >= 3),    # 191~240
+    (10, 30, lambda lv, sc, ez: lv >= 2),   # 241~270
+    (10, 30, lambda lv, sc, ez: lv >= 3),   # 271~300
 ]
-DAILY = {6: 30, 7: 30, 8: 30, 9: 30}
+DAILY = {7: 30, 8: 30, 9: 30, 10: 30}   # 월·화 7, 수·목 8, 금·토 9, 일 10
 
 if __name__ == '__main__':
     rnd = random.Random(20261029)
@@ -233,7 +233,7 @@ if __name__ == '__main__':
     for N, cnt in DAILY.items():
         arr = []
         while len(arr) < cnt:
-            reg, sol, sc, lv, ez = make(N, rnd, lambda lv, sc, ez: lv >= (1 if N < 8 else 2))
+            reg, sol, sc, lv, ez = make(N, rnd, lambda lv, sc, ez: lv >= 2)
             key = canon(N, reg)
             if key in seen: continue
             seen.add(key); arr.append(encode(N, reg, sol))
