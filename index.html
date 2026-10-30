@@ -1147,7 +1147,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.8</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 3.9</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -3837,10 +3837,19 @@ window.__syncLater=function(){
   clearTimeout(syncT);store.set('sekan-sync-pending',true);
   syncT=setTimeout(()=>{RANK.pushProgress(P).then(()=>store.set('sekan-sync-pending',false)).catch(()=>{})},1200);
 };
+// 이 기기의 진행 기록이 누구 것인지 (아이디, 로그인 없이 하던 기록은 '') — 다른 아이디 기록이 섞이지 않게
+const OWNER_KEY='sekan-owner';
+if(store.get(OWNER_KEY,null)===null)store.set(OWNER_KEY,RANK.account()||'');
+const freshP=()=>({unlocked:1,rounds:{},revealed:0});
 async function afterLogin(){
-  // 서버에 저장된 진행 기록과 이 기기의 기록을 합친다 (더 좋은 기록을 남김)
+  const acc=RANK.account()||'',owner=store.get(OWNER_KEY,'');
+  let other=!!owner&&owner!==acc;
+  // 다른 아이디의 기록이 기기에 남아 있으면 합치지 않고 따로 보관 (그 아이디로 다시 로그인하면 합침)
+  if(other){store.set('sekan-stash:'+owner,P);P=freshP();S=null;save();store.set('sekan-nick','')}
+  const stash=store.get('sekan-stash:'+acc,null);if(stash){P=mergeP(P,stash);store.set('sekan-stash:'+acc,null)}
+  // 서버에 저장된 진행 기록과 이 기기의 기록을 합친다 (로그인 없이 하던 기록·같은 아이디 기록만, 더 좋은 기록을 남김)
   try{const remote=await RANK.pullProgress();if(remote&&remote.rounds){P=mergeP(P,remote);if(S&&!(S.round<=P.unlocked))S=null}}catch(e){}
-  store.set('sekan-progress',P);
+  store.set('sekan-progress',P);store.set(OWNER_KEY,acc);
   try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){}
   let me=null;try{me=await RANK.me()}catch(e){}
   await RANK.setNick(me&&me.nickname||RANK.nick()||RANK.account());
@@ -3921,8 +3930,10 @@ function openSignup(){
   sh.querySelector('#suBack').addEventListener('click',()=>openLogin());
 }
 async function doLogout(){
-  const synced=!store.get('sekan-sync-pending',false);
-  if(synced){P={unlocked:1,rounds:{},revealed:0};store.set('sekan-progress',P);S=null;save();store.set('sekan-nick','')}
+  const acc=RANK.account()||'';
+  // 서버에 아직 안 올라간 기록이 있으면 한 번 더 올려 보고, 그래도 안 되면 그 아이디 몫으로 따로 보관
+  if(store.get('sekan-sync-pending',false)&&acc){clearTimeout(syncT);try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){store.set('sekan-stash:'+acc,P)}}
+  P=freshP();store.set('sekan-progress',P);S=null;save();store.set('sekan-nick','');store.set('sekan-sync-pending',false);store.set(OWNER_KEY,'');
   await RANK.logout();OTHERS.reset();backToIntro();
 }
 
@@ -4029,6 +4040,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['3.9','10월 30일','계정 기록 섞임 고침',['한 기기에서 아이디를 바꿔 로그인해도 다른 아이디 기록이 섞이지 않아요','로그아웃할 때 아직 안 올라간 기록을 먼저 서버에 올려요']],
   ['3.8','10월 30일','로직 색·직소 퍼즐',['로직을 다 풀면 칠한 칸이 그림 색으로 바뀌어요 (도형은 어울리는 색, 무늬는 무지개 색)','퍼즐 그림이 정사각형으로 커져서 화면을 꽉 채워요','퍼즐 조각이 볼록·오목 이음새가 있는 진짜 조각 퍼즐 모양이 됐어요']],
   ['3.7','10월 30일','지도 보기 편하게',['라운드 십이지 얼굴을 작게','지금 내 차례인 라운드 위에 내 프로필과 \'나\' 표시 (본 게임·과자 나라 지도)']],
   ['3.6','10월 30일','과자 나라 어렵게',['과자 나라 300라운드를 전체적으로 두 단계 이상 어렵게: 6×6에서 시작해 10×10까지, 뒤쪽은 여러 구역을 묶어 봐야 풀리는 판','오늘의 과자도 한 단계씩 크게 (월·화 7×7 · 수·목 8×8 · 금·토 9×9 · 일 10×10)','판이 어려워진 만큼 별 3개 시간 기준을 넉넉하게']],
