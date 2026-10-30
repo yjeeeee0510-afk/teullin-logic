@@ -39,6 +39,12 @@
 | voyage | boats.png | 투명 | vyBoatOrange·vyBoatBlue·vyBoatPurple | – |
 | voyage | sea.png | – | img/voyage/sea.jpg (옆에서 본 바다) | – |
 
-아직 없는 원본: 눈 덮인 산 물건 모음(snow.png: 통나무집·전나무·눈사람·썰매·눈 덤불·눈덩이·이글루·얼음·표지판·펭귄),
-별빛 하늘 물건 모음(night.png: 성·천문대·가로등·밤 나무·빛나는 버섯·보석·등불·부엉이 우체통·별·행성·달·밤 구름·덤불)과 별빛 하늘 배경(night/scene.png),
-지역별 인게임 배경(img/bg/zone0~4 — 하늘섬 것은 sky/game_bg.png).
+| snow | snow.png | 흰색 | cabinRed/Brown/Green·igloo·pineSnowA/B/C·snowmanRed/Blue/Green·penguin·sled·snowBush(큰 것)·작은 눈 덤불·iceBlue·icePurple·snowballs·skiSign | matting/matte3.py |
+| night | night.png | 흰색 | castleLilac(성)·observatory·lampYellow·lampBlue·treeNightPurple·treeNightTeal·glowMushBlue/Pink/Green·gemPurple/Blue/Pink·lanternOrange/Pink·bushNight·owlPost | matting/matte3.py |
+| night | scene.png | – | img/scenes/nightsky.jpg (지금 쓰는 것과 가장 비슷) | – |
+| night | scene_a.png / scene_c.png | – | 별빛 하늘 배경 다른 시안 (반딧불·구름 없음) — 안 씀 | – |
+| misc | skyitems.png | 흰색 | puffA/B/C·sun·moonFull·moonCrescent·starBig·starWish·planetRing·planetSmall·cloudNight (하늘 장식) | matting/matte3.py |
+| zodiac | face01~12_*.png | 투명 | 십이지 친구 얼굴(프로필·지도) — index.html ZIMG | – |
+| zodiac | faces.png / bodies.png | – | 십이지 얼굴·몸 모음 (원본 확인용) | – |
+
+남은 원본: 지역별 인게임 배경(img/bg/zone0~3 — 하늘섬 것은 sky/game_bg.png).
