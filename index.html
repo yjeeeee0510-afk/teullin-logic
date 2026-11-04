@@ -107,16 +107,17 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* stage 2 */
 .nono-wrap{overflow-x:auto;display:flex;justify-content:center;padding-bottom:4px}
 .nono{display:grid;user-select:none;-webkit-user-select:none;touch-action:none;width:max-content}
-.cc{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:1px;padding-bottom:4px;font-family:var(--f-mono);font-size:12px;font-weight:600;line-height:1.25}
-.rc{display:flex;justify-content:flex-end;align-items:center;gap:6px;padding-right:6px;font-family:var(--f-mono);font-size:12px;font-weight:600;white-space:nowrap}
+.cc{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:1px;padding-bottom:4px;font-family:var(--f-mono);font-size:13px;font-weight:800;line-height:1.25;color:var(--ink)}
+.rc{display:flex;justify-content:flex-end;align-items:center;gap:6px;padding-right:6px;font-family:var(--f-mono);font-size:13px;font-weight:800;white-space:nowrap;color:var(--ink)}
 .cc.alt,.rc.alt{background:var(--soft)}
-.cc.done,.rc.done{color:var(--muted);opacity:.45}
+.cc.done,.rc.done{color:var(--muted);opacity:.32;font-weight:600}
 .cell{width:var(--cell);height:var(--cell);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card);display:grid;place-items:center;color:var(--muted);font-size:calc(var(--cell)*.55);line-height:1;cursor:pointer}
 .cell.c0{border-left:1.5px solid var(--ink)}
 .cell.r0{border-top:1.5px solid var(--ink)}
 .cell.br{border-right:1.5px solid var(--ink)}
 .cell.bb{border-bottom:1.5px solid var(--ink)}
 .cell.f{background:var(--ink)}
+.cell.wrong.f{box-shadow:inset 0 0 0 2px #e03131}
 .cell.x::after{content:"×"}
 .cell:hover{box-shadow:inset 0 0 0 2px var(--accent)}
 .nono.won .cell.x::after{content:""}
@@ -949,13 +950,15 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 .flight.down.go .fl-ship{animation-direction:reverse}
 .flight .fl-bob{position:relative;animation:flBob 1.4s ease-in-out infinite}
 .flight .fl-body{display:block;width:100%;height:auto;position:relative;z-index:1;filter:drop-shadow(0 10px 8px rgba(30,20,80,.25))}
-.flight .fl-wing{position:absolute;height:auto;transform-origin:91% 73%;animation:flFlap .52s ease-in-out infinite alternate}
-.flight .fl-wing.f{left:-43.8%;top:28.6%;width:56.5%;z-index:2}
-.flight .fl-wing.b{left:14.3%;top:20%;width:48%;z-index:0;filter:brightness(.88);animation-delay:-.18s}
+/* 날개 위치는 vyWingShip(날개 달린 배 그림) 기준: 큰 날개는 배 뒤쪽(오른쪽) 위로, 작은 날개는 앞쪽(왼쪽)에 좌우 뒤집어 */
+.flight .fl-wing{position:absolute;height:auto;transform-origin:11% 83%;animation:flFlap .52s ease-in-out infinite alternate}
+.flight .fl-wing.f{left:70%;top:30%;width:48%;z-index:2}
+.flight .fl-wing.b{left:0%;top:50%;width:36%;z-index:0;filter:brightness(.92);transform-origin:11% 83%;animation-name:flFlapB;animation-delay:-.18s}
 .flight.arrive .fl-wing{animation-duration:1.1s}
 @keyframes flCam{from{transform:translateY(-200vh)}to{transform:translateY(0)}}
 @keyframes flShip{0%{transform:translateY(var(--y0))}12%{transform:translateY(calc(var(--y0) - 6vh))}80%{transform:translateY(calc(var(--y1) - 14vh))}100%{transform:translateY(var(--y1))}}
-@keyframes flFlap{from{transform:rotate(-24deg)}to{transform:rotate(14deg)}}
+@keyframes flFlap{from{transform:rotate(-22deg)}to{transform:rotate(12deg)}}
+@keyframes flFlapB{from{transform:scaleX(-1) rotate(-22deg)}to{transform:scaleX(-1) rotate(12deg)}}
 @keyframes flBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
 
 
@@ -1067,23 +1070,23 @@ body.candy-play #board{flex-direction:column}
 .cd-how{margin:0;font-size:13px;font-weight:700;color:#5a3418;background:rgba(255,248,238,.92);border-radius:999px;padding:6px 14px;text-align:center;box-shadow:0 2px 8px rgba(90,40,10,.15)}
 .cd-board{--side:min(94vw,calc(100dvh - 210px),560px);width:var(--side);height:var(--side);display:grid;grid-template-columns:repeat(var(--n),1fr);grid-template-rows:repeat(var(--n),1fr);gap:0;
   padding:7px;border-radius:18px;background:linear-gradient(#8a5130,#5c3218);box-shadow:0 6px 0 #3f200e,0 12px 26px rgba(60,25,5,.35);touch-action:none;user-select:none;-webkit-user-select:none}
-.cc{position:relative;border:0;padding:0;margin:0;background-size:118% 118%;background-position:center;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;
+.cd-board .cc{position:relative;border:0;padding:0;margin:0;background-size:118% 118%;background-position:center;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;
   box-shadow:inset 0 0 0 .5px rgba(80,40,10,.18)}
-.cc{border-top:var(--t,0) solid #4a2410;border-bottom:var(--b,0) solid #4a2410;border-left:var(--l,0) solid #4a2410;border-right:var(--r,0) solid #4a2410}
-.cc.bt{--t:2px}.cc.bb{--b:2px}.cc.bl{--l:2px}.cc.br{--r:2px}
-.cc::before{content:"";position:absolute;inset:0;z-index:0;background:rgba(255,250,244,.42);pointer-events:none}
-.cc.f::before{background:rgba(255,250,244,.2)}
-.cc .m{position:relative;z-index:1;width:78%;height:78%;display:grid;place-items:center;pointer-events:none}
-.cc .m svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
-.cc.f .m{animation:cdSit .35s cubic-bezier(.3,1.7,.5,1) both}
+.cd-board .cc{border-top:var(--t,0) solid #4a2410;border-bottom:var(--b,0) solid #4a2410;border-left:var(--l,0) solid #4a2410;border-right:var(--r,0) solid #4a2410}
+.cd-board .cc.bt{--t:2px}.cd-board .cc.bb{--b:2px}.cd-board .cc.bl{--l:2px}.cd-board .cc.br{--r:2px}
+.cd-board .cc::before{content:"";position:absolute;inset:0;z-index:0;background:rgba(255,250,244,.42);pointer-events:none}
+.cd-board .cc.f::before{background:rgba(255,250,244,.2)}
+.cd-board .cc .m{position:relative;z-index:1;width:78%;height:78%;display:grid;place-items:center;pointer-events:none}
+.cd-board .cc .m svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.cd-board .cc.f .m{animation:cdSit .35s cubic-bezier(.3,1.7,.5,1) both}
 @keyframes cdSit{0%{transform:scale(.2)}100%{transform:none}}
-.cc.x::after{content:"";position:absolute;z-index:2;inset:26%;background:
+.cd-board .cc.x::after{content:"";position:absolute;z-index:2;inset:26%;background:
   linear-gradient(45deg,transparent 42%,rgba(70,30,10,.78) 42%,rgba(70,30,10,.78) 58%,transparent 58%),
   linear-gradient(-45deg,transparent 42%,rgba(70,30,10,.78) 42%,rgba(70,30,10,.78) 58%,transparent 58%)}
-.cc.dot::after{content:"";position:absolute;z-index:2;left:50%;top:50%;width:30%;height:30%;transform:translate(-50%,-50%);border-radius:50%;background:#3a1a08;box-shadow:0 0 0 2.5px #fff,0 1px 4px rgba(0,0,0,.45)}
-.cc.wrong{animation:cdWrong .7s ease}
+.cd-board .cc.dot::after{content:"";position:absolute;z-index:2;left:50%;top:50%;width:30%;height:30%;transform:translate(-50%,-50%);border-radius:50%;background:#3a1a08;box-shadow:0 0 0 2.5px #fff,0 1px 4px rgba(0,0,0,.45)}
+.cd-board .cc.wrong{animation:cdWrong .7s ease}
 @keyframes cdWrong{0%,60%{filter:brightness(.6) sepia(1) saturate(6) hue-rotate(-30deg)}100%{filter:none}}
-.cc.hinted{animation:hintPop .9s ease}
+.cd-board .cc.hinted{animation:hintPop .9s ease}
 .cd-rule{display:flex;align-items:center;gap:10px;text-align:left;background:#fff4ec;border-radius:14px;padding:10px 12px;margin:6px 0}
 .cd-rf{width:52px;height:52px;flex:none;display:grid;place-items:center}.cd-rf>*{width:100%!important;height:100%!important}
 .cd-rule p{margin:0;font-size:13.5px;line-height:1.45;color:#5a3418}
@@ -1149,7 +1152,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.3</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.4</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1962,7 +1965,17 @@ function logicFor(round){
   if(!pool.length)return null;
   const slot=Math.max(0,slots.indexOf(round)),plays=(P.rounds[round]&&P.rounds[round].plays)||0;
   const [code,label]=pool[(slot+plays*slots.length)%pool.length].split('|');
-  return {sol:decodeLogic(code,n),label:label||'',code};
+  const sol=decodeLogic(code,n);
+  return {sol,label:label||patternName(sol,code),code};
+}
+// 이름 없는 무늬 문제에도 이름을 붙임: 대칭 모양에 따라 고르고, 같은 문제는 늘 같은 이름
+function patternName(g,code){
+  const n=g.length,at=(x,y)=>g[y][x];let lr=true,ud=true,r180=true,r90=true;
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const v=at(x,y);
+    if(v!==at(n-1-x,y))lr=false;if(v!==at(x,n-1-y))ud=false;if(v!==at(n-1-x,n-1-y))r180=false;if(v!==at(n-1-y,x))r90=false}
+  const L=lr&&ud?['꽃 무늬','눈송이 무늬','만다라 무늬','별꽃 무늬','창문 무늬']:r90?['바람개비 무늬','회오리 무늬','팽이 무늬']:lr?['나비 무늬','가면 무늬','왕관 무늬','거울 무늬','부엉이 무늬']:ud?['물결 무늬','데칼코마니','호수 무늬']:r180?['카드 무늬','지그재그 무늬','모래시계 무늬']:['비밀 그림','구름 무늬','모자이크','보물 지도','별자리','조각 무늬'];
+  let h=0;for(const ch of String(code||''))h=(h*31+ch.charCodeAt(0))>>>0;
+  return L[h%L.length];
 }
 function initLogic(){
   const n=SIZE.logic(S.round),r=rng(sceneSeed()+31);
@@ -2001,7 +2014,9 @@ function renderLogic(){
   updateClues();
 }
 function cellEl(x,y){return $('#nono').querySelector(`.cell[data-x="${x}"][data-y="${y}"]`)}
-function paintCell(x,y){const v=logic.g[y][x],c=cellEl(x,y);c.classList.toggle('f',v===1);c.classList.toggle('x',v===2);c.classList.toggle('wrong',!!logic.lock[y][x])}
+function paintCell(x,y){const v=logic.g[y][x],c=cellEl(x,y);c.classList.toggle('f',v===1);c.classList.toggle('x',v===2);c.classList.toggle('wrong',!!logic.lock[y][x]);
+  // 칠한 칸은 바로 그림 색으로 (틀린 칸은 칠해지지 않고 × 로 고정되므로 칠한 칸은 늘 정답 칸)
+  if(!logic.col){try{logic.col=logicColorAt()}catch(e){logic.col={}}}c.style.backgroundColor=v===1&&logic.col[x+','+y]||''}
 const same=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 function updateClues(fx){
   const {n,g,rows,cols}=logic;let all=true;const fresh=[];
@@ -2985,7 +3000,8 @@ const CANDY=(function(){
     if(daily){code=dailyCode(new Date());title=`오늘의 과자 · ${WD[new Date().getDay()]}요일`}
     else{
       code=roundCode(n);title=`과자 나라 · 라운드 ${n}`;
-      if(!adm){regen();if(C().hearts<=0){noCookie();return}}
+      // 쿠키가 없으면: 게임판(실패·클리어 창 뒤)에 멈춰 있지 않게 과자 마을로 나간 뒤 안내
+      if(!adm){regen();if(C().hearts<=0){if(document.body.classList.contains('game-mode')||G)showMap();noCookie();return}}
     }
     if(!code){openSheet('<h3>문제를 불러오지 못했어요</h3><p class="lead">새로고침한 뒤 다시 해 주세요.</p><div class="row"><button class="btn primary" type="button" onclick="this.closest(\'.sheet\').remove()">닫기</button></div>');return}
     const pz=decode(code),N=pz.N;
@@ -3988,6 +4004,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['4.4','11월 4일','수정 5가지',['과자 나라: 쿠키가 없을 때 다시 도전을 누르면 게임판에 멈춰 있던 문제 고침 (과자 마을로 나가서 안내)','하늘섬 이동 장면: 새 배 그림에 맞게 날개 위치 고침','로직: 가로·세로 숫자를 진하게, 다 맞춘 줄 숫자는 연하게','로직: 칸을 칠할 때부터 그림 색으로 보여요','로직: 무늬 문제도 다 풀면 이름이 나와요 (예: 나비 무늬 완성!)']],
   ['4.3','10월 31일','새 그림 바로 보이게',['휴대폰에 남아 있던 예전 그림 대신 4.2 새 그림을 바로 받아 오게 고쳤어요']],
   ['4.2','10월 30일','그림 전체 새로',['물건 그림 182개를 새로 그린 그림으로 모두 바꿨어요 (테두리 깨끗하게)','지역 배경·지도 바닥·바닷가·과자 나라 배경도 새 그림으로','하트·코인·힌트·별·메뉴 같은 화면 속 아이콘도 그림으로 바꿨어요']],
   ['4.1','10월 30일','퍼즐 조각 네모로',['퍼즐 맞추기 조각을 직소 모양에서 다시 네모 칸으로 바꿨어요 (정사각형 그림 크기는 그대로)']],
