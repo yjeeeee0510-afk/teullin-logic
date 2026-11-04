@@ -1,8 +1,9 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v79';
+const CACHE='sekan-v80';
 // 그림 주소 뒤 ?v= (index.html ASSET_V와 같게)
 const AV='43';
 const CORE=[
+  'img/voyage/pegCoach.webp',
   'img/bg/zone5-heaven.jpg',
   'img/map/shore5.jpg',
   'img/map/zone5.jpg',
