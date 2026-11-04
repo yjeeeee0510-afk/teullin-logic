@@ -13,7 +13,11 @@ from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SIZES = [5, 6, 7, 8, 10, 12]
-POOL = 120            # 크기마다 문제 수 (라운드 수의 4~12배 → 다시 해도 새 문제)
+# 크기별 로직 라운드 수 (1~720라운드, 천국 511~720도 12×12 기준)
+SLOTS = {5: 20, 6: 10, 7: 20, 8: 20, 10: 30, 12: 140}
+POOL = {n: max(120, SLOTS[n] * 4) for n in SIZES}   # 라운드 수의 4배 이상 → 다시 해도 새 문제
+# 같은 그림(물건·도형 이름)은 문제집 전체에서 한 번만. 크기마다 첫 판 몫의 절반쯤을 그림으로
+PIC_QUOTA = {n: SLOTS[n] // 2 + 2 for n in SIZES}
 rng = random.Random(20261028)
 
 # ---------------- 풀이기 ----------------
@@ -244,8 +248,25 @@ def old_pics():
 def build():
     sprites = sprite_pictures()
     olds = old_pics()
-    bank = {}; report = {}
-    for n in SIZES:
+    bank = {}; report = {}; used = set()   # 이미 쓴 그림 이름 (크기 사이에서도 겹치지 않게)
+    order = sprites[:]; rng.shuffle(order)
+    def pics_for(n, offer, quota):
+        got = 0
+        for f, label in order:
+            if got >= quota: break
+            if label in used: continue
+            for detail in ((True, False) if n >= 8 else (False, True)):
+                ok = False
+                for thr in (.5, .42, .58):
+                    if offer(from_alpha(f, n, thr, detail), label, 'pic'): ok = True; break
+                if ok: used.add(label); got += 1; break
+        for kind, label in SHAPES.items():
+            if got >= quota: break
+            if label in used: continue
+            for t in (.5, .2, .8):
+                if offer(shape(kind, n, t), label, 'shape'): used.add(label); got += 1; break
+    kept_by = {}
+    def make(n):
         seen = set(); kept = []  # (G, label, source, passes)
         def offer(G, label, src):
             if G is None or G.shape != (n, n) or not good(G): return False
@@ -260,20 +281,16 @@ def build():
             seen.add(k); kept.append((G, label, src, passes)); return True
         for k, G in olds:
             if k == n: offer(G, '', 'old')
-        # 그림 (물건) — 작은 크기에서는 알아보기 어려워 크기 7 이상에서 많이
-        order = sprites[:]; rng.shuffle(order)
-        for f, label in order:
-            done = False
-            for detail in ((True, False) if n >= 8 else (False, True)):
-                for thr in (.5, .42, .58):
-                    if offer(from_alpha(f, n, thr, detail), label, 'pic'): done = True; break
-                if done: break
-        for kind, label in SHAPES.items():
-            for t in (.5, .2, .8):
-                if offer(shape(kind, n, t), label, 'shape'): break
+        return kept, offer
+    for n in SIZES: kept_by[n] = make(n)
+    # 그림: 작은 크기부터 몫만큼, 남은 그림은 큰 크기(12→10→8)에 다시 하기용으로
+    for n in SIZES: pics_for(n, kept_by[n][1], PIC_QUOTA[n])
+    for n in (12, 10, 8): pics_for(n, kept_by[n][1], 10 ** 6)
+    for n in SIZES:
+        kept, offer = kept_by[n]
         kinds = ['mirror', 'vmirror', 'rot', 'quad', 'blob', 'blob']
         tries = 0
-        while len(kept) < POOL and tries < 40000:
+        while len(kept) < POOL[n] and tries < 400000:
             tries += 1; offer(pattern(n, kinds[tries % len(kinds)]), '', 'pat')
         # 출처를 섞어서 순서 정하기: 쉬운(추론 횟수 적은) 것부터, 같은 출처가 연달아 나오지 않게
         kept.sort(key=lambda t: t[3] + rng.random() * 2)
@@ -282,7 +299,7 @@ def build():
         while pics or pats:
             if pics and (not pats or len(mixed) % 2 == 0): mixed.append(pics.pop(0))
             elif pats: mixed.append(pats.pop(0))
-        mixed = mixed[:POOL]
+        mixed = mixed[:POOL[n]]
         bank[n] = mixed
         report[n] = {'total': len(mixed), 'pic': sum(t[2] == 'pic' for t in mixed), 'shape': sum(t[2] == 'shape' for t in mixed),
                      'old': sum(t[2] == 'old' for t in mixed), 'pattern': sum(t[2] == 'pat' for t in mixed)}
