@@ -91,3 +91,15 @@ ChatGPT에 물건 모음 32장 + 배경 24장을 요청. 영어 요청문 전체
 | BG28 | shore_heaven | 천국 지도 끝 |
 | H6 | #00B140 | pegBody pegWing carriage pegCarriage flyCloudA flyCloudB |
 | BG29 | voyage_heaven | 하늘섬→천국 천마 이동 하늘(좌우 이음) |
+
+## 선착장 (지역별) — 2026-11-04
+받은 그림은 `art-src/dock/D1.png`~`D6.png`. 칸 순서: 왼위·오위·왼아래·오아래.
+
+| 장 | 바탕 | 칸 순서 |
+|---|---|---|
+| D1 | #FF00FF | dockFlower boatFlower decoFlowerA decoFlowerB |
+| D2 | #FF00FF | dockSea boatSea decoSeaA decoSeaB |
+| D3 | #0047FF | dockSnow boatSnow decoSnowA decoSnowB |
+| D4 | #00B140 | dockNight boatNight decoNightA decoNightB |
+| D5 | #FF00FF | dockSky boatSky decoSkyA decoSkyB |
+| D6 | #00B140 | dockHeaven boatHeaven decoHeavenA decoHeavenB |
