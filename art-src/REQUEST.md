@@ -69,3 +69,23 @@ ChatGPT에 물건 모음 32장 + 배경 24장을 요청. 영어 요청문 전체
 | BG22 | candy_bg | 기타 과자 나라 게임 배경 |
 | BG23 | candy_floor | 기타 과자 나라 지도 바닥 |
 | BG24 | candy_gate | 기타 과자 나라 마을 입구 |
+
+## 천국 (6지역, 511~720라운드) — 2026-11-04 추가
+
+받은 그림은 `art-src/heaven/<장 이름>.png`(H1.png, BG25.png …)로 저장. 영어 요청문은 `art-src/request.json`.
+
+| 장 | 바탕 | 칸 순서 |
+|---|---|---|
+| H1 | #00B140 | heavenGate chapelGold chapelBlue chapelPink lightTreeGold lightTreeWhite |
+| H2 | #0047FF | harpGold harpSilver fountainLight chimeGold chimeSilver cloudBench |
+| H3 | #FF00FF | lilyWhite lilyGold lilyPink featherWhite featherBlue candleLight |
+| H4 | #00B140 | doveWhite haloGold haloPink sunHeaven lanternHeaven stairCloud |
+| H5 | #00B140 | pebHeavenA pebHeavenB pebHeavenC pebHeavenD goldCloudA goldCloudB |
+| I3 | #FF00FF | islHeaven heavenDock |
+
+| 배경 | 파일 | 용도 |
+|---|---|---|
+| BG25 | scene_heaven | 천국 틀린그림 배경 |
+| BG26 | gamebg_heaven | 천국 인게임 배경 |
+| BG27 | mapfloor_heaven | 천국 지도 바닥 |
+| BG28 | shore_heaven | 천국 지도 끝 |

@@ -1098,6 +1098,188 @@
     }
    ],
    "prompt": "A game icon sheet of 3 separate icons, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 1 rows x 3 columns, every icon centered in its own cell, front view, each icon fills about 60% of its cell, wide even spacing, nothing touching. No ground, no cast shadows, no glow outside the icons. Glossy cute 3D game UI icon style, bold simple rounded silhouette that stays readable at very small size (24 px), thick shapes, no thin details, same toy-like pastel look as the attached reference images. No text, no numbers, no letters. Image size 1536x1024.\nRow 1: three rounded white horizontal bars stacked (menu icon) on a small navy rounded square | the same five-point star but empty: pale grey, slightly transparent look | the same heart but empty: pale grey"
+  },
+  {
+   "id": "H1",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "천국",
+   "items": [
+    {
+     "id": "heavenGate",
+     "ko": "천국 문"
+    },
+    {
+     "id": "chapelGold",
+     "ko": "금빛 지붕 성전"
+    },
+    {
+     "id": "chapelBlue",
+     "ko": "파란 지붕 성전"
+    },
+    {
+     "id": "chapelPink",
+     "ko": "분홍 지붕 성전"
+    },
+    {
+     "id": "lightTreeGold",
+     "ko": "금빛 나무"
+    },
+    {
+     "id": "lightTreeWhite",
+     "ko": "진주빛 나무"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a tall pearly heaven gate: two cream-white pillars with gold caps and an arched golden lattice double door, a small cloud at the base | a small round cream-white temple with white pillars and a golden dome with a star on top | the same temple with a sky-blue dome (same shape)\nRow 2: the same temple with a pink dome (same shape) | a round fluffy tree with glowing golden leaves and a cream trunk | the same tree with pearl-white leaves tinted pale lilac (same shape)"
+  },
+  {
+   "id": "H2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "천국",
+   "items": [
+    {
+     "id": "harpGold",
+     "ko": "금 하프"
+    },
+    {
+     "id": "harpSilver",
+     "ko": "은 하프"
+    },
+    {
+     "id": "fountainLight",
+     "ko": "빛 분수"
+    },
+    {
+     "id": "chimeGold",
+     "ko": "금 종"
+    },
+    {
+     "id": "chimeSilver",
+     "ko": "은 종"
+    },
+    {
+     "id": "cloudBench",
+     "ko": "구름 의자"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a golden harp with pearl strings and a small wing ornament on top | the same harp in silver with lilac strings (same shape) | a three-tier cream-white fountain with sparkling pale-gold water\nRow 2: a hanging golden bell with a white ribbon bow | the same bell in silver with a blue bow (same shape) | a small bench made of a puffy white cloud with golden armrests"
+  },
+  {
+   "id": "H3",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "천국",
+   "items": [
+    {
+     "id": "lilyWhite",
+     "ko": "흰 백합"
+    },
+    {
+     "id": "lilyGold",
+     "ko": "금 백합"
+    },
+    {
+     "id": "lilyPink",
+     "ko": "분홍 백합"
+    },
+    {
+     "id": "featherWhite",
+     "ko": "흰 깃털"
+    },
+    {
+     "id": "featherBlue",
+     "ko": "하늘색 깃털"
+    },
+    {
+     "id": "candleLight",
+     "ko": "빛 초"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a small cluster of three white lilies with green leaves | the same lily cluster in pale gold (same shape) | the same lily cluster in soft pink (same shape)\nRow 2: a single large soft white angel feather standing upright | the same feather in sky blue (same shape) | a short cream candle in a golden holder with a soft round flame"
+  },
+  {
+   "id": "H4",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "천국",
+   "items": [
+    {
+     "id": "doveWhite",
+     "ko": "흰 비둘기"
+    },
+    {
+     "id": "haloGold",
+     "ko": "금 고리"
+    },
+    {
+     "id": "haloPink",
+     "ko": "분홍 고리"
+    },
+    {
+     "id": "sunHeaven",
+     "ko": "천국 해"
+    },
+    {
+     "id": "lanternHeaven",
+     "ko": "천국 등"
+    },
+    {
+     "id": "stairCloud",
+     "ko": "구름 계단"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a cute round white dove with tiny wings spread, flying, a small gold halo above its head | a floating golden halo ring with tiny sparkles stuck to it | the same halo ring in pink (same shape)\nRow 2: a big round warm golden sun with chunky rounded rays (rays are part of the object) | a cream-white lantern with a gold roof and warm glowing window | a short curved staircase of white cloud steps with golden edges"
+  },
+  {
+   "id": "H5",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "천국",
+   "items": [
+    {
+     "id": "pebHeavenA",
+     "ko": "금빛 구름 발판 1"
+    },
+    {
+     "id": "pebHeavenB",
+     "ko": "금빛 구름 발판 2"
+    },
+    {
+     "id": "pebHeavenC",
+     "ko": "금빛 구름 발판 3"
+    },
+    {
+     "id": "pebHeavenD",
+     "ko": "금빛 구름 발판 4"
+    },
+    {
+     "id": "goldCloudA",
+     "ko": "금빛 구름 1"
+    },
+    {
+     "id": "goldCloudB",
+     "ko": "금빛 구름 2"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a small flat oval stepping pad made of white cloud with a thin golden rim, seen from slightly above | a slightly different small round cloud stepping pad with a golden rim | a small cloud stepping pad shaped like a soft star, golden rim\nRow 2: a small heart-shaped cloud stepping pad with a golden rim | a wide puffy white cloud with warm golden underside | a smaller puffy white cloud with pink-gold underside, different shape"
+  },
+  {
+   "id": "I3",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "섬",
+   "items": [
+    {
+     "id": "islHeaven",
+     "ko": "천국 섬"
+    },
+    {
+     "id": "heavenDock",
+     "ko": "천국 선착장"
+    }
+   ],
+   "prompt": "A game sprite sheet of 2 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 1 row x 2 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a large floating heaven island: a thick bed of white clouds with golden edges, on top a pearly gate, small white temples with golden domes and glowing golden trees, soft rocks hanging below, wide side view | a small floating cloud dock: a wooden-and-gold pier on a cloud with a golden arch and two little lanterns"
   }
  ],
  "bgs": [
@@ -1268,6 +1450,34 @@
    "region": "기타",
    "ko": "과자 나라 마을 입구",
    "prompt": "A horizontal 1536x1024 view: the entrance of a candy village with a candy arch gate, gingerbread houses, lollipop trees and a path leading in, pastel colors. Cute soft 3D clay toy style, bright pastel colors, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG25",
+   "file": "scene_heaven",
+   "region": "천국",
+   "ko": "틀린그림 배경",
+   "prompt": "A wide landscape game background, horizontal 1536x1024: heaven above the clouds, a soft golden-pink sunrise sky with gentle light rays, distant pearly gates and white temples very small on the horizon about one third from the top; the lower two thirds is a wide flat field of soft white clouds with only tiny lilies near the edges, leaving a large empty area for placing objects. Cute soft 3D clay toy style, bright pastel colors with warm gold and pearl white, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG26",
+   "file": "gamebg_heaven",
+   "region": "천국",
+   "ko": "인게임 배경",
+   "prompt": "A vertical 1024x1536 game background: dreamy heaven sky of soft white and golden clouds with warm light, very simple and slightly blurred in the middle so a puzzle board can sit on top, small golden clouds only along the bottom corners. Cute soft 3D clay toy style, bright pastel colors with warm gold and pearl white, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG27",
+   "file": "mapfloor_heaven",
+   "region": "천국",
+   "ko": "지도 바닥",
+   "prompt": "A vertical 1024x1536 top-down game map tile: a wide soft white cloud ground with faint golden swirl patterns, scattered tiny white lilies, small golden sparkles and a few little cloud puffs, no paths, no buildings, evenly spread texture so the top edge and bottom edge tile seamlessly when stacked vertically. Cute soft 3D clay toy style, bright pastel colors with warm gold and pearl white, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG28",
+   "file": "shore_heaven",
+   "region": "천국",
+   "ko": "지도 끝",
+   "prompt": "A wide horizontal 1536x1024 game map edge, top-down view: the lower half is the edge of a white cloud island with soft golden rims and tiny lilies, the upper half is open golden-pink sky with drifting small clouds, the border between them is a soft wavy cloud edge running left to right. Cute soft 3D clay toy style, bright pastel colors with warm gold and pearl white, same art style as the attached reference images. No text, no logos, no watermark."
   }
  ]
 }
