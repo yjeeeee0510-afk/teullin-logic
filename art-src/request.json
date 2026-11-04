@@ -1280,6 +1280,39 @@
     }
    ],
    "prompt": "A game sprite sheet of 2 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. 1 row x 2 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a large floating heaven island: a thick bed of white clouds with golden edges, on top a pearly gate, small white temples with golden domes and glowing golden trees, soft rocks hanging below, wide side view | a small floating cloud dock: a wooden-and-gold pier on a cloud with a golden arch and two little lanterns"
+  },
+  {
+   "id": "H6",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "천국 이동",
+   "items": [
+    {
+     "id": "pegBody",
+     "ko": "날개 없는 천마"
+    },
+    {
+     "id": "pegWing",
+     "ko": "천마 날개"
+    },
+    {
+     "id": "carriage",
+     "ko": "금빛 마차"
+    },
+    {
+     "id": "pegCarriage",
+     "ko": "천마+마차 한 장(참고·대체용)"
+    },
+    {
+     "id": "flyCloudA",
+     "ko": "지나가는 구름 1"
+    },
+    {
+     "id": "flyCloudB",
+     "ko": "지나가는 구름 2"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate objects, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every object centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow or light rays outside the objects. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, bright pastel colors with warm gold and pearl white, light from the top-left, same art style as the attached reference images. White parts must be clearly shaded cream-white, never pure flat white. Everything is a side view facing RIGHT. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: a cute chubby white winged horse (pegasus) WITHOUT wings, galloping in the air facing right, golden mane and tail, a golden harness on its body with two golden straps trailing back to the left edge of the horse | one large feathered pegasus wing alone, white with golden tips, spread upward, its root at the bottom-left so it can be attached to the horse's back | a small round golden-and-white royal carriage facing right, two wheels, a little cloud under it, a golden star on the roof, two thin golden shafts sticking out to the right toward where a horse would be\nRow 2: the complete scene in one piece for reference: the same pegasus with its wing pulling the same carriage to the right, flying | a long flat wispy white cloud, wide horizontal shape | a puffy white cloud with a golden underside, wide horizontal shape"
   }
  ],
  "bgs": [
@@ -1478,6 +1511,13 @@
    "region": "천국",
    "ko": "지도 끝",
    "prompt": "A wide horizontal 1536x1024 game map edge, top-down view: the lower half is the edge of a white cloud island with soft golden rims and tiny lilies, the upper half is open golden-pink sky with drifting small clouds, the border between them is a soft wavy cloud edge running left to right. Cute soft 3D clay toy style, bright pastel colors with warm gold and pearl white, same art style as the attached reference images. No text, no logos, no watermark."
+  },
+  {
+   "id": "BG29",
+   "file": "voyage_heaven",
+   "region": "천국 이동",
+   "ko": "천마 이동 하늘(좌우 이음)",
+   "prompt": "A very wide horizontal 1536x1024 game background, side view: a sky high above the clouds, soft blue at the top fading to warm golden-pink near the bottom, layers of fluffy white clouds along the bottom third and a few soft clouds in the middle, no islands, no buildings, no characters; the left edge and right edge must tile seamlessly when placed side by side. Cute soft 3D clay toy style, bright pastel colors with warm gold and pearl white, same art style as the attached reference images. No text, no logos, no watermark."
   }
  ]
 }

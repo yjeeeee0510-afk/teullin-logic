@@ -89,3 +89,5 @@ ChatGPT에 물건 모음 32장 + 배경 24장을 요청. 영어 요청문 전체
 | BG26 | gamebg_heaven | 천국 인게임 배경 |
 | BG27 | mapfloor_heaven | 천국 지도 바닥 |
 | BG28 | shore_heaven | 천국 지도 끝 |
+| H6 | #00B140 | pegBody pegWing carriage pegCarriage flyCloudA flyCloudB |
+| BG29 | voyage_heaven | 하늘섬→천국 천마 이동 하늘(좌우 이음) |
