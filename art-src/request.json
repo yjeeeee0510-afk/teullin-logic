@@ -1513,6 +1513,142 @@
    ],
    "prompt": "A game sprite sheet of 5 separate boats, each an isolated cutout floating on a perfectly flat, uniform solid chroma-key green background (#00B140) with no gradient and no texture. 2 rows x 3 columns (bottom-right cell left empty), every boat centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Top-down game map view, seen from above at a slight angle, every boat pointing UP (bow at the top). No water, no waves, no splash, no ripple ring, no cast shadow — only the boat itself. These must be EXACTLY the same boats as the attached side-view reference image (same colors, same sail shapes, same flags, same wood deck, same proportions), just drawn from above. Cute soft 3D clay toy style, rounded chunky shapes, gentle gloss, light from the top-left. No text, no logos, no watermark. Image size 1536x1024.\nRow 1: the orange rowboat with a cream-white triangular sail, wooden mast and red flag | the blue boat with a white stripe, yellow triangular sail and blue flag | the purple boat with a white stripe, purple sail with yellow stars and purple flag\nRow 2: the golden carved galleon with three cream sails, yellow pennants, round blue portholes and white feathered wings spread to both sides | the white winged horse (pegasus) with golden mane pulling the small round golden-and-white carriage, seen from above, wings spread, horse in front (top) and carriage behind (bottom) | (empty)",
    "src": "dock"
+  },
+  {
+   "id": "DP1",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "디테일 짝",
+   "src": "detail",
+   "items": [
+    {
+     "id": "cottageRedX",
+     "ko": "remove the chimney on the roof"
+    },
+    {
+     "id": "windmillX",
+     "ko": "remove the small round window near the top of the tower"
+    },
+    {
+     "id": "beachHutBlueX",
+     "ko": "remove the red-and-white life ring from the wall"
+    },
+    {
+     "id": "lighthouseX",
+     "ko": "remove one red stripe so the middle band is all white"
+    },
+    {
+     "id": "sandcastleX",
+     "ko": "remove the little red flag on top"
+    },
+    {
+     "id": "treeRoundX",
+     "ko": "show only three apples instead of six"
+    }
+   ],
+   "prompt": "Edit the attached image. It is a game sprite sheet of 6 objects on a perfectly flat pure magenta background (#FF00FF), 2 rows x 3 columns. Keep the sheet layout, background color, every object's position, size, pose, colors, lighting and cute soft 3D clay style EXACTLY the same. Change only ONE small detail on each object, as listed below, and nothing else. The change must be clearly visible but small. No new objects, no shadows, no text, no watermark. Image size 1536x1024.\nRow 1, left: remove the chimney on the roof\nRow 1, middle: remove the small round window near the top of the tower\nRow 1, right: remove the red-and-white life ring from the wall\nRow 2, left: remove one red stripe so the middle band is all white\nRow 2, middle: remove the little red flag on top\nRow 2, right: show only three apples instead of six"
+  },
+  {
+   "id": "DP2",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "디테일 짝",
+   "src": "detail",
+   "items": [
+    {
+     "id": "snowmanRedX",
+     "ko": "remove the left stick arm"
+    },
+    {
+     "id": "cabinRedX",
+     "ko": "remove the chimney"
+    },
+    {
+     "id": "iglooX",
+     "ko": "remove the snow cap on top of the igloo"
+    },
+    {
+     "id": "castleLilacX",
+     "ko": "remove the yellow flag on the right pink tower"
+    },
+    {
+     "id": "observatoryX",
+     "ko": "remove the telescope"
+    },
+    {
+     "id": "lampYellowX",
+     "ko": "turn the lamp off: the glass is dark grey-blue instead of glowing yellow"
+    }
+   ],
+   "prompt": "Edit the attached image. It is a game sprite sheet of 6 objects on a perfectly flat pure magenta background (#FF00FF), 2 rows x 3 columns. Keep the sheet layout, background color, every object's position, size, pose, colors, lighting and cute soft 3D clay style EXACTLY the same. Change only ONE small detail on each object, as listed below, and nothing else. The change must be clearly visible but small. No new objects, no shadows, no text, no watermark. Image size 1536x1024.\nRow 1, left: remove the left stick arm\nRow 1, middle: remove the chimney\nRow 1, right: remove the snow cap on top of the igloo\nRow 2, left: remove the yellow flag on the right pink tower\nRow 2, middle: remove the telescope\nRow 2, right: turn the lamp off: the glass is dark grey-blue instead of glowing yellow"
+  },
+  {
+   "id": "DP3",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "디테일 짝",
+   "src": "detail",
+   "items": [
+    {
+     "id": "skyHouseX",
+     "ko": "remove the flowers in front of the house"
+    },
+    {
+     "id": "bellTowerX",
+     "ko": "remove the bell so the arch is empty"
+    },
+    {
+     "id": "weatherVaneX",
+     "ko": "remove the arrow under the rooster"
+    },
+    {
+     "id": "birdHouseX",
+     "ko": "remove the little blue bird"
+    },
+    {
+     "id": "airshipX",
+     "ko": "remove the big star on the side"
+    },
+    {
+     "id": "balloonRedX",
+     "ko": "remove the star on top of the balloon"
+    }
+   ],
+   "prompt": "Edit the attached image. It is a game sprite sheet of 6 objects on a perfectly flat pure magenta background (#FF00FF), 2 rows x 3 columns. Keep the sheet layout, background color, every object's position, size, pose, colors, lighting and cute soft 3D clay style EXACTLY the same. Change only ONE small detail on each object, as listed below, and nothing else. The change must be clearly visible but small. No new objects, no shadows, no text, no watermark. Image size 1536x1024.\nRow 1, left: remove the flowers in front of the house\nRow 1, middle: remove the bell so the arch is empty\nRow 1, right: remove the arrow under the rooster\nRow 2, left: remove the little blue bird\nRow 2, middle: remove the big star on the side\nRow 2, right: remove the star on top of the balloon"
+  },
+  {
+   "id": "DP4",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "디테일 짝",
+   "src": "detail",
+   "items": [
+    {
+     "id": "heavenGateX",
+     "ko": "remove the small wings on top of the gate"
+    },
+    {
+     "id": "chapelGoldX",
+     "ko": "remove the star on top of the dome"
+    },
+    {
+     "id": "fountainLightX",
+     "ko": "remove the star on top of the fountain"
+    },
+    {
+     "id": "harpGoldX",
+     "ko": "remove the small wing on top of the harp"
+    },
+    {
+     "id": "candleLightX",
+     "ko": "remove the flame so the candle is not lit"
+    },
+    {
+     "id": "beehiveX",
+     "ko": "show only one bee instead of two"
+    }
+   ],
+   "prompt": "Edit the attached image. It is a game sprite sheet of 6 objects on a perfectly flat chroma-key green background (#00B140), 2 rows x 3 columns. Keep the sheet layout, background color, every object's position, size, pose, colors, lighting and cute soft 3D clay style EXACTLY the same. Change only ONE small detail on each object, as listed below, and nothing else. The change must be clearly visible but small. No new objects, no shadows, no text, no watermark. Image size 1536x1024.\nRow 1, left: remove the small wings on top of the gate\nRow 1, middle: remove the star on top of the dome\nRow 1, right: remove the star on top of the fountain\nRow 2, left: remove the small wing on top of the harp\nRow 2, middle: remove the flame so the candle is not lit\nRow 2, right: show only one bee instead of two"
   }
  ],
  "bgs": [

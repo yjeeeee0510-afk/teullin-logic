@@ -231,6 +231,13 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .map .fog.go::before{animation:fogL 3.2s ease-in forwards}.map .fog.go::after{animation:fogR 3.2s ease-in forwards}
 @keyframes fogLift{0%{opacity:1}100%{opacity:0;transform:translateY(-60px) scale(1.08)}}
 @keyframes fogL{to{transform:translateX(-40%)}}@keyframes fogR{to{transform:scaleX(-1) translateX(-40%)}}
+.nd .chal{position:absolute;right:-6px;top:2px;min-width:22px;height:22px;padding:0 4px;border-radius:11px;background:linear-gradient(#b197fc,#7048e8);color:#fff;font-style:normal;font-weight:900;font-size:13px;line-height:20px;text-align:center;border:1.5px solid #fff;box-shadow:0 2px 4px rgba(40,20,90,.35)}
+.rs-chal{margin:8px 0 0;padding:8px 12px;border-radius:12px;background:#f3f0ff;color:#5f3dc4;font-size:13px}
+.rs-chal b{margin-right:6px}
+.mir-demo{display:flex;gap:10px;margin:8px 0}
+.mir-demo div{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:8px;text-align:center;background:var(--soft)}
+.mir-demo b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.mir-demo span{font-size:22px;letter-spacing:4px}
 .nd .ty{position:absolute;left:-4px;bottom:4px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1.5px solid #1b2742;color:#fff}
 .nd .ty svg,.nd .ty img.uico{width:13px;height:13px}
 .nd .ty.t0{background:#f76707}.nd .ty.t1{background:#1c7ed6}.nd .ty.t2{background:#ae3ec9}
@@ -1204,7 +1211,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.3</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.4</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1783,11 +1790,14 @@ const ASSET_V='43';
 const embedded=src=>(window.SEKAN_EMBED&&window.SEKAN_EMBED[src])||(/^img\//.test(src)?src+'?v='+ASSET_V:src);
 const UI=(n,cls)=>`<img class="uico${cls?' '+cls:''}" src="${embedded('img/ui/'+n+'.webp')}" alt="" aria-hidden="true" draggable="false">`;
 function loadImg(src){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error(src));im.src=embedded(src)})}
+// 디테일 짝(물건 이름+X: 같은 물건인데 창문·깃발·별 같은 작은 부분 하나만 다른 그림). 그림이 들어오면 여기에 이름을 넣는다(art-src/detail)
+const DETAIL_READY=new Set([]);
 function ensureArt(){
   if(artReady)return artReady;
   const names=new Set();GROUPS.forEach(g=>g.forEach(n=>names.add(n)));THEMES.forEach(t=>[...t.back,...t.front,...t.lights].forEach(n=>names.add(n)));
   const jobs=[...new Set(THEMES.map(t=>t.bg))].map(b=>loadImg(`img/scenes/${b}.${BG_JPG.has(b)?'jpg':'png'}`).then(im=>ART.bg[b]=im));
   REGION_THEMES.forEach(t=>t.sky.forEach(n=>names.add(n)));
+  DETAIL_READY.forEach(n=>names.add(n+'X'));
   names.forEach(n=>jobs.push(loadImg(sprPath(n)).then(im=>ART.spr[n]=im)));
   artReady=Promise.all(jobs);
   artReady.catch(()=>{artReady=null});
@@ -1844,6 +1854,49 @@ function tinted(name,deg){
   }catch(e){}
   tintCache.set(key,c);return c;
 }
+// ---- 부분 색 바꾸기: 물건 안의 같은 색 덩어리(지붕·창문·별 장식·꽃 하나) 하나만 색을 바꿈 ----
+const segCache=new Map(),partCache=new Map();
+function partSegs(name){
+  if(segCache.has(name))return segCache.get(name);
+  let out=[];
+  try{
+    const im=ART.spr[name],W=im.naturalWidth,H=im.naturalHeight,c=document.createElement('canvas');c.width=W;c.height=H;
+    const x=c.getContext('2d');x.drawImage(im,0,0);const p=x.getImageData(0,0,W,H).data,N=W*H;
+    const hue=new Float32Array(N),sat=new Float32Array(N),val=new Float32Array(N),ok=new Uint8Array(N);let opaque=0;
+    for(let i=0;i<N;i++){const a=p[i*4+3];if(a<200)continue;opaque++;
+      const R=p[i*4]/255,G=p[i*4+1]/255,B=p[i*4+2]/255,mx=Math.max(R,G,B),mn=Math.min(R,G,B),d=mx-mn;
+      let h=0;if(d>0){h=mx===R?((G-B)/d)%6:mx===G?(B-R)/d+2:(R-G)/d+4;h*=60;if(h<0)h+=360}
+      hue[i]=h;sat[i]=mx?d/mx:0;val[i]=mx;ok[i]=sat[i]>.3&&mx>.3?1:0}
+    const lab=new Int32Array(N).fill(-1),segs=[],st=[];
+    for(let i0=0;i0<N;i0++){if(!ok[i0]||lab[i0]>=0)continue;
+      const id=segs.length;let n=0,sx=0,sy=0,x0=W,x1=0,y0=H,y1=0;lab[i0]=id;st.push(i0);
+      while(st.length){const i=st.pop(),px=i%W,py=(i-px)/W;n++;sx+=px;sy+=py;if(px<x0)x0=px;if(px>x1)x1=px;if(py<y0)y0=py;if(py>y1)y1=py;
+        for(const j of [i-1,i+1,i-W,i+W]){if(j<0||j>=N||lab[j]>=0||!ok[j])continue;if((j===i-1||j===i+1)&&Math.abs(j%W-px)!==1)continue;
+          const dh=Math.abs(hue[j]-hue[i]);if(Math.min(dh,360-dh)>16||Math.abs(sat[j]-sat[i])>.2||Math.abs(val[j]-val[i])>.22)continue;lab[j]=id;st.push(j)}}
+      segs.push({id,n,cx:sx/n/W,cy:sy/n/H,w:(x1-x0+1)/W,h:(y1-y0+1)/H})}
+    // 너무 작거나(점) 너무 큰(몸통 전체) 덩어리는 빼고, 알아볼 만한 크기만
+    out=segs.filter(g=>g.n>=Math.max(90,opaque*.02)&&g.n<=opaque*.3&&g.w<.85&&g.h<.85).sort((a,b)=>b.n-a.n).slice(0,6);
+    out.forEach(g=>g.lab=lab);out.W=W;out.H=H;
+  }catch(e){out=[]}
+  segCache.set(name,out);return out;
+}
+function partTinted(name,k,deg){
+  const key=name+'|'+k+'|'+deg;if(partCache.has(key))return partCache.get(key);
+  const segs=partSegs(name),g=segs[k],im=ART.spr[name],W=im.naturalWidth,H=im.naturalHeight,c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d');x.drawImage(im,0,0);
+  if(g){try{
+    const d=x.getImageData(0,0,W,H),p=d.data,rad=deg*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);
+    const m=[.213+cos*.787-sin*.213,.715-cos*.715-sin*.715,.072-cos*.072+sin*.928,.213-cos*.213+sin*.143,.715+cos*.285+sin*.140,.072-cos*.072-sin*.283,.213-cos*.213-sin*.787,.715-cos*.715+sin*.715,.072+cos*.928+sin*.072];
+    const lab=g.lab,N=W*H,mask=new Float32Array(N);
+    for(let i=0;i<N;i++)if(lab[i]===g.id)mask[i]=1;
+    // 테두리 1px은 반만 섞어서 계단 없이
+    for(let i=0;i<N;i++)if(!mask[i]){const px=i%W;if((px>0&&lab[i-1]===g.id)||(px<W-1&&lab[i+1]===g.id)||lab[i-W]===g.id||lab[i+W]===g.id)mask[i]=.5}
+    for(let i=0;i<N;i++){const t=mask[i];if(!t)continue;const R=p[i*4],G=p[i*4+1],B=p[i*4+2];
+      p[i*4]=R+(R*m[0]+G*m[1]+B*m[2]-R)*t;p[i*4+1]=G+(R*m[3]+G*m[4]+B*m[5]-G)*t;p[i*4+2]=B+(R*m[6]+G*m[7]+B*m[8]-B)*t}
+    x.putImageData(d,0,0);
+  }catch(e){}}
+  partCache.set(key,c);return c;
+}
 // 땅에 닿는 부드러운 그림자 색 (지역 땅색에 맞춤)
 const SHADOW_COL={flowerhill:'28,70,12',beach:'130,85,25',snowmount:'70,95,150',nightsky:'15,5,50',skyisland:'120,100,180',heaven:'170,130,90'};
 function drawShadow(ctx,o,b,sc){
@@ -1869,7 +1922,7 @@ function drawScene(ctx,sc,objs,patches){
   }
   for(const o of objs){
     if(o.gone)continue;
-    const b=objBox(o),src=o.hue?tinted(o.spr,o.hue):ART.spr[o.spr];
+    const b=objBox(o),src=o.part?partTinted(o.spr,o.part.k,o.part.deg):o.hue?tinted(o.spr,o.hue):ART.spr[o.spr];
     if(o.row!=='sky'&&sc.theme.zone!=null)drawShadow(ctx,o,b,sc);
     ctx.save();ctx.translate(o.x,o.y);if(o.rot)ctx.rotate(o.rot*Math.PI/180);if(o.flip)ctx.scale(-1,1);
     ctx.drawImage(src,-b.w/2,-b.h,b.w,b.h);ctx.restore();
@@ -1883,7 +1936,13 @@ let spot=null;
 // 하늘섬(361~): 살짝 이동·하나 더 생김, 421~: 살짝 기울기·배경 속 차이
 const SPOT_PLUS=r=>r>=421?2:r>=361?1:0;
 // 481~510 틀린그림 라운드 중 9라운드마다: 오른쪽 그림이 좌우로 뒤집힌 '거울 라운드'
-const isMirror=r=>typeOf(r)===0&&(r>=511?(r-511)%6===0:r>=481&&(r-481)%9===0);  // 천국(511~)은 6라운드마다
+// 거울 라운드 = '도전 라운드': 오른쪽(비교) 그림이 좌우로 뒤집힘. 지역마다 몇 개 + 하늘섬 481~ 9라운드마다 + 천국 6라운드마다
+const CHAL_SET=(()=>{const st=new Set(),Z=[0,90,180,270,360];
+  for(const z0 of Z){const len=z0===360?120:90;for(const f of [.3,.62,.9]){let r=z0+1+Math.floor(len*f);while((r-1)%3!==0)r++;if(r<z0+len)st.add(r)}}return st})();
+const isMirror=r=>typeOf(r)===0&&(r>=511?(r-511)%6===0:r>=481?(r-481)%9===0:CHAL_SET.has(r));
+const CHAL_BONUS=50;   // 도전 라운드를 처음 깨면 더 받는 코인
+// 거울 라운드는 비교가 힘드니 틀린 곳을 한두 개 줄임
+const spotCount=r=>{const n=SIZE.spot(r);return isMirror(r)?n-(n>=12?2:1):n};
 function diffKinds(o,lv){
   const k=['gone','size'];
   if(lv>=1)k.push('nudge','add');
@@ -1915,7 +1974,7 @@ function bgPatch(sc,objs,r,diffs){
   return best;
 }
 function initSpot(){
-  const sc=makeScene(sceneSeed()),r=rng(sceneSeed()+17),n=SIZE.spot(S.round),dd=DIFF(S.round),lv=SPOT_PLUS(S.round);
+  const sc=makeScene(sceneSeed()),r=rng(sceneSeed()+17),n=spotCount(S.round),dd=DIFF(S.round),lv=SPOT_PLUS(S.round);
   const mod=sc.objs.map(o=>Object.assign({},o)),diffs=[],used=new Set(),patches=[];
   let order=shuffle(r,sc.objs.slice());
   // 하늘섬: 작고 멀리 있는 물건에 먼저 숨김
@@ -1945,29 +2004,45 @@ function initSpot(){
     const bb=objBox(k==='size'&&m.k>1?m:o);
     diffs.push({x:bb.cx,y:bb.cy,rad:Math.min(85,Math.max(34,Math.max(bb.w,bb.h)*0.5)),found:false});return true;
   };
-  // 어려운 라운드도 일부(약 40%)는 큰 물건의 뚜렷한 차이(없어짐·바뀜·색)로 → 미세한 차이만 잔뜩 있어서 눈이 지치지 않게
-  const clearN=dd>=.5?Math.ceil(n*.4):0;
-  if(clearN){
-    const big=sc.objs.slice().sort((a,b)=>{const A=objBox(a),B=objBox(b);return B.w*B.h-A.w*A.h});
-    let made=0;
-    for(const o of big){
-      if(made>=clearN||diffs.length>=n)break;
-      if(used.has(o.id)||o.row==='sky')continue;
-      const b=objBox(o);if(diffs.some(d=>Math.hypot(d.x-b.cx,d.y-b.cy)<95))continue;
-      const ks=['gone'];if(groupOf(o.spr))ks.push('swap','swap');if(!ART_NOCOLOR.test(o.spr))ks.push('color');
-      used.add(o.id);if(make(o,pick(r,ks),dd*.3,95))made++;else used.delete(o.id);
-    }
+  // 단계별 차이 구성 (6곳 기준): 쉬움 물건 변화 5·부분 1·미세 0 / 보통 3·2·1 / 어려움 2·3·1
+  const zq=zoneOf(S.round),RATIO=zq<=1?[5,1,0]:zq<=3?[3,2,1]:[2,3,1];
+  let cN=Math.round(n*RATIO[0]/6),pN=Math.round(n*RATIO[1]/6);if(cN+pN>n)pN=n-cN;
+  const fine0=diffs.length;   // 배경 속 차이(이미 넣음)는 미세한 차이로 셈
+  const bySize=sc.objs.filter(o=>o.row!=='sky').sort((a,b)=>{const A=objBox(a),B=objBox(b);return B.w*B.h-A.w*A.h});
+  const far=(x,y,g)=>!diffs.some(d=>Math.hypot(d.x-x,d.y-y)<g);
+  // 1) 뚜렷한 물건 변화: 큰 물건부터 없어짐·바꿔치기·색
+  let made=0;
+  for(const gap of [95,72])for(const o of bySize){
+    if(made>=cN||diffs.length>=n)break;
+    if(used.has(o.id))continue;const b=objBox(o);if(!far(b.cx,b.cy,gap))continue;
+    const ks=['gone'];if(groupOf(o.spr))ks.push('swap','swap');if(!ART_NOCOLOR.test(o.spr))ks.push('color');if(lv>=1)ks.push('add');
+    used.add(o.id);if(make(o,pick(r,ks),Math.min(dd,.5)*.4,gap))made++;else used.delete(o.id);
   }
+  // 2) 부분 변화: 물건 안의 색 덩어리 하나만 다른 색
+  made=0;
+  for(const gap of [80,60])for(const o of bySize){
+    if(made>=pN||diffs.length>=n)break;
+    if(used.has(o.id))continue;const b=objBox(o);
+    // 디테일 짝 그림이 있으면 반은 그것으로(같은 물건, 작은 부분 하나만 다름)
+    if(DETAIL_READY.has(o.spr)&&ART.spr[o.spr+'X']&&r()<.5&&far(b.cx,b.cy,gap)){used.add(o.id);mod.find(q=>q.id===o.id).spr=o.spr+'X';
+      diffs.push({x:b.cx,y:b.cy,rad:Math.min(85,Math.max(34,Math.max(b.w,b.h)*.5)),found:false,part:true});made++;continue}
+    const segs=partSegs(o.spr).filter(g=>Math.max(g.w*b.w,g.h*b.h)>=16);if(!segs.length)continue;
+    const g=pick(r,segs),k=partSegs(o.spr).indexOf(g),u=o.flip?1-g.cx:g.cx;
+    const x=o.x-b.w/2+u*b.w,y=o.y-b.h+g.cy*b.h;if(!far(x,y,gap))continue;
+    used.add(o.id);const m=mod.find(q=>q.id===o.id);m.part={k,deg:Math.round(lerp(170,95,dd)+r()*30)};
+    diffs.push({x,y,rad:Math.min(70,Math.max(30,Math.max(g.w*b.w,g.h*b.h)*.6+8)),found:false,part:true});made++;
+  }
+  // 3) 미세한 차이(나머지): 크기·뒤집기·살짝 이동·기울기·옅은 색
+  const fineKinds=o=>{const k=['size'];if(!ART_NOCOLOR.test(o.spr)&&!/^cloud|^moon/.test(o.spr))k.push('color');if(ART_FLIP.has(o.spr)||/^cloud|^bush|^house/.test(o.spr))k.push('flip');if(lv>=1)k.push('nudge');if(lv>=2)k.push('tilt');return k};
   for(const gap of GAPS)for(const o of order){
     if(diffs.length>=n)break;
-    if(used.has(o.id))continue;
-    const b=objBox(o);
-    if(diffs.some(d=>Math.hypot(d.x-b.cx,d.y-b.cy)<gap))continue;
-    used.add(o.id);
-    if(!make(o,pick(r,diffKinds(o,o.row==='sky'?Math.min(lv,0):lv)),dd,gap))used.delete(o.id);
+    if(used.has(o.id))continue;const b=objBox(o);if(!far(b.cx,b.cy,gap))continue;
+    used.add(o.id);if(!make(o,pick(r,o.row==='sky'?['size','color']:fineKinds(o)),Math.max(dd,.35),gap))used.delete(o.id);
   }
   spot={sc,mod,diffs,miss:null,flash:null,mirror:isMirror(S.round),baseL:sceneCanvas(sc,sc.objs),baseR:sceneCanvas(sc,mod,patches)};
 }
+// 테스트 모드에서만: 자동 검사용으로 틀린그림 상태를 볼 수 있게
+if(QA)window.__qa={spot:()=>spot&&{n:spot.diffs.length,part:spot.diffs.filter(d=>d.part).length,mirror:spot.mirror,mods:spot.mod.filter(m=>m.gone||m.part||m.hue||m.k!==1||m.rot||m.spr!==(spot.sc.objs.find(o=>o.id===m.id)||{}).spr).map(m=>m.gone?'gone':m.part?'part':m.hue?'color':m.k!==1?'size':m.rot?'tilt':'swap/flip/etc')},showAll:()=>{spot.diffs.forEach(d=>d.found=true);renderSpot()}};
 // 틀린그림 확대 보기: 두 그림이 같은 자리(거울 라운드는 좌우 반대 자리)를 함께 확대·이동
 function sceneToCanvas(side,x,y){
   const v=(spot&&spot.vz)||{z:1,cx:SW/2,cy:SH/2},mir=side==='R'&&spot&&spot.mirror,dx=mir?SW-x:x,dc=mir?SW-v.cx:v.cx;
@@ -2354,7 +2429,7 @@ function jigClick(e){
 /* ---------- flow ---------- */
 function renderTrack(){
   $('#track').innerHTML=STAGES.map((s,i)=>{
-    const sz=i===0?`${SIZE.spot(S.round)}곳`:i===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
+    const sz=i===0?`${spotCount(S.round)}곳`:i===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
     const st=i<S.stage?'done':i===S.stage?'now':'';
     return`<div class="step ${st}" ${st==='now'?'aria-current="step"':''}><span class="no">${i<S.stage?'✓':i+1}</span><div style="min-width:0"><div class="nm">${s.name}</div><div class="sub">${sz}</div></div></div>`;
   }).join('');
@@ -2386,6 +2461,13 @@ function buildSpot(){
     $('#spZoomBtn').addEventListener('click',()=>{const z=spot.vz.z;zoomSpot(z>=2.9?1:z<1.9?2:3)});
     $('#hintBtn').addEventListener('click',spotHint);
     renderSpot();gameDock();
+    if(spot.mirror&&!P.mirrorSeen){P.mirrorSeen=1;saveP();
+      const sh=openSheet(`<div class="eyebrow">처음 만나는 도전 라운드</div><h3>⇄ 거울 라운드</h3>
+        <div class="mir-demo"><div><b>원본</b><span>🏠 🌳 ⭐</span></div><div><b>비교 그림</b><span>⭐ 🌳 🏠</span></div></div>
+        <p class="pause-how">비교 그림이 <b>좌우로 뒤집혀</b> 있어요. 뒤집힌 것 자체는 차이가 아니에요.<br>원본의 왼쪽은 비교 그림의 오른쪽과 맞춰 보세요. 틀린 곳은 평소보다 한두 개 적고, 처음 깨면 보너스 ${CHAL_BONUS}코인!</p>
+        <div class="row"><button class="btn primary" type="button" id="mirOk">알겠어요</button></div>`);
+      sh.querySelector('#mirOk').addEventListener('click',()=>{closeSheet();resumeGame()});
+    }
     if(spot.mirror)setTimeout(()=>{const q=$('#picR').getBoundingClientRect();FX.text('거울 라운드!<small>비교 그림이 좌우로 뒤집혀 있어요</small>',q.left+q.width/2,q.top+q.height/2,{size:30,color:'#b197fc'})},900);
 }
 function buildJig(){
@@ -2407,7 +2489,7 @@ function startStage(){
   misses=S.miss||0;hints=S.hu||0;combo=0;lastHit=0;comboPts=S.cp||0;running=false;elapsedFrozen=S.el||0;
   $('#veil').hidden=true;
   const st=STAGES[S.stage];
-  const sz=S.stage===0?`틀린 곳 ${SIZE.spot(S.round)}개`:S.stage===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
+  const sz=S.stage===0?`틀린 곳 ${spotCount(S.round)}개`:S.stage===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
   $('#pTitle').textContent=`라운드 ${S.round} · ${st.name} (${sz})`;
   $('#ghTitle').textContent=`${ZONES[zoneOf(S.round)].lvl} · 라운드 ${S.round} · ${st.name}`;
   $('#pDesc').textContent=st.desc;
@@ -2511,14 +2593,15 @@ function clearStage(){
     // 코인 기능 바뀌기 전에 깬 라운드는 그때 별만큼 이미 받은 것으로 친다
     const achBefore=ACH.snapshot();ACH.onClear(round,prevStars,!!prev,rs);
     const paidStars=prev?Math.max(0,Math.min(3,typeof prev.cs==='number'?prev.cs:prevStars)):0;
-    const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars]);coinSfx=coinGot;
+    const chalBonus=!prev&&isMirror(round)&&!isAdmin()?CHAL_BONUS:0;
+    const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars])+chalBonus;coinSfx=coinGot;
     P.rounds[round]={cs:Math.max(rs,paidStars),best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
     const opened=round<MAXR&&P.unlocked<round+1;
     if(round<MAXR)P.unlocked=Math.max(P.unlocked,round+1);
     if(coinGot){W().coins+=coinGot;P.walletAt=Date.now()}
     const achNew=ACH.newSince(achBefore);
     saveP();RANK.submitQuiet();
-    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}${heartSpent?'−1 <small>(다시 하기)</small>':'그대로'}</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${achNew.length?`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`:''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
+    extra=`${isAdmin()?'':`<dt>하트</dt><dd class="heart-dd">${ICON.heart}${heartSpent?'−1 <small>(다시 하기)</small>':'그대로'}</dd>`}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coinGot?`+${coinGot}${chalBonus?` <small>(도전 보너스 ${chalBonus} 포함)</small>`:''}`:'0 <small>(이 별점 코인은 이미 받았어요)</small>'}</dd><dt>라운드 별점</dt><dd class="rstar">${'★'.repeat(rs)}<span>${'★'.repeat(3-rs)}</span>${rs>prevStars&&prev?' 갱신':''}</dd>${isBest&&prev?'<dt>기록</dt><dd>최고 점수 갱신</dd>':''}${achNew.length?`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`:''}${opened?`<dt>새로 열림</dt><dd>라운드 ${round+1} · ${STAGES[typeOf(round+1)].name}</dd>`:''}${opened&&isZoneEnd(round)?`<dt>다음 지역</dt><dd>${ZONES[zoneOf(round+1)].name} ${round+1}–${zHi(zoneOf(round+1))}라운드</dd>`:''}`;
     S=null;save();
     const toDock=isZoneEnd(round)&&!isAdmin()&&P.revealed<zoneOf(round+1);
     pendingNext=round<MAXR&&!toDock?round+1:0;
@@ -2802,7 +2885,7 @@ function showMenu(){
     const stars=rec?starRow(rec.stars||1):'';
     const label=rec?`라운드 ${n}, 별 ${rec.stars||1}개, 최고 ${rec.best.toLocaleString()}점`:open?`라운드 ${n} 도전`:`라운드 ${n} 잠김`;
     h+=`<div class="node ${cls}${n===MAXR?' final':''}" style="left:${mapX(n)}%;top:${mapY(n)}px;--c:${ZODIAC.COLORS[ZODIAC.idx(n)]}">${stars}
-      <button type="button" class="nd" data-r="${n}" ${open?'':'disabled'} aria-label="${label} (${ZODIAC.NAMES[ZODIAC.idx(n)]})">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span><i class="ty t${typeOf(n)}" title="${STAGES[typeOf(n)].name}">${TYPE_ICON[typeOf(n)]}</i>${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
+      <button type="button" class="nd" data-r="${n}" ${open?'':'disabled'} aria-label="${label} (${ZODIAC.NAMES[ZODIAC.idx(n)]})">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span><i class="ty t${typeOf(n)}" title="${STAGES[typeOf(n)].name}">${TYPE_ICON[typeOf(n)]}</i>${isMirror(n)?'<i class="chal" title="도전 라운드 · 거울">⇄</i>':''}${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
       ${cls==='next'?`${mePin()}<span class="tag">도전 · ${TYPE_SHORT[typeOf(n)]}</span>`:n===MAXR&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
   }
   h+=`</div></div><div class="map-hint"><button type="button" id="toCur">↓ 지금 라운드로</button></div>
@@ -4173,7 +4256,7 @@ async function doLogout(){
 function fmtTime(t){t=Math.round(t||0);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
 function openRoundSheet(n){
   const rec=P.rounds[n],t=typeOf(n),z=ZODIAC.idx(n),stars=rec?(rec.stars||1):0;
-  const sz=t===0?`틀린 곳 ${SIZE.spot(n)}개`:t===1?`${SIZE.logic(n)}×${SIZE.logic(n)} 로직`:`${SIZE.jig(n)}×${SIZE.jig(n)} 조각`;
+  const sz=t===0?`틀린 곳 ${spotCount(n)}개${isMirror(n)?' · 거울':''}`:t===1?`${SIZE.logic(n)}×${SIZE.logic(n)} 로직`:`${SIZE.jig(n)}×${SIZE.jig(n)} 조각`;
   const resumeHere=S&&S.round===n;
   const recHtml=rec?`<div class="rs-rec">
       <div><small>최고 점수</small><b>${Number(rec.best).toLocaleString()}</b></div>
@@ -4188,6 +4271,7 @@ function openRoundSheet(n){
     <div class="eyebrow">${ZONES[zoneOf(n)].lvl} · ${ZONES[zoneOf(n)].name} · ${ZODIAC.NAMES[z]}</div>
     <h3>라운드 ${n}</h3>
     <div class="rs-type"><i class="ty t${t}">${TYPE_ICON[t]}</i><span>${STAGES[t].name}</span><em>${sz}</em></div>
+    ${isMirror(n)?`<p class="rs-chal"><b>⇄ 도전 라운드</b> 비교 그림이 좌우로 뒤집혀 있어요. 처음 깨면 보너스 ${CHAL_BONUS}코인!</p>`:''}
     ${recHtml}
     ${isAdmin()?'':`<p class="rs-heart">${ICON.heart}<span>${resumeHere?'하트 1개를 걸고 하던 판이에요':`하트 1개를 걸고 시작해요 · 지금 <b data-hearts>${W().hearts}</b>개`}<br><small>${rec?'이미 깬 라운드라 다시 하면 하트 1개를 써요':t===2?'깨면 그대로, 중간에 그만두면 1개 줄어요':`깨면 그대로, 실수 ${MISS_MAX}번이거나 그만두면 1개 줄어요`}</small></span></p>`}
     <div class="row"><button class="btn" type="button" id="rsNo">닫기</button><button class="btn primary rs-go" type="button" id="rsGo">${resumeHere?'이어하기':'라운드 시작'}</button></div></div>`);
@@ -4273,6 +4357,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['5.4','2026-11-05','틀린그림 부분 변화·도전 라운드',['새 차이: 물건 안의 한 부분(지붕·창문·장식 등)만 색이 바뀜','단계별 차이 구성: 쉬움 물건 변화 위주, 보통·어려움은 부분 변화와 미세한 차이를 섞음','거울 라운드 = 도전 라운드: 지역마다 몇 개, 지도에 ⇄ 표시, 처음 깨면 보너스 50코인','도전 라운드는 틀린 곳 한두 개 적게, 처음 만날 때 설명 화면']],
   ['5.3','2026-11-04','천마 날갯짓',['하늘섬↔천국 이동에서 천마 날개가 다시 퍼덕이게']],
   ['5.2','2026-11-04','천마 마차 다시 그림',['천마 끈 끝이 마차 끌채 끝에 이어진 한 장 그림으로','날개를 천마 등(어깨)에서 뒤쪽으로 펼쳐 날갯짓']],
   ['5.1','2026-11-04','천마 마차 연결',['하늘섬→천국 이동에서 천마의 끈이 마차 끌채에 딱 붙어 함께 움직이게']],
