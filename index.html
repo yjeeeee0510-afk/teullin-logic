@@ -967,6 +967,9 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 /* 천마+마차는 끈 끝과 끌채 끝을 맞춰 붙인 한 장(pegCoach, 661×362), 날개는 등(어깨) 위에서 뒤쪽으로 날갯짓 */
 .voyage.heaven .hv-coach-img{left:0;top:0;width:100%;z-index:1}
 .voyage.heaven .hv-wingw{position:absolute;left:40.5%;top:0;width:36.2%;z-index:3;transform:scaleX(-1)}
+.voyage.heaven .hv-bob .hv-wingw .hv-wing{position:relative;display:block;width:100%;transform-origin:14% 90%;animation:hvFlap .45s ease-in-out infinite alternate}
+@keyframes hvFlap{from{transform:rotate(-26deg)}to{transform:rotate(14deg)}}
+@media (prefers-reduced-motion:reduce){.voyage.heaven .hv-wing{animation:none}}
 @keyframes hvBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @keyframes hvGallop{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
 .voyage.flight{background:#151542;--ship:min(46vw,230px);--dur:4.6s}
@@ -1201,7 +1204,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.2</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.3</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4270,6 +4273,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['5.3','2026-11-04','천마 날갯짓',['하늘섬↔천국 이동에서 천마 날개가 다시 퍼덕이게']],
   ['5.2','2026-11-04','천마 마차 다시 그림',['천마 끈 끝이 마차 끌채 끝에 이어진 한 장 그림으로','날개를 천마 등(어깨)에서 뒤쪽으로 펼쳐 날갯짓']],
   ['5.1','2026-11-04','천마 마차 연결',['하늘섬→천국 이동에서 천마의 끈이 마차 끌채에 딱 붙어 함께 움직이게']],
   ['5.0','2026-11-04','QA 반영: 이어하기·확대',['이어하기 때 걸린 시간·힌트·콤보와 찾은 곳·칠한 칸·조각 자리까지 그대로 (시간 보너스·별이 부풀던 문제도 함께 고침)','메뉴를 열면 \'준비~·시작!\'과 효과 글씨를 숨기고, 준비 중에 연 메뉴는 닫을 때 시작','로직: 🔍·두 손가락 확대·이동, 숫자 단서는 위·왼쪽에 고정, 누른 줄·칸 강조, 확대 동작은 칠하지 않음','틀린그림: 두 그림 함께 확대·이동(거울 라운드는 반대 자리), 끌기·두 손가락은 실수 아님, 누르는 동안 위치 표시','힌트 원을 진한 테두리와 깜박임으로 더 잘 보이게','퍼즐: 고른 조각 굵은 테두리, 제자리 조각 ✓ 표시','지도 왼쪽 \'지역 이동\'으로 가 본 지역 바로 가기','어려운 틀린그림도 약 40%는 뚜렷한 차이, 거울 라운드엔 배경 속 미세한 차이 없음','틀린그림 안내 문구를 화면 방향과 상관없게, 거울 라운드 설명 추가']],
