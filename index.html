@@ -100,13 +100,25 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .pics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .pic{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
 .pic figcaption{font-size:12px;color:var(--muted);letter-spacing:.06em;font-family:var(--f-mono)}
-.pic .frame{border:1.5px solid var(--ink);border-radius:8px;overflow:hidden;cursor:crosshair;touch-action:manipulation;line-height:0;max-width:100%}
+.pic .frame{border:1.5px solid var(--ink);border-radius:8px;overflow:hidden;cursor:crosshair;touch-action:none;line-height:0;max-width:100%}
+.pics.zoomed .pic .frame{border-color:#4dabf7;box-shadow:0 0 0 2px #4dabf7}
+.press-dot{position:fixed;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(20,28,60,.85),inset 0 0 0 2px rgba(20,28,60,.5);pointer-events:none;z-index:31}
 .pic canvas.frame{width:100%;height:auto;display:block;aspect-ratio:4/3;background:var(--soft)}
 .loading{margin:0;padding:48px 0;text-align:center;color:var(--muted)}
 
 /* stage 2 */
 .nono-wrap{overflow-x:auto;display:flex;justify-content:center;padding-bottom:4px}
 .nono{display:grid;user-select:none;-webkit-user-select:none;touch-action:none;width:max-content}
+.nono-wrap{touch-action:none;overscroll-behavior:contain;scrollbar-width:none}
+.nono-wrap::-webkit-scrollbar{display:none}
+/* 확대해도 숫자 단서가 보이게: 위 단서·왼쪽 단서를 스크롤 가장자리에 붙임 */
+.nono .cc{position:sticky;top:0;z-index:3;background:var(--card)}
+.nono .rc{position:sticky;left:0;z-index:2;background:var(--card)}
+.nono .cc.alt,.nono .rc.alt{background:var(--soft)}
+.nono .lg-corner{position:sticky;top:0;left:0;z-index:4;background:var(--card)}
+.nono .cc.hl,.nono .rc.hl{background:#fff3bf;color:#1b2742;opacity:1;box-shadow:inset 0 0 0 2px #fab005}
+.nono .cell.hl:not(.f){background-color:#fff9db}
+.nono-wrap.zoomed{justify-content:flex-start!important;align-items:flex-start!important;box-shadow:0 0 0 2px #4dabf7,0 4px 14px rgba(20,30,60,.2)}
 .cc{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:1px;padding-bottom:4px;font-family:var(--f-mono);font-size:13px;font-weight:800;line-height:1.25;color:var(--ink)}
 .rc{display:flex;justify-content:flex-end;align-items:center;gap:6px;padding-right:6px;font-family:var(--f-mono);font-size:13px;font-weight:800;white-space:nowrap;color:var(--ink)}
 .cc.alt,.rc.alt{background:var(--soft)}
@@ -126,8 +138,9 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .jig-area{display:flex;justify-content:center}
 .jig{position:relative;width:min(100%,600px);aspect-ratio:1/1;max-width:100%;display:grid;gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
 .tile{border:0;padding:0;background-image:var(--img);background-repeat:no-repeat;transition:transform .15s ease,filter .15s;touch-action:manipulation;position:relative}
-.tile.sel{z-index:2;transform:scale(.92);box-shadow:0 0 0 4px var(--mark),0 8px 18px rgba(0,0,0,.35)}
-.tile.ok::after{content:"";position:absolute;right:4px;bottom:4px;width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px #fff}
+.tile.sel{z-index:2;transform:scale(.92);box-shadow:0 0 0 3px #fff,0 0 0 6px #1b2742,0 8px 18px rgba(0,0,0,.35);outline:3px dashed #ffd43b;outline-offset:-5px}
+.tile.ok{box-shadow:inset 0 0 0 2px rgba(47,158,68,.85)}
+.tile.ok::after{content:"✓";position:absolute;right:3px;bottom:3px;width:clamp(13px,32%,20px);height:clamp(13px,32%,20px);border-radius:50%;background:#2f9e44;color:#fff;font:900 clamp(9px,22%,14px)/1 system-ui,sans-serif;display:grid;place-items:center;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.35)}
 .jig.won{gap:0}
 .jig.won .tile::after{display:none}
 .peek{position:absolute;inset:0;background-image:var(--img);background-size:100% 100%;z-index:3}
@@ -395,6 +408,8 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* ===== 팡팡 이펙트 ===== */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
+/* 메뉴(시트)가 열리면 '준비~·시작!'·콤보 글씨·반짝이를 숨김 → 메뉴 버튼을 가리지 않게 */
+body:has(#sheet) .pop,body:has(#sheet) .ready,body:has(#sheet) #fx{visibility:hidden}
 .pop{position:fixed;z-index:45;pointer-events:none;white-space:nowrap;font-family:var(--f-display);line-height:1;color:#fff;
   --o:#1b2742;text-shadow:3px 0 var(--o),-3px 0 var(--o),0 3px var(--o),0 -3px var(--o),2px 2px var(--o),-2px 2px var(--o),2px -2px var(--o),-2px -2px var(--o),0 6px 0 rgba(27,39,66,.35);
   animation:popText .95s cubic-bezier(.2,1.4,.4,1) forwards}
@@ -708,6 +723,9 @@ body.game-mode .ghud{display:flex;align-items:center;gap:10px;flex:none;min-heig
 .gh-info .chip{font-size:12px;padding:3px 9px;display:inline-flex;align-items:center;gap:3px;flex:none}
 .gh-info .chip .ico{width:14px;height:14px}
 .gh-info .chip:empty{display:none}
+/* 좁은 화면(360px 안팎): 상태줄 칩이 잘리지 않게 줄여서 */
+@media (max-width:380px){.gh-info{gap:3px}.gh-info .chip{font-size:11px;padding:2px 6px;letter-spacing:-.02em}}
+@media (max-width:380px){.zone-go img{width:52px}.zone-go span{font-size:11px;padding:2px 7px}}
 .gm-menu{flex:none;width:46px;height:46px;border-radius:12px;border:1.5px solid var(--ink);background:var(--card);display:grid;place-items:center;padding:0;box-shadow:0 3px 0 var(--ink)}
 .gm-menu svg,.gm-menu img.uico{width:24px;height:24px}
 .gm-menu:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
@@ -1053,6 +1071,17 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 /* ---------- 과자 나라 ---------- */
 .candy-go,.candy-back,.candy-daily{position:absolute;z-index:9;top:50%;transform:translateY(-50%);border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;font:inherit;-webkit-tap-highlight-color:transparent}
 .candy-go{right:max(4px,env(safe-area-inset-right,0px))}
+.zone-go{position:absolute;z-index:9;left:max(4px,env(safe-area-inset-left,0px));top:calc(50% + 70px);transform:translateY(-50%);border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;font:inherit;-webkit-tap-highlight-color:transparent}
+.zone-go img{width:64px;height:auto;filter:drop-shadow(0 5px 6px rgba(20,40,80,.35))}
+.zone-go span{margin-top:-4px;font-weight:800;font-size:12px;color:#fff;background:linear-gradient(#4dabf7,#1c7ed6);border-radius:999px;padding:3px 9px;box-shadow:0 2px 0 #1864ab,0 4px 10px rgba(0,0,0,.2);white-space:nowrap}
+.zl{display:flex;flex-direction:column;gap:8px;margin:10px 0 12px;max-height:60vh;overflow:auto}
+.zl-it{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:14px;background:var(--card);padding:6px 12px 6px 6px;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.zl-it img{width:58px;height:auto}
+.zl-it span{flex:1;display:flex;flex-direction:column}
+.zl-it small{color:var(--muted);font-size:12px}
+.zl-it em{font-style:normal;font-weight:800;font-size:13px;color:#e67700;white-space:nowrap}
+.zl-it.on{border-color:#4dabf7;box-shadow:0 0 0 2px #4dabf7}
+.zl-it[disabled]{opacity:.45;cursor:default}
 .candy-back{left:max(4px,env(safe-area-inset-left,0px))}
 .candy-daily{right:max(4px,env(safe-area-inset-right,0px))}
 .candy-go img,.candy-back img,.candy-daily img{width:74px;height:auto;filter:drop-shadow(0 5px 6px rgba(80,30,20,.35));animation:cdBob 2.4s ease-in-out infinite}
@@ -1172,7 +1201,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.9</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.0</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1360,7 +1389,7 @@ const pick=(r,a)=>a[Math.floor(r()*a.length)];
 function shuffle(r,a){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
 const STAGES=[
-  {name:'틀린그림 찾기',desc:'오른쪽 그림에서 왼쪽과 다른 곳을 눌러 찾으세요. 엉뚱한 곳을 누르면 감점됩니다.'},
+  {name:'틀린그림 찾기',desc:'두 그림을 비교해 원본과 다른 곳을 누르세요(어느 그림을 눌러도 돼요). 엉뚱한 곳을 누르면 실수예요. 두 손가락이나 🔍로 두 그림을 함께 확대할 수 있어요.'},
   {name:'네모네모 로직',desc:'줄 옆 숫자는 연속해서 칠할 칸의 길이입니다. 숫자 순서대로, 덩어리 사이엔 한 칸 이상 비워 두세요.'},
   {name:'퍼즐 맞추기',desc:'그림이 조각났어요. 조각 두 개를 차례로 누르면 자리가 바뀝니다.'}
 ];
@@ -1889,34 +1918,106 @@ function initSpot(){
   // 하늘섬: 작고 멀리 있는 물건에 먼저 숨김
   if(lv){const key=new Map(order.map(o=>[o.id,o.h*(.55+r()*.9)]));order.sort((a,b)=>key.get(a.id)-key.get(b.id))}
   // 421~: 배경 속 차이 1~2곳
-  if(lv>=2){const want=S.round>=481?2:1;for(let t=0;t<want;t++){const p=bgPatch(sc,mod,r,diffs);if(p){patches.push(p);diffs.push({x:p.dx+p.w/2,y:p.dy+p.h/2,rad:Math.max(34,p.w*.42),found:false})}}}
+  // 거울 라운드에는 배경 속 미세한 차이를 넣지 않음(눈 피로)
+  if(lv>=2&&!isMirror(S.round)){const want=S.round>=481?2:1;for(let t=0;t<want;t++){const p=bgPatch(sc,mod,r,diffs);if(p){patches.push(p);diffs.push({x:p.dx+p.w/2,y:p.dy+p.h/2,rad:Math.max(34,p.w*.42),found:false})}}}
   const GAPS=lv>=2?[70,54,42]:[95,72,52];
+  // 차이 하나 만들기 (ddv: 0이면 크게·뚜렷하게, 1이면 아주 살짝)
+  const make=(o,k,ddv,gap)=>{
+    const m=mod.find(x=>x.id===o.id);
+    if(k==='gone')m.gone=true;
+    else if(k==='size')m.k=o.row==='back'?lerp(0.72,0.84,ddv):lerp(1.42,1.22,ddv);
+    else if(k==='flip')m.flip=!o.flip;
+    else if(k==='color')m.hue=Math.round(lerp(90,40,ddv)+Math.floor(r()*4)*lerp(45,14,ddv));
+    else if(k==='swap'){const g=groupOf(o.spr).filter(x=>x!==o.spr);m.spr=pick(r,g)}
+    else if(k==='nudge'){m.x+=(r()<.5?-1:1)*lerp(34,20,ddv)}
+    else if(k==='tilt'){m.rot=(r()<.5?-1:1)*lerp(13,8,ddv)}
+    else if(k==='add'){
+      // 옆에 작은 물건 하나가 새로 생김
+      const spr=pick(r,sc.theme.front),nx=Math.max(50,Math.min(SW-50,o.x+(r()<.5?-1:1)*(70+r()*40))),ny=Math.max(470,Math.min(585,o.y+(r()*40-20)));
+      const no={id:9000+diffs.length,spr,x:nx,y:ny,h:spriteH(spr,r)*.85,row:'front',k:1,flip:false,hue:0,gone:false};
+      if(diffs.some(d=>Math.hypot(d.x-no.x,d.y-(no.y-no.h/2))<gap))return false;
+      mod.push(no);mod.sort((a,b)=>(a.row==='sky'?0:1)-(b.row==='sky'?0:1)||a.y-b.y);
+      const nb=objBox(no);diffs.push({x:nb.cx,y:nb.cy,rad:Math.min(85,Math.max(34,Math.max(nb.w,nb.h)*0.5)),found:false});return true;
+    }
+    const bb=objBox(k==='size'&&m.k>1?m:o);
+    diffs.push({x:bb.cx,y:bb.cy,rad:Math.min(85,Math.max(34,Math.max(bb.w,bb.h)*0.5)),found:false});return true;
+  };
+  // 어려운 라운드도 일부(약 40%)는 큰 물건의 뚜렷한 차이(없어짐·바뀜·색)로 → 미세한 차이만 잔뜩 있어서 눈이 지치지 않게
+  const clearN=dd>=.5?Math.ceil(n*.4):0;
+  if(clearN){
+    const big=sc.objs.slice().sort((a,b)=>{const A=objBox(a),B=objBox(b);return B.w*B.h-A.w*A.h});
+    let made=0;
+    for(const o of big){
+      if(made>=clearN||diffs.length>=n)break;
+      if(used.has(o.id)||o.row==='sky')continue;
+      const b=objBox(o);if(diffs.some(d=>Math.hypot(d.x-b.cx,d.y-b.cy)<95))continue;
+      const ks=['gone'];if(groupOf(o.spr))ks.push('swap','swap');if(!ART_NOCOLOR.test(o.spr))ks.push('color');
+      used.add(o.id);if(make(o,pick(r,ks),dd*.3,95))made++;else used.delete(o.id);
+    }
+  }
   for(const gap of GAPS)for(const o of order){
     if(diffs.length>=n)break;
     if(used.has(o.id))continue;
     const b=objBox(o);
     if(diffs.some(d=>Math.hypot(d.x-b.cx,d.y-b.cy)<gap))continue;
     used.add(o.id);
-    const m=mod.find(x=>x.id===o.id),k=pick(r,diffKinds(o,o.row==='sky'?Math.min(lv,0):lv));
-    if(k==='gone')m.gone=true;
-    else if(k==='size')m.k=o.row==='back'?lerp(0.72,0.84,dd):lerp(1.42,1.22,dd);
-    else if(k==='flip')m.flip=!o.flip;
-    else if(k==='color')m.hue=Math.round(lerp(90,40,dd)+Math.floor(r()*4)*lerp(45,14,dd));
-    else if(k==='swap'){const g=groupOf(o.spr).filter(x=>x!==o.spr);m.spr=pick(r,g)}
-    else if(k==='nudge'){m.x+=(r()<.5?-1:1)*lerp(34,20,dd)}
-    else if(k==='tilt'){m.rot=(r()<.5?-1:1)*lerp(13,8,dd)}
-    else if(k==='add'){
-      // 옆에 작은 물건 하나가 새로 생김
-      const spr=pick(r,sc.theme.front),nx=Math.max(50,Math.min(SW-50,o.x+(r()<.5?-1:1)*(70+r()*40))),ny=Math.max(470,Math.min(585,o.y+(r()*40-20)));
-      const no={id:9000+diffs.length,spr,x:nx,y:ny,h:spriteH(spr,r)*.85,row:'front',k:1,flip:false,hue:0,gone:false};
-      if(diffs.some(d=>Math.hypot(d.x-no.x,d.y-(no.y-no.h/2))<gap)){used.delete(o.id);continue}
-      mod.push(no);mod.sort((a,b)=>(a.row==='sky'?0:1)-(b.row==='sky'?0:1)||a.y-b.y);
-      const nb=objBox(no);diffs.push({x:nb.cx,y:nb.cy,rad:Math.min(85,Math.max(34,Math.max(nb.w,nb.h)*0.5)),found:false});continue;
-    }
-    const bb=objBox(k==='size'&&m.k>1?m:o);
-    diffs.push({x:bb.cx,y:bb.cy,rad:Math.min(85,Math.max(34,Math.max(bb.w,bb.h)*0.5)),found:false});
+    if(!make(o,pick(r,diffKinds(o,o.row==='sky'?Math.min(lv,0):lv)),dd,gap))used.delete(o.id);
   }
   spot={sc,mod,diffs,miss:null,flash:null,mirror:isMirror(S.round),baseL:sceneCanvas(sc,sc.objs),baseR:sceneCanvas(sc,mod,patches)};
+}
+// 틀린그림 확대 보기: 두 그림이 같은 자리(거울 라운드는 좌우 반대 자리)를 함께 확대·이동
+function sceneToCanvas(side,x,y){
+  const v=(spot&&spot.vz)||{z:1,cx:SW/2,cy:SH/2},mir=side==='R'&&spot&&spot.mirror,dx=mir?SW-x:x,dc=mir?SW-v.cx:v.cx;
+  return {x:(dx-dc)*v.z+SW/2,y:(y-v.cy)*v.z+SH/2};
+}
+function screenToScene(side,px,py){
+  const v=(spot&&spot.vz)||{z:1,cx:SW/2,cy:SH/2},mir=side==='R'&&spot&&spot.mirror,dc=mir?SW-v.cx:v.cx;
+  const dx=(px-SW/2)/v.z+dc,y=(py-SH/2)/v.z+v.cy;
+  return {x:mir?SW-dx:dx,y};
+}
+function clampView(){const v=spot.vz,hw=SW/2/v.z,hh=SH/2/v.z;v.cx=Math.max(hw,Math.min(SW-hw,v.cx));v.cy=Math.max(hh,Math.min(SH-hh,v.cy))}
+function zoomSpot(z,side,px,py){
+  if(!spot)return;const v=spot.vz;
+  const before=px!=null?screenToScene(side,px,py):null;
+  v.z=Math.max(1,Math.min(3,z));
+  if(before){const after=screenToScene(side,px,py);v.cx+=before.x-after.x;v.cy+=before.y-after.y}   // 손가락 아래 자리를 그대로
+  clampView();renderSpot();
+  const b=$('#spZoomBtn');if(b)b.innerHTML=v.z>1.01?`🔍${v.z.toFixed(1)}`:'🔍';
+  $('.pics')&&$('.pics').classList.toggle('zoomed',v.z>1.01);
+}
+// 손가락 처리: 탭(손을 뗄 때 확정)만 찾기·오답으로 셈, 끌기=이동, 두 손가락=확대 → 확대·이동은 오답이 아님
+function bindSpotGestures(){
+  const pts=new Map();let g=null,dot=null;
+  const showDot=(x,y)=>{if(!dot){dot=document.createElement('div');dot.className='press-dot';document.body.appendChild(dot)}dot.style.left=x+'px';dot.style.top=y+'px'};
+  const hideDot=()=>{if(dot){dot.remove();dot=null}};
+  for(const side of ['L','R']){
+    const cv=$('#pic'+side);
+    cv.addEventListener('pointerdown',e=>{
+      e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(_){}
+      pts.set(e.pointerId,{x:e.clientX,y:e.clientY,side});
+      if(pts.size===1){g={side,sx:e.clientX,sy:e.clientY,moved:false,multi:false,last:{x:e.clientX,y:e.clientY}};if(e.pointerType!=='mouse')showDot(e.clientX,e.clientY)}
+      else if(g){g.multi=true;hideDot();const [a,b]=[...pts.values()];g.d=Math.hypot(a.x-b.x,a.y-b.y);g.z=spot.vz.z;g.mx=(a.x+b.x)/2;g.my=(a.y+b.y)/2}
+    });
+    cv.addEventListener('pointermove',e=>{
+      if(!pts.has(e.pointerId)||!g)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY,side});
+      const r=cv.getBoundingClientRect(),k=SW/r.width;
+      if(g.multi&&pts.size>=2){
+        const [a,b]=[...pts.values()],d=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+        zoomSpot(g.z*d/Math.max(20,g.d),g.side,(mx-r.left)*k,(my-r.top)*k);
+        const v=spot.vz,mir=g.side==='R'&&spot.mirror;v.cx-=(mir?-1:1)*(mx-g.mx)*k/v.z;v.cy-=(my-g.my)*k/v.z;g.mx=mx;g.my=my;clampView();renderSpot();return;
+      }
+      if(!g.moved&&Math.hypot(e.clientX-g.sx,e.clientY-g.sy)>10){g.moved=true;hideDot()}
+      if(dot)showDot(e.clientX,e.clientY);
+      if(g.moved&&spot.vz.z>1){const v=spot.vz,mir=g.side==='R'&&spot.mirror;v.cx-=(mir?-1:1)*(e.clientX-g.last.x)*k/v.z;v.cy-=(e.clientY-g.last.y)*k/v.z;clampView();renderSpot()}
+      g.last={x:e.clientX,y:e.clientY};
+    });
+    const end=(e,cancel)=>{
+      if(!pts.has(e.pointerId))return;pts.delete(e.pointerId);
+      if(pts.size===0){hideDot();const gg=g;g=null;if(!cancel&&gg&&!gg.moved&&!gg.multi)spotClick({currentTarget:cv,clientX:e.clientX,clientY:e.clientY},side)}
+    };
+    cv.addEventListener('pointerup',e=>end(e,false));cv.addEventListener('pointercancel',e=>end(e,true));
+    cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect(),k=SW/r.width;zoomSpot(spot.vz.z*(e.deltaY<0?1.15:1/1.15),side,(e.clientX-r.left)*k,(e.clientY-r.top)*k)},{passive:false});
+  }
 }
 function drawMarks(ctx,side){
   ctx.lineCap='round';
@@ -1924,15 +2025,22 @@ function drawMarks(ctx,side){
     ctx.beginPath();ctx.arc(d.x,d.y,d.rad,0,7);ctx.strokeStyle='#fff';ctx.lineWidth=11;ctx.stroke();
     ctx.strokeStyle='#e03131';ctx.lineWidth=6;ctx.stroke();
   }
-  if(spot.flash){const f=spot.flash;ctx.beginPath();ctx.arc(f.x,f.y,f.rad+14,0,7);ctx.fillStyle='rgba(255,212,59,.35)';ctx.fill();
-    ctx.setLineDash([12,10]);ctx.strokeStyle='#ffd43b';ctx.lineWidth=6;ctx.stroke();ctx.setLineDash([])}
+  if(spot.flash){const f=spot.flash,t=(performance.now()-(spot.ft||0))/1000,pu=.5+.5*Math.sin(t*Math.PI*2.4),R=f.rad+14+pu*8;
+    // 밝은 그림에서도 보이게: 진한 남색 바깥선 + 흰 선 + 노란 점선, 부드럽게 커졌다 작아짐
+    ctx.beginPath();ctx.arc(f.x,f.y,R,0,7);ctx.fillStyle=`rgba(255,212,59,${.22+.2*pu})`;ctx.fill();
+    ctx.strokeStyle='rgba(20,28,60,.9)';ctx.lineWidth=13;ctx.stroke();
+    ctx.strokeStyle='#fff';ctx.lineWidth=8;ctx.stroke();
+    ctx.setLineDash([14,10]);ctx.lineDashOffset=-t*40;ctx.strokeStyle='#f59f00';ctx.lineWidth=6;ctx.stroke();ctx.setLineDash([])}
   if(spot.miss&&spot.miss.side===side){const m=spot.miss,s=16;
     for(const [c,w] of [['#fff',13],['#e03131',7]]){ctx.beginPath();ctx.moveTo(m.x-s,m.y-s);ctx.lineTo(m.x+s,m.y+s);ctx.moveTo(m.x+s,m.y-s);ctx.lineTo(m.x-s,m.y+s);ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke()}}
 }
 function renderSpot(){
+  const v=spot.vz||{z:1,cx:SW/2,cy:SH/2};
   for(const [id,base,side] of [['#picL',spot.baseL,'L'],['#picR',spot.baseR,'R']]){
     const ctx=$(id).getContext('2d'),mir=side==='R'&&spot.mirror;
-    ctx.save();if(mir){ctx.translate(SW,0);ctx.scale(-1,1)}
+    ctx.save();
+    if(v.z>1){ctx.fillStyle='#fff';ctx.fillRect(0,0,SW,SH);ctx.translate(SW/2,SH/2);ctx.scale(v.z,v.z);ctx.translate(-(mir?SW-v.cx:v.cx),-v.cy)}   // 두 그림 같은 자리 확대 (거울이면 좌우 반대 자리)
+    if(mir){ctx.translate(SW,0);ctx.scale(-1,1)}
     ctx.drawImage(base,0,0);drawMarks(ctx,side);ctx.restore();
   }
   const f=spot.diffs.filter(d=>d.found).length;
@@ -1942,8 +2050,7 @@ function renderSpot(){
 function spotClick(e,side){
   if(!running||!spot)return;
   const rect=e.currentTarget.getBoundingClientRect();
-  let x=(e.clientX-rect.left)/rect.width*SW;const y=(e.clientY-rect.top)/rect.height*SH;
-  if(side==='R'&&spot.mirror)x=SW-x;
+  const q=screenToScene(side,(e.clientX-rect.left)/rect.width*SW,(e.clientY-rect.top)/rect.height*SH);let x=q.x;const y=q.y;
   const d=spot.diffs.find(d=>!d.found&&Math.hypot(d.x-x,d.y-y)<=d.rad+10);
   if(d){NATIVE.buzz('ok');d.found=true;spot.flash=null;spot.miss=null;renderSpot();
     const now=performance.now();combo=(now-lastHit<4000)?combo+1:1;lastHit=now;
@@ -1960,11 +2067,11 @@ function spotClick(e,side){
 const COMBO=[['좋아요!','#ffd43b'],['굿!','#69db7c'],['그레이트!','#4dabf7'],['엑설런트!','#b197fc'],['퍼펙트!','#ff6b9d'],['어메이징!','#ff922b']];
 function spotFx(d,c){
   for(const id of ['#picL','#picR']){
-    const cv=$(id),r=cv.getBoundingClientRect(),dx=id==='#picR'&&spot.mirror?SW-d.x:d.x,x=r.left+dx/SW*r.width,y=r.top+d.y/SH*r.height;
-    FX.burst(x,y,{count:12+Math.min(c,5)*4,speed:6+Math.min(c,5)*1.2,ringR:d.rad/SW*r.width+30});
+    const cv=$(id),r=cv.getBoundingClientRect(),q=sceneToCanvas(id==='#picR'?'R':'L',d.x,d.y),x=r.left+q.x/SW*r.width,y=r.top+q.y/SH*r.height;
+    FX.burst(x,y,{count:12+Math.min(c,5)*4,speed:6+Math.min(c,5)*1.2,ringR:d.rad*((spot.vz&&spot.vz.z)||1)/SW*r.width+30});
     cv.classList.remove('hit');void cv.offsetWidth;cv.classList.add('hit');
   }
-  const R=$('#picR').getBoundingClientRect(),tx=R.left+(spot.mirror?SW-d.x:d.x)/SW*R.width,ty=R.top+d.y/SH*R.height-20;
+  const R=$('#picR').getBoundingClientRect(),qr=sceneToCanvas('R',d.x,d.y),tx=R.left+qr.x/SW*R.width,ty=R.top+qr.y/SH*R.height-20;
   const [label,color]=COMBO[Math.min(c,COMBO.length)-1];
   FX.text(c>=2?`${label}<small>${c} 콤보</small>`:label,Math.min(Math.max(tx,90),window.innerWidth-90),Math.max(ty,60),{size:30+Math.min(c,5)*4,color});
   FX.bump($('#spotCount'));
@@ -1972,8 +2079,11 @@ function spotFx(d,c){
 function spotHint(){
   const d=spot&&spot.diffs.find(d=>!d.found);if(!d)return;
   if(!useHint()){noHint();return}
-  hints++;SFX.play('hint');spot.flash=d;renderSpot();
-  clearTimeout(spot.ht);spot.ht=setTimeout(()=>{if(spot){spot.flash=null;renderSpot()}},1400);
+  hints++;SFX.play('hint');spot.flash=d;spot.ft=performance.now();
+  // 확대 중이면 힌트 자리가 보이게 옮김
+  if(spot.vz&&spot.vz.z>1){spot.vz.cx=d.x;spot.vz.cy=d.y;clampView()}
+  const tick=()=>{if(!spot||spot.flash!==d)return;renderSpot();if(performance.now()-spot.ft<2600)requestAnimationFrame(tick);else{spot.flash=null;renderSpot()}};
+  requestAnimationFrame(tick);
 }
 
 /* ---------- stage 2: nonogram ---------- */
@@ -2031,10 +2141,9 @@ function renderLogic(){
     if(bh>120)cell=Math.min(cell,Math.floor((bh-(maxC*16+8)-6)/n));
   }
   cell=Math.max(n>=12?17:22,cell);
-  el.style.setProperty('--cell',cell+'px');
-  el.style.gridTemplateColumns=`${rcw}px repeat(${n},${cell}px)`;
-  el.style.gridTemplateRows=`${maxC*16+8}px repeat(${n},${cell}px)`;
-  let h='<div></div>';
+  logic.base=cell;logic.rcw=rcw;logic.chh=maxC*16+8;
+  applyLogicZoom();
+  let h='<div class="lg-corner"></div>';
   cols.forEach((c,x)=>{h+=`<div class="cc${x%2?' alt':''}" id="cc${x}">${(c.length?c:[0]).map(v=>`<span>${v}</span>`).join('')}</div>`});
   for(let y=0;y<n;y++){
     h+=`<div class="rc${y%2?' alt':''}" id="rc${y}">${(rows[y].length?rows[y]:[0]).map(v=>`<span>${v}</span>`).join('')}</div>`;
@@ -2047,6 +2156,34 @@ function renderLogic(){
   el.innerHTML=h;
   for(let y=0;y<n;y++)for(let x=0;x<n;x++)paintCell(x,y);
   updateClues();
+}
+// 로직 확대: 칸 크기만 바꾸고(단서는 위·왼쪽에 붙어 있음), 두 손가락으로 확대·이동
+let lgZoom=1;
+function applyLogicZoom(){
+  const el=$('#nono');if(!el||!logic||!logic.base)return;
+  const cell=Math.round(logic.base*lgZoom);
+  el.style.setProperty('--cell',cell+'px');
+  el.style.gridTemplateColumns=`${logic.rcw}px repeat(${logic.n},${cell}px)`;
+  el.style.gridTemplateRows=`${logic.chh}px repeat(${logic.n},${cell}px)`;
+  const w=el.parentElement;if(w)w.classList.toggle('zoomed',lgZoom>1.01);
+  const b=$('#lgZoomBtn');if(b)b.innerHTML=lgZoom>1.01?`🔍${lgZoom.toFixed(1)}`:'🔍';
+}
+function zoomLogicTo(z,cx,cy){
+  const w=$('#nono')&&$('#nono').parentElement;if(!w||!logic)return;
+  const old=lgZoom;lgZoom=Math.max(1,Math.min(3,z));if(Math.abs(old-lgZoom)<.001)return;
+  const r=w.getBoundingClientRect();if(cx==null){cx=r.left+r.width/2;cy=r.top+r.height/2}
+  // 손가락(또는 가운데) 아래 칸이 그대로 있게 스크롤 맞춤
+  const gx=w.scrollLeft+cx-r.left-logic.rcw,gy=w.scrollTop+cy-r.top-logic.chh,k=lgZoom/old;
+  applyLogicZoom();
+  w.scrollLeft=gx*k+logic.rcw-(cx-r.left);w.scrollTop=gy*k+logic.chh-(cy-r.top);
+}
+// 누르는 칸의 줄·칸 강조 (단서도)
+function logicFocus(x,y){
+  const el=$('#nono');if(!el)return;
+  el.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
+  if(x==null)return;
+  const a=$('#cc'+x),b=$('#rc'+y);if(a)a.classList.add('hl');if(b)b.classList.add('hl');
+  el.querySelectorAll(`.cell[data-x="${x}"],.cell[data-y="${y}"]`).forEach(c=>c.classList.add('hl'));
 }
 function cellEl(x,y){return $('#nono').querySelector(`.cell[data-x="${x}"][data-y="${y}"]`)}
 function paintCell(x,y){const v=logic.g[y][x],c=cellEl(x,y);c.classList.toggle('f',v===1);c.classList.toggle('x',v===2);c.classList.toggle('wrong',!!logic.lock[y][x]);
@@ -2121,17 +2258,40 @@ function applyAt(el){
   logic.g[y][x]=paint;paintCell(x,y);NATIVE.buzz('tick');SFX.play('paint');
 }
 function bindLogic(){
-  const el=$('#nono');
+  const el=$('#nono'),wrap=el.parentElement,pts=new Map();
+  let pend=null,pinch=null;
   el.addEventListener('contextmenu',e=>e.preventDefault());
-  el.addEventListener('pointerdown',e=>{
+  // 한 손가락: 칸을 누르면 강조만 하고 아주 잠깐 기다렸다가 칠함 → 그 사이 두 번째 손가락이 오면 확대·이동으로 바꾸고 칠하지 않음(오답 없음)
+  const start=()=>{if(!pend)return;const {c,tool}=pend;pend=null;if(!running)return;
+    const cur=logic.g[+c.dataset.y][+c.dataset.x];paint=cur===tool?0:tool;dragging=true;applyAt(c)};
+  wrap.addEventListener('pointerdown',e=>{
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size>=2){   // 두 손가락 → 확대·이동
+      if(pend){clearTimeout(pend.t);pend=null}
+      dragging=false;const [a,b]=[...pts.values()];
+      pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:lgZoom,mx:(a.x+b.x)/2,my:(a.y+b.y)/2};e.preventDefault();return;
+    }
     const c=e.target.closest('.cell');if(!c||!running)return;
     e.preventDefault();
     if(c.hasPointerCapture&&c.hasPointerCapture(e.pointerId))c.releasePointerCapture(e.pointerId);
-    const tool=e.button===2?2:mode;
-    const cur=logic.g[+c.dataset.y][+c.dataset.x];
-    paint=cur===tool?0:tool;dragging=true;applyAt(c);
+    logicFocus(+c.dataset.x,+c.dataset.y);
+    pend={c,tool:e.button===2?2:mode,t:setTimeout(start,e.pointerType==='touch'?110:0)};
   });
-  el.addEventListener('pointermove',e=>{if(!dragging)return;applyAt(document.elementFromPoint(e.clientX,e.clientY))});
+  wrap.addEventListener('pointermove',e=>{
+    if(!pts.has(e.pointerId))return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pinch&&pts.size>=2){
+      const [a,b]=[...pts.values()],d=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+      zoomLogicTo(pinch.z*d/Math.max(20,pinch.d),mx,my);
+      wrap.scrollLeft-=mx-pinch.mx;wrap.scrollTop-=my-pinch.my;pinch.mx=mx;pinch.my=my;e.preventDefault();return;
+    }
+    const t=document.elementFromPoint(e.clientX,e.clientY),c=t&&t.closest&&t.closest('#nono .cell');
+    if(pend&&c&&c!==pend.c){clearTimeout(pend.t);start()}   // 끌기 시작하면 바로 칠하기
+    if(!dragging)return;
+    if(c)logicFocus(+c.dataset.x,+c.dataset.y);
+    applyAt(t);
+  },{passive:false});
+  const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(pend&&pts.size===0){clearTimeout(pend.t);start()}};
+  wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(pend){clearTimeout(pend.t);pend=null}});
 }
 window.addEventListener('pointerup',()=>{
   if(!dragging)return;dragging=false;
@@ -2147,7 +2307,8 @@ function initJig(){
   let uri;try{const c=document.createElement('canvas');c.width=JIG_W*2;c.height=SH*2;const x=c.getContext('2d');x.setTransform(2,0,0,2,-JIG_X*2,0);drawScene(x,sc,sc.objs);uri=c.toDataURL('image/jpeg',0.9)}catch(e){uri=embedded(`img/scenes/${sc.theme.bg}.${BG_JPG.has(sc.theme.bg)?'jpg':'png'}`)}
   let order;
   do{order=shuffle(r,[...Array(n*n).keys()])}while(order.filter((v,i)=>v===i).length>Math.floor(n*n/4));
-  jig={n,order,sel:-1,uri,peek:false};
+  if(Array.isArray(S.jo)&&S.jo.length===n*n)order=S.jo.slice();
+  jig={n,order,sel:-1,uri,peek:false,paid:!!S.jp};
 }
 function renderJig(){
   const {n,order,sel}=jig,el=$('#jig');
@@ -2214,14 +2375,15 @@ let stageToken=0;
 function buildSpot(){
   const tools=$('#pTools'),board=$('#board');
     initSpot();
+    if(Array.isArray(S.found))S.found.forEach(i=>{if(spot.diffs[i])spot.diffs[i].found=true});
     $('#pDesc').textContent=`${spot.sc.theme.name} · ${STAGES[0].desc}`;
-    tools.innerHTML=`<span class="chip" id="spotCount"></span><span class="chip warn" id="spotMiss"></span><button class="btn hint-btn" id="hintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
+    tools.innerHTML=`<span class="chip" id="spotCount"></span><span class="chip warn" id="spotMiss"></span><button class="btn" id="spZoomBtn" type="button" aria-label="두 그림 함께 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="hintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
     board.innerHTML=`<div class="pics"><figure class="pic"><figcaption>원본</figcaption><canvas class="frame" id="picL" width="800" height="600" aria-label="원본 그림"></canvas></figure><figure class="pic${spot.mirror?' mirror':''}"><figcaption>${spot.mirror?'거울 그림 ⇄':'다른 그림'}</figcaption><canvas class="frame" id="picR" width="800" height="600" aria-label="틀린 곳이 있는 그림"></canvas></figure></div>`;
-    $('#picL').addEventListener('click',e=>spotClick(e,'L'));
-    $('#picR').addEventListener('click',e=>spotClick(e,'R'));
+    spot.vz={z:1,cx:SW/2,cy:SH/2};bindSpotGestures();
+    $('#spZoomBtn').addEventListener('click',()=>{const z=spot.vz.z;zoomSpot(z>=2.9?1:z<1.9?2:3)});
     $('#hintBtn').addEventListener('click',spotHint);
     renderSpot();gameDock();
-    if(spot.mirror)setTimeout(()=>{const q=$('#picR').getBoundingClientRect();FX.text('거울 라운드!<small>오른쪽 그림이 좌우로 뒤집혀 있어요</small>',q.left+q.width/2,q.top+q.height/2,{size:30,color:'#b197fc'})},900);
+    if(spot.mirror)setTimeout(()=>{const q=$('#picR').getBoundingClientRect();FX.text('거울 라운드!<small>비교 그림이 좌우로 뒤집혀 있어요</small>',q.left+q.width/2,q.top+q.height/2,{size:30,color:'#b197fc'})},900);
 }
 function buildJig(){
   const tools=$('#pTools'),board=$('#board');
@@ -2239,7 +2401,7 @@ function startStage(){
   if(!S){showMenu();return}
   paused=false;inGame=true;$('#track').hidden=true;$('#menuBtn').hidden=false;document.body.classList.remove('menu-mode');document.body.classList.add('game-mode');setGameBg(S.round);closeSheet();
   $('#ghInfo').querySelectorAll('.mv').forEach(e=>e.remove());
-  misses=S.miss||0;hints=0;combo=0;lastHit=0;comboPts=0;running=false;elapsedFrozen=0;
+  misses=S.miss||0;hints=S.hu||0;combo=0;lastHit=0;comboPts=S.cp||0;running=false;elapsedFrozen=S.el||0;
   $('#veil').hidden=true;
   const st=STAGES[S.stage];
   const sz=S.stage===0?`틀린 곳 ${SIZE.spot(S.round)}개`:S.stage===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
@@ -2257,24 +2419,44 @@ function startStage(){
   }
   if(S.stage===1){
     spot=null;initLogic();mode=1;
-    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
+    if(S.lg){const g=S.lg.split(','),k=(S.lk||'').split(',');if(g.length===logic.n&&g[0].length===logic.n){logic.g=g.map(r=>[...r].map(Number));if(k.length===logic.n)logic.lock=k.map(r=>[...r].map(v=>v==='1'))}}
+    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn" id="lgZoomBtn" type="button" aria-label="판 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
     board.innerHTML=`<div class="nono-wrap"><div class="nono" id="nono"></div></div>`;
     const setMode=m=>{mode=m;$('#mFill').setAttribute('aria-pressed',m===1);$('#mX').setAttribute('aria-pressed',m===2)};
     $('#mFill').addEventListener('click',()=>setMode(1));
     $('#mX').addEventListener('click',()=>setMode(2));
     $('#clrBtn').addEventListener('click',()=>{logic.g=logic.g.map((r,y)=>r.map((v,x)=>logic.lock[y][x]?v:0));renderLogic()});
     $('#lgHintBtn').addEventListener('click',logicHint);
+    lgZoom=1;$('#lgZoomBtn').addEventListener('click',()=>zoomLogicTo(lgZoom>=2.4?1:lgZoom<1.5?1.6:2.4));
     gameDock();bindLogic();renderLogic();
     goTime(token);
   }
 }
 function goTime(token){
-  running=false;elapsedFrozen=0;
-  FX.ready(()=>{if(token!==stageToken)return;running=true;t0=performance.now()});
+  const base=(S&&S.el)||0;   // 이어하기면 앞서 흐른 시간부터
+  running=false;elapsedFrozen=base;
+  if(base>0){running=true;t0=performance.now()-base;return}   // 이어하기는 '준비~ 시작!' 없이 바로
+  FX.ready(()=>{if(token!==stageToken)return;
+    if(document.getElementById('sheet')){paused=true;running=false;elapsedFrozen=0;return}   // 준비~ 중에 메뉴를 열었으면 메뉴를 닫을 때 시작
+    running=true;t0=performance.now()});
 }
 function elapsed(){return running?performance.now()-t0:elapsedFrozen}
 function fmt(ms){const s=Math.floor(ms/1000);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
 setInterval(()=>{const t=fmt(elapsed());$('#sTime').textContent=t;const g=$('#ghTime');if(g)g.textContent=t},250);
+// 이어하기용: 하던 판의 경과 시간·힌트·콤보 점수·진행(찾은 곳/칠한 칸/조각 자리)을 S에 저장 → 다시 열면 그대로 이어서
+function snapRun(){
+  try{
+    if(!S||!inGame||!(running||paused)||(CANDY.playing&&CANDY.playing()))return;
+    S.el=Math.round(elapsed());S.hu=hints;S.cp=comboPts;
+    if(S.stage===0&&spot&&spot.diffs)S.found=spot.diffs.map((d,i)=>d.found?i:-1).filter(i=>i>=0);
+    if(S.stage===1&&logic&&logic.g){S.lg=logic.g.map(r=>r.join('')).join(',');S.lk=logic.lock.map(r=>r.map(v=>v?1:0).join('')).join(',')}
+    if(S.stage===2&&jig&&jig.order){S.jo=jig.order.slice();S.jp=!!jig.paid}
+    save();
+  }catch(e){}
+}
+setInterval(()=>{if(inGame&&running)snapRun()},1000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)snapRun()});
+addEventListener('pagehide',snapRun);
 
 function addMiss(){
   if(!S)return;S.miss=misses;save();
@@ -2551,8 +2733,20 @@ function islandRoad(z,upto){
 }
 
 function starRow(k){return `<span class="nstars" aria-hidden="true">${[0,1,2].map(i=>`<span class="s${i+1} ${i<k?'on':'off'}">${STAR_P}</span>`).join('')}</span>`}
+// 가 본 지역 목록 → 누르면 그 지역 지도로 바로 (선착장 이동은 그대로)
+const ZONE_ISL=['islFlower','islSea','islSnow','islNight','islSky','islHeaven'];
+function openZoneList(){
+  const top=isAdmin()?ZONES.length-1:Math.min(ZONES.length-1,P.revealed|0);
+  const sh=openSheet(`<div class="eyebrow">지역 이동</div><h3>어느 지역으로 갈까요?</h3><div class="zl">${ZONES.map((Z,z)=>{
+    const ok=z<=top,have=zoneStars(z),all=zLen(z)*3;
+    return `<button type="button" class="zl-it${z===VIEWZ?' on':''}" data-z="${z}" ${ok?'':'disabled'}><img src="${embedded(`img/voyage/${ZONE_ISL[z]}.webp`)}" alt=""><span><b>${Z.name}</b><small>${Z.lvl} · ${zLo(z)}~${zHi(z)}라운드</small></span><em>${ok?`★ ${have}/${all}`:LOCK}</em></button>`}).join('')}</div>
+    <div class="row"><button class="btn" type="button" id="zlNo">닫기</button></div>`);
+  sh.querySelector('#zlNo').addEventListener('click',closeSheet);
+  sh.querySelectorAll('.zl-it:not([disabled])').forEach(b=>b.addEventListener('click',()=>{store.set('sekan-viewz',+b.dataset.z);closeSheet();showMenu()}));
+}
 function showMenu(){
   if(CANDY.isOn()){CANDY.showMap();return}
+  snapRun();
   inGame=false;paused=false;stageToken++;running=false;elapsedFrozen=0;spot=null;document.body.classList.remove('game-mode','candy-mode','candy-play');
   $('#veil').hidden=true;$('#track').hidden=true;$('#menuBtn').hidden=true;
   $('#pTitle').textContent='라운드 선택';
@@ -2615,6 +2809,7 @@ function showMenu(){
   OTHERS.show();
   // 과자 나라 가는 버튼 (지도 오른쪽 가운데)
   board.querySelector('.map-wrap').insertAdjacentHTML('beforeend',CANDY.goBtn());$('#candyGo').addEventListener('click',CANDY.enter);
+  if(isAdmin()||P.revealed>0){board.querySelector('.map-wrap').insertAdjacentHTML('beforeend',`<button type="button" class="zone-go" id="zoneGo" aria-label="가 본 지역으로 바로 이동"><img src="${embedded(`img/voyage/${ZONE_ISL[VIEWZ]}.webp`)}" alt=""><span>지역 이동</span></button>`);$('#zoneGo').addEventListener('click',openZoneList)}
   $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
   $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
   $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});ACH.dot();
@@ -2837,7 +3032,7 @@ function fitBoard(){
   const jg=b.querySelector('.jig');
   if(jg)jg.style.setProperty('--jigw',Math.floor(Math.min(W,H,600))+'px');
 }
-function pauseGame(){if(inGame&&running){elapsedFrozen=performance.now()-t0;running=false;paused=true}}
+function pauseGame(){if(inGame&&running){elapsedFrozen=performance.now()-t0;running=false;paused=true;snapRun()}}
 function resumeGame(){if(!paused)return;if(CANDY.playing()){CANDY.resume();return}paused=false;if(!inGame||!S)return;t0=performance.now()-elapsedFrozen;running=true}
 function openPause(){
   if(CANDY.playing()){CANDY.pause();return}
@@ -2845,7 +3040,7 @@ function openPause(){
   NATIVE.buzz('tick');pauseGame();
   const st=STAGES[S.stage];
   const sh=openSheet(`<div class="eyebrow">일시정지 · ${ZONES[zoneOf(S.round)].lvl} · 라운드 ${S.round}</div><h3>${st.name}</h3>
-    <p class="pause-how">${esc(st.desc)}</p>
+    <p class="pause-how">${esc(st.desc)}${S.stage===0&&spot&&spot.mirror?'<br><b>거울 라운드:</b> 비교 그림이 좌우로 뒤집혀 있어요. 뒤집힌 것 자체는 차이가 아니에요.':''}</p>
     <div class="pause-btns">
       <button class="btn primary" type="button" id="pzGo">계속하기</button>
       <button class="btn" type="button" id="pzRe">처음부터 다시${S.held?' <small>(하트 1개)</small>':''}</button>
@@ -4076,6 +4271,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['5.0','2026-11-04','QA 반영: 이어하기·확대',['이어하기 때 걸린 시간·힌트·콤보와 찾은 곳·칠한 칸·조각 자리까지 그대로 (시간 보너스·별이 부풀던 문제도 함께 고침)','메뉴를 열면 \'준비~·시작!\'과 효과 글씨를 숨기고, 준비 중에 연 메뉴는 닫을 때 시작','로직: 🔍·두 손가락 확대·이동, 숫자 단서는 위·왼쪽에 고정, 누른 줄·칸 강조, 확대 동작은 칠하지 않음','틀린그림: 두 그림 함께 확대·이동(거울 라운드는 반대 자리), 끌기·두 손가락은 실수 아님, 누르는 동안 위치 표시','힌트 원을 진한 테두리와 깜박임으로 더 잘 보이게','퍼즐: 고른 조각 굵은 테두리, 제자리 조각 ✓ 표시','지도 왼쪽 \'지역 이동\'으로 가 본 지역 바로 가기','어려운 틀린그림도 약 40%는 뚜렷한 차이, 거울 라운드엔 배경 속 미세한 차이 없음','틀린그림 안내 문구를 화면 방향과 상관없게, 거울 라운드 설명 추가']],
   ['4.9','2026-11-04','천국 지역 오픈',['새 지역 천국(511~720라운드, 난이도 전설)','하늘섬→천국은 천마가 마차를 끌고 구름 사이로','천국 틀린그림 최대 14곳·거울 라운드 6라운드마다·물건 더 많이','천국 물건 24가지·금빛 구름 발판','지역마다 선착장·물가 장식 새 그림, 지도 배를 이동 배와 같은 모양으로','업적: 라운드 720·별 2160 단계, 천국 프로필 테두리']],
   ['4.8','2026-11-04','로직 그림 겹침 없앰',['같은 물건 그림이 다른 크기 로직에 다시 나오지 않음','12×12 로직 문제 560개로 늘림(천국까지 대비)','다시 해도 새 무늬 문제']],
   ['4.7','11월 4일','마지막 구간 퍼즐 8×8',['하늘섬 481~510라운드 퍼즐을 9×9에서 8×8(64조각)로']],
