@@ -1326,9 +1326,13 @@ const ADMIN_ID='yjeeeee0510';
 // 운영진 아이디 목록 (랭킹 제외·모든 라운드 열림). 서버 트리거 leaderboard_skip_admin에도 같이 넣어야 함
 const ADMIN_IDS=[ADMIN_ID,'dhsb1234'];
 let adminLiftZ=-1;
-function isAdmin(){try{return ADMIN_IDS.includes(RANK.account())}catch(e){return false}}
+function isAdmin(){if(QA)return true;try{return ADMIN_IDS.includes(RANK.account())}catch(e){return false}}
 function openMax(){return isAdmin()?MAXR:P.unlocked}
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+// 테스트 모드(?qa=1): 모든 라운드 열림·하트 안 씀(운영진과 같음), 랭킹에 안 보냄, 기록은 'qa:' 칸에 따로 저장
+const QA=(()=>{try{const q=new URLSearchParams(location.search).get('qa');if(q==='1')sessionStorage.setItem('sekan-qa','1');if(q==='0')sessionStorage.removeItem('sekan-qa');return sessionStorage.getItem('sekan-qa')==='1'}catch(e){return false}})();
+const QK=k=>QA?'qa:'+k:k;
+const store={get(k,d){try{const v=localStorage.getItem(QK(k));return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(QK(k),JSON.stringify(v))}catch(e){}}};
+if(QA&&store.get('sekan-nick-skip',null)===null)store.set('sekan-nick-skip',true);
 function rng(seed){let a=seed>>>0;return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const pick=(r,a)=>a[Math.floor(r()*a.length)];
 function shuffle(r,a){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -3348,7 +3352,7 @@ const RANK=(function(){
   }
   async function submit(newNick){
     const n=newNick||nick();if(!enabled||!n)return;
-    if(ADMIN_IDS.includes(account())){store.set('sekan-rank-pending',false);return}
+    if(QA||ADMIN_IDS.includes(account())){store.set('sekan-rank-pending',false);return}
     const s=await auth();
     const row=Object.assign({id:s.user.id,nickname:n},mine());
     if(typeof P.avatar==='number')row.avatar=P.avatar;
@@ -3416,7 +3420,7 @@ const RANK=(function(){
     async top(n){const s=await auth();return api('/rest/v1/rpc/leaderboard_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})},
     async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
     // 접속 신호: 이미 세션이 있는 사람만 (새 익명 계정을 만들지 않음). 표가 없으면 조용히 멈춤
-    async beat(online){if(!enabled||noPresence||!session||!session.access_token)return;let s;try{s=await auth()}catch(e){return}
+    async beat(online){if(QA||!enabled||noPresence||!session||!session.access_token)return;let s;try{s=await auth()}catch(e){return}
       const row={id:s.user.id,nickname:nick()||account()||null,online:!!online};if(typeof P.avatar==='number')row.avatar=P.avatar;
       try{await fetch(url+'/rest/v1/presence?on_conflict=id',{method:'POST',keepalive:!online,headers:Object.assign({apikey:key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},bearer(s)),body:JSON.stringify(row)})
         .then(r=>{if(r.status===404)noPresence=true})}catch(e){}},
