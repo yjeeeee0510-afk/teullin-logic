@@ -1150,7 +1150,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.5</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 4.6</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1364,9 +1364,9 @@ const ZONE_DIFF=[
   {spot:10,logic:12, jig:7, dd:0.80},  // 301–330
   {spot:10,logic:12, jig:7, dd:0.90},  // 331–360
   {spot:10,logic:12, jig:7, dd:0.92},  // 361–390 아주 어려움 (하늘섬)
-  {spot:11,logic:12, jig:8, dd:0.94},  // 391–420
-  {spot:11,logic:12, jig:8, dd:0.96},  // 421–450
-  {spot:12,logic:12, jig:8, dd:0.98},  // 451–480
+  {spot:11,logic:12, jig:7, dd:0.94},  // 391–420
+  {spot:11,logic:12, jig:7, dd:0.96},  // 421–450
+  {spot:12,logic:12, jig:7, dd:0.98},  // 451–480
   {spot:12,logic:12, jig:9, dd:1.00}   // 481–510
 ];
 const ZD=r=>ZONE_DIFF[Math.min(ZONE_DIFF.length-1,Math.floor((Math.max(1,r)-1)/TSIZE))];
@@ -4002,6 +4002,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['4.6','11월 4일','하늘섬 퍼즐 7×7',['하늘섬 391~480라운드 퍼즐을 8×8에서 7×7(49조각)로 (481~510은 9×9 그대로)']],
   ['4.5','11월 4일','하늘섬 배 날개',['하늘섬으로 날아갈 때 배 앞쪽의 작은 날개를 없앴어요 (뒤쪽 큰 날개만)']],
   ['4.4','11월 4일','수정 5가지',['과자 나라: 쿠키가 없을 때 다시 도전을 누르면 게임판에 멈춰 있던 문제 고침 (과자 마을로 나가서 안내)','하늘섬 이동 장면: 새 배 그림에 맞게 날개 위치 고침','로직: 가로·세로 숫자를 진하게, 다 맞춘 줄 숫자는 연하게','로직: 칸을 칠할 때부터 그림 색으로 보여요','로직: 무늬 문제도 다 풀면 이름이 나와요 (예: 나비 무늬 완성!)']],
   ['4.3','10월 31일','새 그림 바로 보이게',['휴대폰에 남아 있던 예전 그림 대신 4.2 새 그림을 바로 받아 오게 고쳤어요']],
