@@ -85,13 +85,13 @@ def matte(rgb):
     return np.dstack([np.clip(col, 0, 255), a * 255]).astype(np.uint8), K
 
 
-def split_cells(rgba, n):
+def split_cells(rgba, n, cols=3):
     """물건 n개를 줄(3개씩, 마지막 줄은 나머지)로 나눠 읽는 순서대로. 줄은 세로 빈 띠로, 줄 안에서는 가로 빈 틈으로 나누고,
     작은 조각(벌·더듬이·반짝이)은 가장 가까운 큰 덩어리에 붙임. 한 줄짜리 넓은 그림(2172×724)도 같은 방법."""
     a = rgba[..., 3] > 20
     H, W = a.shape
-    rows = (n + 2) // 3
-    per = [3] * (rows - 1) + [n - 3 * (rows - 1)]
+    rows = (n + cols - 1) // cols
+    per = [cols] * (rows - 1) + [n - cols * (rows - 1)]
     # 줄 나누기: 가로 투영의 빈 띠 중 가장 넓은 rows-1 곳
     pr = a.sum(1)
     if rows == 1:
@@ -164,23 +164,27 @@ def qa_sheet(sheet, items, path):
 def run(sheets):
     req = json.load(open(os.path.join(ROOT, 'art-src', 'request.json'), encoding='utf-8'))
     plan = {s['id']: [i['id'] for i in s['items']] for s in req['sheets']}
+    meta = {s['id']: s for s in req['sheets']}
     os.makedirs(OUT, exist_ok=True)
     rep = {}
     for sh in sheets:
-        rgb = np.asarray(Image.open(os.path.join(ROOT, 'art-src', 'new', sh + '.png')).convert('RGB'))
+        base = sh.split(':')[0]; fn = sh.split(':')[-1]   # 'I3:I3_02' 처럼 다른 파일 이름도 됨
+        m = meta[base]
+        rgb = np.asarray(Image.open(os.path.join(ROOT, 'art-src', m.get('src', 'new'), fn + '.png')).convert('RGB'))
         rgba, K = matte(rgb)
-        names = plan[sh]
-        parts = split_cells(rgba, len(names))
+        names = plan[base]
+        parts = split_cells(rgba, len(names), m.get('cols', 3))
         done = []
         for nm, im in zip(names, parts):
             if im is None: rep[nm] = '없음'; continue
+            if nm.startswith('_'): continue
             bb = im.getchannel('A').point(lambda v: 255 if v > 8 else 0).getbbox(); im = im.crop(bb)
             pad = 3; canvas = Image.new('RGBA', (im.width + pad * 2, im.height + pad * 2), (0, 0, 0, 0)); canvas.paste(im, (pad, pad)); im = canvas
             h = game_height(nm)
             im2 = im.resize((max(1, round(im.width * h / im.height)), h), Image.LANCZOS)
             im2.save(os.path.join(OUT, nm + '.webp'), 'WEBP', quality=92, method=6)
             done.append((nm, im)); rep[nm] = f'{im2.width}x{im2.height}'
-        qa_sheet(sh, done, os.path.join(OUT, f'qa_{sh}.png'))
+        qa_sheet(fn, done, os.path.join(OUT, f'qa_{fn}.png'))
     return rep
 
 

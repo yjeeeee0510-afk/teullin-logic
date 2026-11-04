@@ -264,3 +264,9 @@ update public.leaderboard l set
 where l.id=(select id from t);
 commit;
 -- 결과: 랭킹 9명, test1 과자 나라 3라운드·별 9, 칭호 없음
+
+-- 2026-11-04 · 천국(511~720라운드) 추가로 제한 넓힘 (라운드 720, 별 720×3)
+alter table public.leaderboard drop constraint if exists leaderboard_best_round_check;
+alter table public.leaderboard add constraint leaderboard_best_round_check check (best_round between 0 and 720);
+alter table public.leaderboard drop constraint if exists leaderboard_stars_check;
+alter table public.leaderboard add constraint leaderboard_stars_check check (stars between 0 and 2160);
