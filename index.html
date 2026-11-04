@@ -964,11 +964,13 @@ body.game-mode .loading{background:var(--hud-bg);border-radius:14px;padding:16px
 .voyage.heaven.go .hv-coach{left:calc(50vw - var(--coach) / 2)}
 .voyage.heaven .hv-bob{position:relative;width:100%;height:100%;animation:hvBob 1.1s ease-in-out infinite}
 .voyage.heaven .hv-bob img{position:absolute;height:auto;filter:drop-shadow(0 8px 8px rgba(140,100,60,.2))}
-.voyage.heaven .hv-car{left:0;bottom:0;width:43%;z-index:1}
-.voyage.heaven .hv-horse{left:40%;bottom:14%;width:52%;z-index:2;animation:hvGallop .55s ease-in-out infinite alternate}
-.voyage.heaven .hv-wing{left:57%;bottom:48%;width:31%;z-index:3;transform-origin:14% 90%;animation:flFlap .5s ease-in-out infinite alternate}
+/* 천마 끈 끝(그림 왼쪽 53% 높이)이 마차 끌채 끝(그림 오른쪽 61% 높이)에 딱 닿게 맞춤 */
+.voyage.heaven .hv-car{left:0;bottom:14.3%;width:43%;z-index:1;animation:hvCar .55s ease-in-out infinite alternate;transform-origin:100% 61.5%}
+.voyage.heaven .hv-horse{left:41%;bottom:2.5%;width:52%;z-index:2;animation:hvGallop .55s ease-in-out infinite alternate;transform-origin:0 53.5%}
+.voyage.heaven .hv-wing{left:58%;bottom:36.5%;width:31%;z-index:3;transform-origin:14% 90%;animation:flFlap .5s ease-in-out infinite alternate}
+@keyframes hvCar{from{transform:rotate(-1deg)}to{transform:rotate(1deg)}}
 @keyframes hvBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-@keyframes hvGallop{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+@keyframes hvGallop{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
 .voyage.flight{background:#151542;--ship:min(46vw,230px);--dur:4.6s}
 .flight .fl-world{position:absolute;left:0;right:0;top:0;height:300vh;transform:translateY(-200vh);will-change:transform;pointer-events:none}
 .flight.go .fl-world{animation:flCam var(--dur) cubic-bezier(.55,0,.35,1) .25s both}
@@ -1201,7 +1203,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.0</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.1</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4271,6 +4273,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['5.1','2026-11-04','천마 마차 연결',['하늘섬→천국 이동에서 천마의 끈이 마차 끌채에 딱 붙어 함께 움직이게']],
   ['5.0','2026-11-04','QA 반영: 이어하기·확대',['이어하기 때 걸린 시간·힌트·콤보와 찾은 곳·칠한 칸·조각 자리까지 그대로 (시간 보너스·별이 부풀던 문제도 함께 고침)','메뉴를 열면 \'준비~·시작!\'과 효과 글씨를 숨기고, 준비 중에 연 메뉴는 닫을 때 시작','로직: 🔍·두 손가락 확대·이동, 숫자 단서는 위·왼쪽에 고정, 누른 줄·칸 강조, 확대 동작은 칠하지 않음','틀린그림: 두 그림 함께 확대·이동(거울 라운드는 반대 자리), 끌기·두 손가락은 실수 아님, 누르는 동안 위치 표시','힌트 원을 진한 테두리와 깜박임으로 더 잘 보이게','퍼즐: 고른 조각 굵은 테두리, 제자리 조각 ✓ 표시','지도 왼쪽 \'지역 이동\'으로 가 본 지역 바로 가기','어려운 틀린그림도 약 40%는 뚜렷한 차이, 거울 라운드엔 배경 속 미세한 차이 없음','틀린그림 안내 문구를 화면 방향과 상관없게, 거울 라운드 설명 추가']],
   ['4.9','2026-11-04','천국 지역 오픈',['새 지역 천국(511~720라운드, 난이도 전설)','하늘섬→천국은 천마가 마차를 끌고 구름 사이로','천국 틀린그림 최대 14곳·거울 라운드 6라운드마다·물건 더 많이','천국 물건 24가지·금빛 구름 발판','지역마다 선착장·물가 장식 새 그림, 지도 배를 이동 배와 같은 모양으로','업적: 라운드 720·별 2160 단계, 천국 프로필 테두리']],
   ['4.8','2026-11-04','로직 그림 겹침 없앰',['같은 물건 그림이 다른 크기 로직에 다시 나오지 않음','12×12 로직 문제 560개로 늘림(천국까지 대비)','다시 해도 새 무늬 문제']],
