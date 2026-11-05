@@ -1215,7 +1215,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.9</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.0</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -2296,8 +2296,8 @@ function logicFocus(x,y){
 }
 function cellEl(x,y){return $('#nono').querySelector(`.cell[data-x="${x}"][data-y="${y}"]`)}
 function paintCell(x,y){const v=logic.g[y][x],c=cellEl(x,y);c.classList.toggle('f',v===1);c.classList.toggle('x',v===2);c.classList.toggle('wrong',!!logic.lock[y][x]);
-  // 칠한 칸은 바로 그림 색으로 (틀린 칸은 칠해지지 않고 × 로 고정되므로 칠한 칸은 늘 정답 칸)
-  if(!logic.col){try{logic.col=logicColorAt()}catch(e){logic.col={}}}c.style.backgroundColor=v===1&&logic.col[x+','+y]||''}
+  // 푸는 중엔 검은색(CSS .cell.f), 다 풀면 logicWinFx가 그림 색을 입힌다
+  c.style.backgroundColor=''}
 const same=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 function updateClues(fx){
   const {n,g,rows,cols}=logic;let all=true;const fresh=[];
@@ -2538,14 +2538,14 @@ function startStage(){
   if(S.stage===1){
     spot=null;initLogic();mode=1;
     if(S.lg){const g=S.lg.split(','),k=(S.lk||'').split(',');if(g.length===logic.n&&g[0].length===logic.n){logic.g=g.map(r=>[...r].map(Number));if(k.length===logic.n)logic.lock=k.map(r=>[...r].map(v=>v==='1'))}}
-    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn" id="lgZoomBtn" type="button" data-sfx="none" aria-label="판 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
+    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
     board.innerHTML=`<div class="nono-wrap"><div class="nono" id="nono"></div></div>`;
     const setMode=m=>{mode=m;$('#mFill').setAttribute('aria-pressed',m===1);$('#mX').setAttribute('aria-pressed',m===2)};
     $('#mFill').addEventListener('click',()=>setMode(1));
     $('#mX').addEventListener('click',()=>setMode(2));
     $('#clrBtn').addEventListener('click',()=>{logic.g=logic.g.map((r,y)=>r.map((v,x)=>logic.lock[y][x]?v:0));renderLogic()});
     $('#lgHintBtn').addEventListener('click',logicHint);
-    lgZoom=1;$('#lgZoomBtn').addEventListener('click',()=>(SFX.play('zoom'),zoomLogicTo)(lgZoom>=2.4?1:lgZoom<1.5?1.6:2.4));
+    lgZoom=1;
     gameDock();bindLogic();renderLogic();
     goTime(token);
   }
@@ -4449,6 +4449,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['6.0','2026-11-05','로직 색·돋보기',['네모네모 로직은 풀 때 검은색, 다 풀면 그림 색이 나타나요','로직 확대 돋보기 버튼을 없앴어요(두 손가락으로 확대·이동)']],
   ['5.9','2026-11-05','운영 도구·안정화',['운영진 도구에 비밀번호 재설정(운영진만)','자잘한 개선']],
   ['5.8','2026-11-05','앱 자동 업데이트',['앱을 켤 때 새 버전이 있으면 ‘새 버전이 나왔어요’ 안내','받기를 누르면 앱 안에서 내려받아 바로 업데이트(기록 그대로)','설정에 ‘업데이트 확인’ 버튼']],
   ['5.7','2026-11-05','앱 아이콘·시작 화면',['앱 아이콘을 어흥이 그림으로 바꿨어요','안드로이드 앱 시작 화면에 새 그림','홈 화면에 추가한 웹 아이콘도 새 그림']],
