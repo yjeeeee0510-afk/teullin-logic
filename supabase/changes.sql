@@ -270,3 +270,35 @@ alter table public.leaderboard drop constraint if exists leaderboard_best_round_
 alter table public.leaderboard add constraint leaderboard_best_round_check check (best_round between 0 and 720);
 alter table public.leaderboard drop constraint if exists leaderboard_stars_check;
 alter table public.leaderboard add constraint leaderboard_stars_check check (stars between 0 and 2160);
+
+-- 2026-11-05 · 운영진이 아이디 비밀번호를 새로 정하는 함수 (admin_set_password)
+-- 비밀번호는 bcrypt 해시로만 저장돼 원래 값을 볼 수 없다. '찾기'는 불가, 재설정만 가능.
+-- 운영진(yjeeeee0510·dhsb1234)만 호출 가능. service_role 키를 클라이언트에 두지 않으려고 서버 함수(SECURITY DEFINER)로 처리.
+create extension if not exists pgcrypto with schema extensions;
+
+create or replace function public.admin_set_password(target_id text, new_password text)
+returns json
+language plpgsql security definer set search_path = public, extensions as $$
+declare
+  target_email text;
+  uid uuid;
+begin
+  if (auth.jwt() ->> 'email') not in ('yjeeeee0510@teullin.game','dhsb1234@teullin.game') then
+    raise exception 'not_admin' using errcode = '42501';
+  end if;
+  if new_password is null or length(new_password) < 6 then
+    raise exception 'weak_password' using errcode = 'P0001';
+  end if;
+  target_email := lower(trim(target_id)) || '@teullin.game';
+  select id into uid from auth.users where email = target_email;
+  if uid is null then
+    return json_build_object('ok', false, 'reason', 'no_user');
+  end if;
+  update auth.users
+     set encrypted_password = extensions.crypt(new_password, extensions.gen_salt('bf')),
+         updated_at = now()
+   where id = uid;
+  return json_build_object('ok', true, 'id', lower(trim(target_id)));
+end $$;
+revoke all on function public.admin_set_password(text, text) from public, anon;
+grant execute on function public.admin_set_password(text, text) to authenticated;

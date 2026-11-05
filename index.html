@@ -189,6 +189,8 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .nick-in{width:100%;font:inherit;font-size:18px;padding:10px 14px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink)}
 .nick-in:focus{outline:3px solid var(--mark);outline-offset:1px}
 .formmsg{margin:0;font-size:13px;color:var(--bad);min-height:1.2em}
+.formmsg.ok{color:var(--good,#2f9e44)}
+.pwr-l{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:var(--muted);margin:8px 0}
 .me-card{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;background:var(--mark);color:var(--mark-ink);border:1.5px solid var(--ink);border-radius:14px;padding:10px 14px}
 .me-card .rk{grid-row:span 2;font-family:var(--f-display);font-size:30px;line-height:1}
 .me-card .nm{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3808,6 +3810,9 @@ const RANK=(function(){
     // 운영진: 지금 접속 중인 사람 (서버 함수 presence_online, 없으면 null)
     async online(){const s=await auth();try{return await api('/rest/v1/rpc/presence_online',{method:'POST',headers:bearer(s),body:'{}'})||[]}
       catch(e){if(e&&(e.status===404||e.code==='PGRST202'||e.code==='42P01'||/presence/i.test(e.message||'')))return null;throw e}},
+    // 운영진: 아이디의 비밀번호를 새로 정함 (서버 함수 admin_set_password, 운영진 JWT만 통과). 함수가 아직 없으면 code 'nofunc'
+    async adminSetPassword(id,pw){const s=await auth();try{return await api('/rest/v1/rpc/admin_set_password',{method:'POST',headers:bearer(s),body:JSON.stringify({target_id:id,new_password:pw})})}
+      catch(e){if(e&&(e.status===404||e.code==='PGRST202')){const er=new Error('nofunc');er.code='nofunc';throw er}throw e}},
     // 과자 나라 순위 (서버 함수가 아직 없으면 code 'nocandy')
     async candyTop(n){const s=await auth();try{return await api('/rest/v1/rpc/leaderboard_candy_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})}catch(e){if(e&&(e.status===404||e.code==='PGRST202'||/candy/i.test(e.message||''))){const er=new Error('nocandy');er.code='nocandy';throw er}throw e}},
     async candyMe(){const s=await auth();try{const r=await api('/rest/v1/rpc/leaderboard_candy_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null}catch(e){if(e&&(e.status===404||e.code==='PGRST202'||/candy/i.test(e.message||''))){const er=new Error('nocandy');er.code='nocandy';throw er}throw e}},
@@ -4520,6 +4525,7 @@ function openAdmin(){
       <div class="adm-row">${ZONES.slice(1).map((Z,i)=>g('fog'+(i+1),`${Z.name} 오픈`)).join('')}</div>
       <b>지도 위치로 이동</b>
       <div class="adm-row">${ZONES.map((Z,z)=>g('go'+zLo(z),`${Z.lvl} (${zLo(z)}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
+      ${RANK.enabled&&ADMIN_IDS.includes(RANK.account())?`<b>계정</b><div class="adm-row">${g('pwreset','비밀번호 재설정')}</div>`:''}
     </div>
     <div class="row"><button class="btn primary" type="button" id="admClose">닫기</button></div>`);
   sh.querySelector('.card').classList.add('adm-card');
@@ -4540,8 +4546,40 @@ function openAdmin(){
     if(a==='round'){openRoundSheet(Math.max(1,P.unlocked));return}
     if(a.startsWith('play')){closeSheet();startRound(+a.slice(4));return}
     if(a.startsWith('fog')){closeSheet();const z=+a.slice(3);store.set('sekan-viewz',z-1);showMenu();travel(z-1,z);return}
+    if(a==='pwreset'){openPwReset();return}
     if(a.startsWith('go')){closeSheet();const n=+a.slice(2);store.set('sekan-viewz',zoneOf(n));showMenu();const m=$('#map');if(m)m.scrollTop=Math.max(0,mapY(n)-m.clientHeight*0.62);return}
   }));
+}
+/* 운영진: 아이디의 비밀번호를 새로 정함 (비밀번호는 해시로만 저장돼 '찾기'는 불가, 재설정만 가능) */
+function openPwReset(){
+  if(!isAdmin())return;
+  const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> 비밀번호 재설정</div><h3>비밀번호 바꿔 주기</h3>
+    <p class="lead">비밀번호는 암호로만 저장돼 원래 값은 볼 수 없어요. 여기서 <b>새 비밀번호</b>로 바꾼 뒤, 그 비밀번호를 본인에게 알려 주세요.</p>
+    <label class="pwr-l">아이디<input class="nick-in" id="pwId" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="20" placeholder="예: insung1703"></label>
+    <label class="pwr-l">새 비밀번호<input class="nick-in" id="pwNew" type="text" autocomplete="off" maxlength="72" placeholder="6자 이상"></label>
+    <p class="formmsg" id="pwMsg" aria-live="polite"></p>
+    <div class="row"><button class="btn" type="button" id="pwCancel">닫기</button><button class="btn primary" type="button" id="pwGo">바꾸기</button></div>`);
+  const msg=sh.querySelector('#pwMsg'),btn=sh.querySelector('#pwGo');
+  sh.querySelector('#pwCancel').addEventListener('click',closeSheet);
+  btn.addEventListener('click',async()=>{
+    const id=sh.querySelector('#pwId').value.trim().toLowerCase(),pw=sh.querySelector('#pwNew').value;
+    msg.className='formmsg';
+    if(!id){msg.textContent='아이디를 입력해 주세요.';return}
+    if(pw.length<6){msg.textContent='새 비밀번호는 6자 이상으로 해 주세요.';return}
+    btn.disabled=true;btn.textContent='바꾸는 중…';msg.textContent='';
+    try{
+      const r=await RANK.adminSetPassword(id,pw);
+      if(r&&r.ok){msg.className='formmsg ok';msg.innerHTML=`<b>${esc(id)}</b> 비밀번호를 바꿨어요. 이 비밀번호로 로그인하라고 알려 주세요.`;btn.textContent='완료';}
+      else{msg.textContent='그 아이디를 찾을 수 없어요.';btn.disabled=false;btn.textContent='바꾸기';}
+    }catch(e){
+      const m=(e&&(e.message||'')+' '+(e&&e.code||'')+' '+(e&&e.status||''));
+      if(e&&e.code==='nofunc')msg.textContent='서버에 이 기능이 아직 없어요. 비밀번호 재설정 SQL을 먼저 실행해 주세요.';
+      else if(/not_admin|42501|permission|403/i.test(m))msg.textContent='운영진만 쓸 수 있어요. 운영진 아이디로 로그인했는지 확인해 주세요.';
+      else if(/weak_password|P0001/i.test(m))msg.textContent='새 비밀번호는 6자 이상으로 해 주세요.';
+      else msg.textContent=RANK.explain(e);
+      btn.disabled=false;btn.textContent='바꾸기';
+    }
+  });
 }
 /* ---------- 접속 신호 (운영진 '접속 중인 사람' 창용) ---------- */
 (function(){
