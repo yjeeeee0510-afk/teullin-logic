@@ -283,7 +283,7 @@ declare
   target_email text;
   uid uuid;
 begin
-  if (auth.jwt() ->> 'email') not in ('yjeeeee0510@teullin.game','dhsb1234@teullin.game') then
+  if coalesce(auth.jwt() ->> 'email', '') not in ('yjeeeee0510@teullin.game','dhsb1234@teullin.game') then
     raise exception 'not_admin' using errcode = '42501';
   end if;
   if new_password is null or length(new_password) < 6 then
