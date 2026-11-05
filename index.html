@@ -768,6 +768,7 @@ body.game-mode .pic canvas.frame{width:var(--picw,100%)}
 body.game-mode .jig-area{width:100%;height:100%;align-items:center}
 body.game-mode .jig{width:var(--jigw,100%)}
 body.game-mode .nono-wrap{width:100%;max-height:100%;overflow:auto;align-items:center}
+.sheet.updsheet{z-index:70}
 .upd-notes{margin:0 0 10px;padding-left:20px;font-size:14px;line-height:1.55}.upd-prog{margin:0 0 10px}.upd-bar{height:12px;border-radius:99px;background:var(--soft);overflow:hidden}.upd-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#4dabf7,#69db7c);transition:width .2s}.upd-msg{margin:6px 0 0;font-size:13px;color:var(--muted);text-align:center}
 .pause-how{margin:0;font-size:14px;color:var(--muted);background:var(--soft);border-radius:10px;padding:10px 12px}
 .pause-btns{display:flex;flex-direction:column;gap:8px}
@@ -1233,7 +1234,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.3</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.4</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4217,11 +4218,11 @@ const UPD=(function(){
   function notes(i){return (i.notes||[]).slice(0,4).map(n=>`<li>${esc(n)}</li>`).join('')}
   function show(i){
     const sh=openSheet(`<div class="eyebrow">업데이트</div><h3>새 버전이 나왔어요!</h3>
-      <p class="lead">지금 앱 <b>${mine?`패치 ${Math.floor(mine/10)}.${mine%10}`:esc(NATIVE.ver||'')}</b> → 새 버전 <b>패치 ${esc(i.version)}</b>${i.size?` · ${esc(i.size)}`:''}</p>
-      ${notes(i)?`<ul class="upd-notes">${notes(i)}</ul>`:''}
+      <p class="lead">더 좋아진 새 버전이 준비됐어요.<br>지금 받아서 업데이트할까요?</p>
       <div class="upd-prog" hidden><div class="upd-bar"><i></i></div><p class="upd-msg">받는 중…</p></div>
       <p class="pause-how">게임 기록은 그대로 남아요. 설치 화면이 뜨면 <b>업데이트</b>를 눌러 주세요.</p>
       <div class="row"><button class="btn" type="button" id="updLater">나중에</button><button class="btn primary" type="button" id="updGo">받기</button></div>`);
+    sh.classList.add('updsheet');   // 시작 화면(z-index 50) 위로 띄움
     sh.querySelector('#updLater').addEventListener('click',()=>{store.set('sekan-upd-skip',i.code+'@'+new Date().toDateString());closeSheet()});
     sh.querySelector('#updGo').addEventListener('click',()=>go(i,sh));
   }
@@ -4240,14 +4241,14 @@ const UPD=(function(){
     catch(e){msg.textContent='받지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';btn.textContent='다시 받기'}
     busy=false;btn.disabled=false;try{h&&h.remove()}catch(e){}
   }
-  // 앱을 켜면 한 번 확인. 시작 화면·게임 중·다른 창이 열려 있으면 기다렸다가 지도에서 보여 줌
+  // 앱을 켜면 한 번 확인 → 시작 화면에서 바로 안내(다른 창이 열려 있으면 그것만 기다림)
   async function auto(){
     const i=await fetchInfo();if(!i)return;
     if(store.get('sekan-upd-skip')===i.code+'@'+new Date().toDateString())return;
     let n=0;const t=setInterval(()=>{if(++n>900){clearInterval(t);return}
-      const it=document.getElementById('intro');if(it&&!it.hidden)return;
-      if(document.body.classList.contains('game-mode')||document.getElementById('sheet')||document.getElementById('veil')&&!document.getElementById('veil').hidden)return;
-      clearInterval(t);show(i)},2000);
+      if(document.getElementById('sheet'))return;   // 로그인 등 다른 창이 열려 있으면 대기
+      const v=document.getElementById('veil');if(v&&!v.hidden)return;
+      clearInterval(t);show(i)},1200);
   }
   // 설정의 '업데이트 확인'
   async function manual(){
@@ -4494,6 +4495,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['6.4','2026-11-06','업데이트 안내 개선',['앱을 켜면 시작 화면에서 바로 ‘새 버전이 나왔어요’ 안내','안내를 더 간단하게(바뀐 점 목록은 빼고)']],
   ['6.3','2026-11-06','상단 새 모습·숨은 친구',['상단에 라운드·점수·시간, 그 아래 목숨 하트(실수하면 하나씩 사라져요)','과자 나라에 숨은 친구 줄 — 친구를 앉힐 때마다 얼굴이 하나씩 나와요','로직판 두 손가락 확대 없앰(두 손가락은 판 밀기만)','시작 화면 배경 새 그림']],
   ['6.2','2026-11-05','십이지 친구 새 얼굴',['십이지 친구 12명을 새 그림체(말랑한 점토 인형)로 새로 그렸어요','프로필·지도·랭킹의 친구 얼굴이 모두 바뀌었어요']],
   ['6.1','2026-11-05','로직판 색 고정',['휴대폰 다크 모드에서도 네모네모 로직판은 늘 흰 배경에 검은 칸으로 보여요']],
