@@ -1649,6 +1649,138 @@
     }
    ],
    "prompt": "Edit the attached image. It is a game sprite sheet of 6 objects on a perfectly flat chroma-key green background (#00B140), 2 rows x 3 columns. Keep the sheet layout, background color, every object's position, size, pose, colors, lighting and cute soft 3D clay style EXACTLY the same. Change only ONE small detail on each object, as listed below, and nothing else. The change must be clearly visible but small. No new objects, no shadows, no text, no watermark. Image size 1536x1024.\nRow 1, left: remove the small wings on top of the gate\nRow 1, middle: remove the star on top of the dome\nRow 1, right: remove the star on top of the fountain\nRow 2, left: remove the small wing on top of the harp\nRow 2, middle: remove the flame so the candle is not lit\nRow 2, right: show only one bee instead of two"
+  },
+  {
+   "id": "Z1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "십이지",
+   "items": [
+    {
+     "id": "zFace0",
+     "ko": "찍찍이 얼굴"
+    },
+    {
+     "id": "zFace1",
+     "ko": "음메 얼굴"
+    },
+    {
+     "id": "zFace2",
+     "ko": "어흥이 얼굴"
+    },
+    {
+     "id": "zFace3",
+     "ko": "깡총이 얼굴"
+    },
+    {
+     "id": "zFace4",
+     "ko": "미르 얼굴"
+    },
+    {
+     "id": "zFace5",
+     "ko": "스르르 얼굴"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate characters, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every character centered in its own square cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. HEADS ONLY: each cell shows just the character's head (ears, horns, hat included), facing the viewer straight on, no neck, no body, no hands, no props. Each head fills about 80% of its cell and sits in the same position and size in every cell. If a heads sheet from this chat is attached, match its style, eye shape and head size exactly. Cute soft 3D clay toy style exactly like the attached style reference (the windmill, cottage and trees sheet): rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left. All twelve zodiac friends belong to ONE family: same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, same line-free clay finish. Keep each character recognisable from the attached current character sheet (species, main colours and signature item), but redraw them in the new clay style. Bold, simple silhouette with strong colour contrast so each one is still readable at 32 pixels wide.\nRow 1: a grey mouse with big round pink-lined ears, two small front teeth, pink nose and whiskers | a white cow with brown patches, two small cream horns, floppy ears and a big pink muzzle | an orange tiger with bold dark stripes, white cheeks and muzzle, round ears\nRow 2: a white rabbit with tall upright ears with pink insides, pink nose, a tiny yellow star clip on one ear | a pearly white dragon with soft rainbow-sheen scales, two small golden horns and little ear fins | a bright green snake with a lighter belly-green face, a pink flower on top of the head, winking, tiny tongue"
+  },
+  {
+   "id": "Z2",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "십이지",
+   "items": [
+    {
+     "id": "zFace6",
+     "ko": "다그닥 얼굴"
+    },
+    {
+     "id": "zFace7",
+     "ko": "몽실이 얼굴"
+    },
+    {
+     "id": "zFace8",
+     "ko": "끼끼 얼굴"
+    },
+    {
+     "id": "zFace9",
+     "ko": "꼬꼬 얼굴"
+    },
+    {
+     "id": "zFace10",
+     "ko": "멍멍이 얼굴"
+    },
+    {
+     "id": "zFace11",
+     "ko": "꿀꿀이 얼굴"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate characters, each an isolated cutout floating on a perfectly flat, uniform solid pure green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every character centered in its own square cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. HEADS ONLY: each cell shows just the character's head (ears, horns, hat included), facing the viewer straight on, no neck, no body, no hands, no props. Each head fills about 80% of its cell and sits in the same position and size in every cell. If a heads sheet from this chat is attached, match its style, eye shape and head size exactly. Cute soft 3D clay toy style exactly like the attached style reference (the windmill, cottage and trees sheet): rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left. All twelve zodiac friends belong to ONE family: same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, same line-free clay finish. Keep each character recognisable from the attached current character sheet (species, main colours and signature item), but redraw them in the new clay style. Bold, simple silhouette with strong colour contrast so each one is still readable at 32 pixels wide.\nRow 1: a chestnut brown horse with a dark brown mane falling over the forehead and pointy ears | a fluffy white sheep with a cream face, curly wool puff on top of the head and floppy ears | a brown monkey with a beige heart-shaped face, round ears, a red strawberry-pattern bandana (red with white dots, no green)\nRow 2: a white rooster with a big red comb, small red wattle and a yellow beak | a tan puppy with long floppy brown ears, a brown patch around one eye, tongue slightly out | a pink pig with a round snout, small pointed ears and a tall white chef hat"
+  },
+  {
+   "id": "Z3",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "십이지",
+   "items": [
+    {
+     "id": "zBody0",
+     "ko": "찍찍이 몸"
+    },
+    {
+     "id": "zBody1",
+     "ko": "음메 몸"
+    },
+    {
+     "id": "zBody2",
+     "ko": "어흥이 몸"
+    },
+    {
+     "id": "zBody3",
+     "ko": "깡총이 몸"
+    },
+    {
+     "id": "zBody4",
+     "ko": "미르 몸"
+    },
+    {
+     "id": "zBody5",
+     "ko": "스르르 몸"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate characters, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. 2 rows x 3 columns, every character centered in its own square cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. FULL BODY: each cell shows the whole character from head to feet in a three-quarter view turned slightly to the viewer's right, all characters drawn at the same scale (head about half of the total height). The prop is held close to the body, not floating. The heads must match the attached heads sheets (Z1, Z2) exactly: same face, colours and accessories. Cute soft 3D clay toy style exactly like the attached style reference (the windmill, cottage and trees sheet): rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left. All twelve zodiac friends belong to ONE family: same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, same line-free clay finish. Keep each character recognisable from the attached current character sheet (species, main colours and signature item), but redraw them in the new clay style. Bold, simple silhouette with strong colour contrast so each one is still readable at 32 pixels wide.\nRow 1: grey mouse walking happily, small brown backpack, holding a yellow cheese wedge, long pink tail | white cow with brown patches standing on four legs, red collar with a golden bell | orange striped tiger standing on two legs, waving one paw, red scarf, curled striped tail\nRow 2: white rabbit standing, lilac short cape with a yellow star badge, holding a carrot microphone | pearly white baby dragon standing, small lilac wings, chubby belly, winking and waving | green snake coiled in a neat spiral and raising its head, pink flower on its head, winking"
+  },
+  {
+   "id": "Z4",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "십이지",
+   "items": [
+    {
+     "id": "zBody6",
+     "ko": "다그닥 몸"
+    },
+    {
+     "id": "zBody7",
+     "ko": "몽실이 몸"
+    },
+    {
+     "id": "zBody8",
+     "ko": "끼끼 몸"
+    },
+    {
+     "id": "zBody9",
+     "ko": "꼬꼬 몸"
+    },
+    {
+     "id": "zBody10",
+     "ko": "멍멍이 몸"
+    },
+    {
+     "id": "zBody11",
+     "ko": "꿀꿀이 몸"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate characters, each an isolated cutout floating on a perfectly flat, uniform solid pure green background (#00B140) with no gradient and no texture. 2 rows x 3 columns, every character centered in its own square cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. FULL BODY: each cell shows the whole character from head to feet in a three-quarter view turned slightly to the viewer's right, all characters drawn at the same scale (head about half of the total height). The prop is held close to the body, not floating. The heads must match the attached heads sheets (Z1, Z2) exactly: same face, colours and accessories. Cute soft 3D clay toy style exactly like the attached style reference (the windmill, cottage and trees sheet): rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left. All twelve zodiac friends belong to ONE family: same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, same line-free clay finish. Keep each character recognisable from the attached current character sheet (species, main colours and signature item), but redraw them in the new clay style. Bold, simple silhouette with strong colour contrast so each one is still readable at 32 pixels wide.\nRow 1: chestnut horse trotting on four legs, dark brown mane and tail, red saddle blanket with yellow stars | fluffy white sheep standing on two legs, holding a small flower bouquet wrapped in a cream paper cone (pink, yellow and white flowers, no green leaves) | brown monkey standing, red bandana with white dots, holding the strings of three balloons (red, yellow, orange)\nRow 2: white rooster standing proudly, red comb, golden-brown wings, tail feathers in red, orange and gold (no green) | tan puppy running, long floppy ears, blue collar with a golden bone tag, wagging tail | pink pig chef standing, white chef hat and apron, red neckerchief, holding a piping bag"
   }
  ],
  "bgs": [

@@ -103,3 +103,15 @@ ChatGPT에 물건 모음 32장 + 배경 24장을 요청. 영어 요청문 전체
 | D4 | #00B140 | dockNight decoNightA decoNightB |
 | D5 | #FF00FF | dockSky decoSkyA decoSkyB |
 | D6 | #00B140 | dockHeaven decoHeavenA decoHeavenB |
+
+## 십이지 리뉴얼 (2026-11-05)
+
+같은 ChatGPT 대화에서 Z1→Z4 순서로, 뒤 장엔 앞 결과를 붙여 얼굴·몸을 맞춘다. 받은 그림은 `art-src/new/Z1.png`~`Z4.png`.
+얼굴 `zFace0~11` → `ZIMG.face`, 몸 `zBody0~11` → `ZIMG.body` (순서는 `ZODIAC.NAMES`).
+
+| 장 | 바탕 | 칸 순서 |
+|---|---|---|
+| Z1 | 파랑 #0047FF | 얼굴: 찍찍이 음메 어흥이 깡총이 미르 스르르 |
+| Z2 | 초록 #00B140 | 얼굴: 다그닥 몽실이 끼끼 꼬꼬 멍멍이 꿀꿀이 |
+| Z3 | 파랑 #0047FF | 몸: 찍찍이 음메 어흥이 깡총이 미르 스르르 |
+| Z4 | 초록 #00B140 | 몸: 다그닥 몽실이 끼끼 꼬꼬 멍멍이 꿀꿀이 |
