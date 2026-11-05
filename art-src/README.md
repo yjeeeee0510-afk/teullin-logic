@@ -46,5 +46,6 @@
 | misc | skyitems.png | 흰색 | puffA/B/C·sun·moonFull·moonCrescent·starBig·starWish·planetRing·planetSmall·cloudNight (하늘 장식) | matting/matte3.py |
 | zodiac | face01~12_*.png | 투명 | 십이지 친구 얼굴(프로필·지도) — index.html ZIMG | – |
 | zodiac | faces.png / bodies.png | – | 십이지 얼굴·몸 모음 (원본 확인용) | – |
+| new | Z1~Z4.png | 파랑·초록 | 십이지 리뉴얼(6.2) 얼굴 Z1·Z2, 몸 Z3·Z4 — `tools/matting/apply_zodiac.py`로 ZIMG | – |
 
 남은 원본: 지역별 인게임 배경(img/bg/zone0~3 — 하늘섬 것은 sky/game_bg.png).
