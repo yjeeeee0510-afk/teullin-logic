@@ -4525,7 +4525,7 @@ function openAdmin(){
       <div class="adm-row">${ZONES.slice(1).map((Z,i)=>g('fog'+(i+1),`${Z.name} 오픈`)).join('')}</div>
       <b>지도 위치로 이동</b>
       <div class="adm-row">${ZONES.map((Z,z)=>g('go'+zLo(z),`${Z.lvl} (${zLo(z)}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
-      ${RANK.enabled&&ADMIN_IDS.includes(RANK.account())?`<b>계정</b><div class="adm-row">${g('pwreset','비밀번호 재설정')}</div>`:''}
+      <b>계정</b><div class="adm-row">${g('pwreset','비밀번호 재설정')}</div>
     </div>
     <div class="row"><button class="btn primary" type="button" id="admClose">닫기</button></div>`);
   sh.querySelector('.card').classList.add('adm-card');
