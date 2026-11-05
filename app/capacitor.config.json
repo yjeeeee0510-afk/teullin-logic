@@ -1,0 +1,6 @@
+{
+  "appId": "com.jungdok.teullinlogic",
+  "appName": "틀린로직맞추기",
+  "webDir": "www",
+  "android": { "backgroundColor": "#eef2f7" }
+}
