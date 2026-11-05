@@ -19,7 +19,12 @@ fg=load('icon_fg.png'); bgimg=load('icon_bg.png'); splash=load('splash.png')
 edge=icon.resize((64,64)).getpixel((2,32))[:3]
 D={'mdpi':1,'hdpi':1.5,'xhdpi':2,'xxhdpi':3,'xxxhdpi':4}
 def save(im,folder,name):
-    d=os.path.join(RES,folder);os.makedirs(d,exist_ok=True);im.save(os.path.join(d,name))
+    d=os.path.join(RES,folder);os.makedirs(d,exist_ok=True)
+    if name.endswith('.webp'):
+        old=os.path.join(d,name[:-5]+'.png')
+        if os.path.exists(old): os.remove(old)
+        im.save(os.path.join(d,name),quality=82,method=6)
+    else: im.save(os.path.join(d,name))
 for k,s in D.items():
     n=round(48*s); sq=icon.resize((n,n),Image.LANCZOS); save(sq,f'mipmap-{k}','ic_launcher.png')
     m=Image.new('L',(n*4,n*4),0);ImageDraw.Draw(m).ellipse((0,0,n*4-1,n*4-1),fill=255);m=m.resize((n,n),Image.LANCZOS)
@@ -42,6 +47,6 @@ def splash_img(w,h):
         x=(t.width-w)//2;y=(t.height-h)//2;return t.crop((x,y,x+w,y+h))
     im=Image.new('RGBA',(w,h),(238,242,247,255)); n=round(min(w,h)*.42); im.alpha_composite(icon.resize((n,n),Image.LANCZOS),((w-n)//2,(h-n)//2)); return im
 for k,(w,h) in SPL.items():
-    save(splash_img(w,h).convert('RGB'),f'drawable-port-{k}','splash.png'); save(splash_img(h,w).convert('RGB'),f'drawable-land-{k}','splash.png')
-save(splash_img(480,800).convert('RGB'),'drawable','splash.png')
+    save(splash_img(w,h).convert('RGB'),f'drawable-port-{k}','splash.webp'); save(splash_img(h,w).convert('RGB'),f'drawable-land-{k}','splash.webp')
+save(splash_img(480,800).convert('RGB'),'drawable','splash.webp')
 print('아이콘·시작 화면 완료', '(원본:', 'art-src/app' if os.path.exists(A('icon.png')) else 'icons/icon-512.png', ')')
