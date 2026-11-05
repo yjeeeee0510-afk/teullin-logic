@@ -414,8 +414,6 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 }
 
 /* ===== 팡팡 이펙트 ===== */
-/* 효과음 시안 시험 중 표시 */
-.sfx-set{position:fixed;left:max(8px,env(safe-area-inset-left,0px));bottom:max(4px,env(safe-area-inset-bottom,0px));z-index:60;font-size:10.5px;font-weight:700;color:#fff;background:rgba(95,61,196,.85);border-radius:999px;padding:2px 8px;pointer-events:none}
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 /* 메뉴(시트)가 열리면 '준비~·시작!'·콤보 글씨·반짝이를 숨김 → 메뉴 버튼을 가리지 않게 */
 body:has(#sheet) .pop,body:has(#sheet) .ready,body:has(#sheet) #fx{visibility:hidden}
@@ -1213,7 +1211,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.4</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 5.5</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1365,32 +1363,42 @@ window.SFX=(function(){
     open:t=>{seq(t,['G5','C6','E6','G6'],.1,(x,f)=>bell(x,f,.45,.22));['C6','E6','G6','C7','E7'].forEach(n=>bell(t+.42,N(n),1.2,.1));noise(t+.4,.8,{v:.05,f:8000})}, // A
     badge:t=>{bell(t,N('C6'),.3);bell(t+.1,N('G6'),.3);bell(t+.2,N('C7'),.8,.25)}    // A
   };
-  // 효과음 시안 시험: 주소에 ?sfx=claude 또는 ?sfx=gpt (탭 안에서 유지, ?sfx=off로 원래 합성음). 플레이어 기본은 합성음 그대로
-  const SET=(()=>{try{const q=new URLSearchParams(location.search).get('sfx');if(q==='claude'||q==='gpt')sessionStorage.setItem('sekan-sfxset',q);if(q==='off')sessionStorage.removeItem('sekan-sfxset');const v=sessionStorage.getItem('sekan-sfxset');return v==='claude'||v==='gpt'?v:''}catch(e){return ''}})();
-  const BUF={};let loading=false,sailSrc=null;
-  if(SET)addEventListener('DOMContentLoaded',()=>{const d=document.createElement('div');d.className='sfx-set';d.textContent=`효과음 시안: ${SET==='gpt'?'지팀장':'클로드'}`;document.body.appendChild(d)});
-  const FILES=['tap','pebble','hit','combo1','combo2','combo3','combo4','combo5','miss','hint','paint','line','pick','piece','clear','star1','star2','star3','fail','coin','buy','empty','sail','fly','open','badge'];
+  // 효과음 파일(sfx/, 대표가 고른 클로드·지팀장 시안 40개). 파일을 못 받으면 아래 합성음으로. ?sfx=off 면 합성음만(?sfx=on 되돌림)
+  const USE_FILES=(()=>{try{const q=new URLSearchParams(location.search).get('sfx');if(q==='off')sessionStorage.setItem('sekan-sfxoff','1');if(q==='on')sessionStorage.removeItem('sekan-sfxoff');return sessionStorage.getItem('sekan-sfxoff')!=='1'}catch(e){return true}})();
+  const SFX_V='1';
+  const FILES=['tap','pebble','hit','combo1','combo2','combo3','combo4','combo5','miss','hint','paint','line','pick','piece','clear','star1','star2','star3','fail','coin','buy','empty','sail','fly','open','badge',
+    'ready','go','heart','unlock','chal','chalClear','zoom','xmark','fit','gallop','heaven','candySit','candyX','daily'];
+  const LONG=new Set(['sail','heaven']);
+  const BUF={},LOOPS={};let loading=false;
   function loadSet(){
-    if(!SET||loading||!AC)return;loading=true;
-    FILES.forEach(n=>fetch(`sfx-test/${SET}/${n}.mp3?v=1`).then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>new Promise((ok,no)=>AC.decodeAudioData(b,ok,no))).then(buf=>{BUF[n]=buf}).catch(()=>{}));
+    if(!USE_FILES||loading||!AC)return;loading=true;
+    FILES.forEach(n=>fetch(`sfx/${n}.mp3?v=${SFX_V}`).then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>new Promise((ok,no)=>AC.decodeAudioData(b,ok,no))).then(buf=>{BUF[n]=buf}).catch(()=>{}));
   }
   function playFile(n,t){
     const b=BUF[n];if(!b)return false;
-    const src=AC.createBufferSource(),g=AC.createGain();src.buffer=b;g.gain.value=1/.6;src.connect(g);g.connect(out);src.start(t);   // 파일은 이미 음량을 맞춰 두었으니 합성음 전체 음량(0.6)을 되돌림
-    if(n==='sail'){sailBus=g;sailSrc=src}
+    const src=AC.createBufferSource(),g=AC.createGain();src.buffer=b;g.gain.value=1/.6;src.connect(g);g.connect(out);src.start(t);   // 파일은 음량을 맞춰 두었으니 합성음 전체 음량(0.6)을 되돌림
+    if(LONG.has(n)){LOOPS[n]=g;if(n==='sail')sailBus=g}
     return true;
   }
   let lastAt={};
   function play(name,arg){
-    if(!on||!S[name])return;
+    if(!on||(!S[name]&&!FILES.includes(name)))return;
     try{const c=ctx();if(!c)return;
       // 같은 소리가 한순간에 겹겹이 나지 않게 (칸을 끌어 칠할 때 등)
-      const now=c.currentTime;if(lastAt[name]&&now-lastAt[name]<.03)return;lastAt[name]=now;
-      if(SET){loadSet();const f=name==='combo'?`combo${Math.min(5,Math.max(1,(arg||2)-1))}`:name==='star'?`star${Math.min(3,(arg||0)+1)}`:name;if(playFile(f,now+.005))return}
-      S[name](now+.01,arg)}catch(e){}
+      const now=c.currentTime,gap=name==='paint'||name==='xmark'||name==='candyX'?.06:.03;if(lastAt[name]&&now-lastAt[name]<gap)return;lastAt[name]=now;
+      loadSet();const f=name==='combo'?`combo${Math.min(5,Math.max(1,(arg||2)-1))}`:name==='star'?`star${Math.min(3,(arg||0)+1)}`:name;if(playFile(f,now+.005))return;
+      // 파일이 아직 없을 때: 새 소리는 비슷한 합성음으로
+      const ALT={ready:'tap',go:'line',heart:'coin',unlock:'open',chal:'hint',chalClear:'clear',zoom:null,xmark:'paint',fit:'piece',gallop:null,heaven:'fly',candySit:'hit',candyX:'paint',daily:'badge'};
+      const k=S[name]?name:ALT[name];if(k&&S[k])S[k](now+.01,arg)}catch(e){}
   }
   // 건너뛰기 하면 파도 소리를 부드럽게 줄임
-  function stop(name){if(name==='sail'&&sailBus&&AC){const g=sailBus.gain,t=AC.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(0,t+.35);sailBus=null}}
+  function stop(name){
+    const fade=bus=>{if(!bus||!AC)return;const g=bus.gain,t=AC.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(0,t+.35)};
+    if(name==='sail'){fade(sailBus);sailBus=null;fade(LOOPS.sail);LOOPS.sail=null}
+    if(name==='heaven'){fade(LOOPS.heaven);LOOPS.heaven=null}
+  }
+  // 앱을 내리거나 화면을 숨기면 긴 소리(배·천마 이동)를 멈춤
+  addEventListener('visibilitychange',()=>{if(document.hidden){stop('sail');stop('heaven')}});
   return {play,stop,get on(){return on},set(v){on=!!v;try{localStorage.setItem('sekan-sfx',on?'1':'0')}catch(e){}if(on)play('tap')}};
 })();
 </script>
@@ -1711,8 +1719,8 @@ const FX=(function(){
   function center(el){const r=el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2}}
   function ready(cb){
     const wrap=document.createElement('div');wrap.className='ready';wrap.innerHTML='<span>준비~</span>';
-    document.body.appendChild(wrap);
-    setTimeout(()=>{wrap.innerHTML='<span class="go">시작!</span>';const c={x:W/2,y:H/2};burst(c.x,c.y,{count:26,speed:10,ringR:140})},RM?150:650);
+    document.body.appendChild(wrap);if(window.SFX)SFX.play('ready');
+    setTimeout(()=>{wrap.innerHTML='<span class="go">시작!</span>';if(window.SFX)SFX.play('go');const c={x:W/2,y:H/2};burst(c.x,c.y,{count:26,speed:10,ringR:140})},RM?150:650);
     setTimeout(()=>{wrap.remove();cb()},RM?300:1150);
   }
   function stamp(label,cls){
@@ -2351,7 +2359,7 @@ function applyAt(el){
     if(running&&updateClues(true)){logicWinFx();$('#nono').classList.add('won');setTimeout(clearStage,LOGIC_WIN_MS)}
     return;
   }
-  logic.g[y][x]=paint;paintCell(x,y);NATIVE.buzz('tick');SFX.play('paint');
+  logic.g[y][x]=paint;paintCell(x,y);NATIVE.buzz('tick');SFX.play(paint===2?'xmark':'paint');
 }
 function bindLogic(){
   const el=$('#nono'),wrap=el.parentElement,pts=new Map();
@@ -2439,7 +2447,8 @@ function jigClick(e){
       if(jig.order[k]===k){good++;el.classList.add('gotit');const p=FX.center(el);FX.burst(p.x,p.y,{count:16,speed:6,ringR:50})}
       else el.classList.add('land');
     }
-    if(good){SFX.play('piece');const el=$('#jig').querySelector(`.tile[data-i="${swapped[1]}"]`),p=FX.center(el);FX.text(good>1?'더블 딱!':'딱!',p.x,p.y-10,{size:good>1?36:30,color:good>1?'#ff6b9d':'#ffd43b'});FX.bump($('#jigCount'))}
+    SFX.play(good?'fit':'piece');
+    if(good){const el=$('#jig').querySelector(`.tile[data-i="${swapped[1]}"]`),p=FX.center(el);FX.text(good>1?'더블 딱!':'딱!',p.x,p.y-10,{size:good>1?36:30,color:good>1?'#ff6b9d':'#ffd43b'});FX.bump($('#jigCount'))}
   }
   if(jig.order.every((v,i)=>v===i)){$('#jig').classList.add('won');setTimeout(clearStage,550)}
 }
@@ -2473,10 +2482,10 @@ function buildSpot(){
     initSpot();
     if(Array.isArray(S.found))S.found.forEach(i=>{if(spot.diffs[i])spot.diffs[i].found=true});
     $('#pDesc').textContent=`${spot.sc.theme.name} · ${STAGES[0].desc}`;
-    tools.innerHTML=`<span class="chip" id="spotCount"></span><span class="chip warn" id="spotMiss"></span><button class="btn" id="spZoomBtn" type="button" aria-label="두 그림 함께 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="hintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
+    tools.innerHTML=`<span class="chip" id="spotCount"></span><span class="chip warn" id="spotMiss"></span><button class="btn" id="spZoomBtn" type="button" data-sfx="none" aria-label="두 그림 함께 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="hintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
     board.innerHTML=`<div class="pics"><figure class="pic"><figcaption>원본</figcaption><canvas class="frame" id="picL" width="800" height="600" aria-label="원본 그림"></canvas></figure><figure class="pic${spot.mirror?' mirror':''}"><figcaption>${spot.mirror?'거울 그림 ⇄':'다른 그림'}</figcaption><canvas class="frame" id="picR" width="800" height="600" aria-label="틀린 곳이 있는 그림"></canvas></figure></div>`;
     spot.vz={z:1,cx:SW/2,cy:SH/2};bindSpotGestures();
-    $('#spZoomBtn').addEventListener('click',()=>{const z=spot.vz.z;zoomSpot(z>=2.9?1:z<1.9?2:3)});
+    $('#spZoomBtn').addEventListener('click',()=>{SFX.play('zoom');const z=spot.vz.z;zoomSpot(z>=2.9?1:z<1.9?2:3)});
     $('#hintBtn').addEventListener('click',spotHint);
     renderSpot();gameDock();
     if(spot.mirror&&!P.mirrorSeen){P.mirrorSeen=1;saveP();
@@ -2486,6 +2495,7 @@ function buildSpot(){
         <div class="row"><button class="btn primary" type="button" id="mirOk">알겠어요</button></div>`);
       sh.querySelector('#mirOk').addEventListener('click',()=>{closeSheet();resumeGame()});
     }
+    if(spot.mirror)setTimeout(()=>SFX.play('chal'),S&&S.el?300:1250);
     if(spot.mirror)setTimeout(()=>{const q=$('#picR').getBoundingClientRect();FX.text('거울 라운드!<small>비교 그림이 좌우로 뒤집혀 있어요</small>',q.left+q.width/2,q.top+q.height/2,{size:30,color:'#b197fc'})},900);
 }
 function buildJig(){
@@ -2523,14 +2533,14 @@ function startStage(){
   if(S.stage===1){
     spot=null;initLogic();mode=1;
     if(S.lg){const g=S.lg.split(','),k=(S.lk||'').split(',');if(g.length===logic.n&&g[0].length===logic.n){logic.g=g.map(r=>[...r].map(Number));if(k.length===logic.n)logic.lock=k.map(r=>[...r].map(v=>v==='1'))}}
-    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn" id="lgZoomBtn" type="button" aria-label="판 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
+    tools.innerHTML=`<div class="seg" role="group" aria-label="칠하기 도구"><button type="button" id="mFill" aria-pressed="true">■ 칠하기</button><button type="button" id="mX" aria-pressed="false">× 표시</button></div><button class="btn" id="clrBtn" type="button">지우기</button><button class="btn" id="lgZoomBtn" type="button" data-sfx="none" aria-label="판 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="lgHintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button><span class="chip warn" id="lgMiss">실수 ${misses} / ${MISS_MAX}</span>`;
     board.innerHTML=`<div class="nono-wrap"><div class="nono" id="nono"></div></div>`;
     const setMode=m=>{mode=m;$('#mFill').setAttribute('aria-pressed',m===1);$('#mX').setAttribute('aria-pressed',m===2)};
     $('#mFill').addEventListener('click',()=>setMode(1));
     $('#mX').addEventListener('click',()=>setMode(2));
     $('#clrBtn').addEventListener('click',()=>{logic.g=logic.g.map((r,y)=>r.map((v,x)=>logic.lock[y][x]?v:0));renderLogic()});
     $('#lgHintBtn').addEventListener('click',logicHint);
-    lgZoom=1;$('#lgZoomBtn').addEventListener('click',()=>zoomLogicTo(lgZoom>=2.4?1:lgZoom<1.5?1.6:2.4));
+    lgZoom=1;$('#lgZoomBtn').addEventListener('click',()=>(SFX.play('zoom'),zoomLogicTo)(lgZoom>=2.4?1:lgZoom<1.5?1.6:2.4));
     gameDock();bindLogic();renderLogic();
     goTime(token);
   }
@@ -2589,7 +2599,7 @@ function failStage(){
   },FX.RM?150:650);
 }
 function clearStage(){
-  let coinSfx=0;
+  let coinSfx=0,chalWon=false;
   if(!running)return;
   elapsedFrozen=performance.now()-t0;running=false;NATIVE.buzz('win');
   const secs=Math.round(elapsedFrozen/1000);
@@ -2611,7 +2621,7 @@ function clearStage(){
     // 코인 기능 바뀌기 전에 깬 라운드는 그때 별만큼 이미 받은 것으로 친다
     const achBefore=ACH.snapshot();ACH.onClear(round,prevStars,!!prev,rs);
     const paidStars=prev?Math.max(0,Math.min(3,typeof prev.cs==='number'?prev.cs:prevStars)):0;
-    const chalBonus=!prev&&isMirror(round)&&!isAdmin()?CHAL_BONUS:0;
+    const chalBonus=!prev&&isMirror(round)&&!isAdmin()?CHAL_BONUS:0;chalWon=!prev&&isMirror(round);
     const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars])+chalBonus;coinSfx=coinGot;
     P.rounds[round]={cs:Math.max(rs,paidStars),best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
     const opened=round<MAXR&&P.unlocked<round+1;
@@ -2637,7 +2647,7 @@ function clearStage(){
   $('#mStats').innerHTML=`<dt>걸린 시간</dt><dd>${fmt(elapsedFrozen)}</dd><dt>기본 점수</dt><dd>+${base}</dd><dt>시간 보너스</dt><dd>+${bonus}</dd>${comboPts?`<dt>콤보 보너스</dt><dd>+${comboPts}</dd>`:''}${pen?`<dt>실수·힌트</dt><dd>−${pen}</dd>`:''}<dt>얻은 점수</dt><dd class="big">+${pts}</dd>${extra}`;
   const STAR=UI('icoStar','st-on')+UI('icoStarEmpty','st-off');
   $('#mStars').innerHTML=[0,1,2].map(k=>`<span class="s${k+1} ${k<nStars?'on':'off'}" style="--d:${0.25+k*0.22}s">${STAR}</span>`).join('');
-  FX.stamp(wasLast?'라운드 클리어!':'클리어!',wasLast?'round':'');SFX.play('clear');
+  FX.stamp(wasLast?'라운드 클리어!':'클리어!',wasLast?'round':'');SFX.play(chalWon?'chalClear':'clear');
   setTimeout(()=>{
     $('#veil').hidden=false;$('#mNext').focus();
     [...$('#mStars').querySelectorAll('.on')].forEach((st,k)=>setTimeout(()=>{const p=FX.center(st);FX.burst(p.x,p.y,{count:14,speed:6,ringR:45,colors:['#ffd43b','#fff3bf','#ff922b']});NATIVE.buzz('tick');SFX.play('star',k)},(250+k*220)+300));
@@ -2947,7 +2957,7 @@ function showMenu(){
     arriveZ=-1;
     setTimeout(()=>{const r=map.getBoundingClientRect();FX.confetti(70);NATIVE.buzz('win');SFX.play('open');
       FX.text(`${ZONES[VIEWZ].name} 오픈!`,r.left+r.width/2,r.top+r.height*0.35,{size:34,color:'#ffd43b'});
-      const cp=CANDY.partFor(VIEWZ);if(cp)setTimeout(()=>FX.text(`과자 나라 '${cp}'도 열렸어요!`,r.left+r.width/2,r.top+r.height*0.35+46,{size:20,color:'#ffb3c9'}),700)},250);
+      const cp=CANDY.partFor(VIEWZ);if(cp)setTimeout(()=>(SFX.play('unlock'),FX.text)(`과자 나라 '${cp}'도 열렸어요!`,r.left+r.width/2,r.top+r.height*0.35+46,{size:20,color:'#ffb3c9'}),700)},250);
   }
   renderStats();
 }
@@ -3063,7 +3073,7 @@ function playFlight(from,to,done){
 /* 하늘섬 ↔ 천국: 날개 달린 천마가 마차를 끌고 구름 사이를 왼쪽에서 오른쪽으로 */
 function playHeaven(from,to,done){
   if(FX.RM){done();return}
-  [0,1100,2200,3300].forEach(d=>setTimeout(()=>SFX.play('fly'),d+250));
+  SFX.play('heaven');
   const isl=z=>embedded(`img/voyage/${z===5?'islHeaven':'islSky'}.webp`),r=rng(5151),CL=['flyCloudA','flyCloudB','goldCloudA','goldCloudB'];
   let back='',front='';
   for(let i=0;i<14;i++){
@@ -3082,10 +3092,10 @@ function playHeaven(from,to,done){
     <div class="vy-title"><small>${ZONES[from].name} → ${ZONES[to].name}</small><b>${roName(ZONES[to].name)} 출발!</b></div>
     <button type="button" class="vy-skip">건너뛰기 ›</button>`;
   document.body.appendChild(el);
-  let ended=false;const end=()=>{if(ended)return;ended=true;el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
+  let ended=false;const end=()=>{if(ended)return;ended=true;SFX.stop('heaven');el.classList.add('out');setTimeout(()=>{el.remove();done()},450)};
   el.querySelector('.vy-skip').addEventListener('click',e=>{e.stopPropagation();NATIVE.buzz('tick');end()});
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
-  setTimeout(()=>{const t=el.querySelector('.vy-title b');if(t){t.textContent=`${ZONES[to].name} 도착!`;el.classList.add('arrive');NATIVE.buzz('win')}},4100);
+  setTimeout(()=>{const t=el.querySelector('.vy-title b');if(t){t.textContent=`${ZONES[to].name} 도착!`;el.classList.add('arrive');NATIVE.buzz('win');SFX.play('gallop')}},4100);
   setTimeout(end,5400);
 }
 function playVoyage(from,to,done){
@@ -3433,7 +3443,7 @@ const CANDY=(function(){
     b.addEventListener('pointermove',e=>{
       if(drag==null||!G)return;const i=at(e);if(i<0||i===startI&&!moved)return;
       if(!moved){moved=true;if(G.cell[startI]!==3)G.cell[startI]=drag}
-      if(G.cell[i]!==3&&(drag===0||!autoX().has(i))){if(G.cell[i]!==drag){G.cell[i]=drag;SFX.play('paint')}}
+      if(G.cell[i]!==3&&(drag===0||!autoX().has(i))){if(G.cell[i]!==drag){G.cell[i]=drag;SFX.play('candyX')}}
       draw();
     });
     const up=e=>{
@@ -3447,13 +3457,13 @@ const CANDY=(function(){
     if(!G||!running)return;
     const v=G.cell[i];
     if(v===3)return;
-    if(v===0){G.cell[i]=1;SFX.play('tap');NATIVE.buzz('tick');draw();return}
+    if(v===0){G.cell[i]=1;SFX.play('candyX');NATIVE.buzz('tick');draw();return}
     place(i);
   }
   function place(i,byHint){
     const {N,sol}=G,[y,x]=rc(N,i),el=$('#cdBoard').children[i];
     if(sol[y]===x){
-      G.cell[i]=3;draw();SFX.play(byHint?'hint':'hit');NATIVE.buzz('ok');
+      G.cell[i]=3;draw();SFX.play(byHint?'hint':'candySit');NATIVE.buzz('ok');
       const p=FX.center(el);FX.burst(p.x,p.y,{count:12,speed:5,ringR:30,colors:['#ff8fb1','#ffd43b','#fff']});
       if(byHint)el.classList.add('hinted');
       if(G.cell.filter(v=>v===3).length===N)win();
@@ -3512,7 +3522,7 @@ const CANDY=(function(){
     if(coin){W().coins+=coin;P.walletAt=Date.now()}
     const achNew=ACH.newSince(achBefore);if(achNew.length)rows+=`<dt>업적 달성</dt><dd class="ach-dd">${achNew.map(esc).join('<br>')}</dd>`;
     saveP();RANK.submitQuiet();
-    FX.stamp(title,'round');SFX.play('clear');NATIVE.buzz('win');
+    FX.stamp(title,'round');SFX.play(g.daily?'daily':'clear');NATIVE.buzz('win');
     setTimeout(()=>{
       const sh=openSheet(`<div class="cd-done"><div class="eyebrow">${esc(g.title)}</div><h3>${title}</h3>
         ${g.daily?`<img class="cd-stamp" src="${img(STAMPS[dayIdx(new Date())%STAMPS.length])}" alt="">`:`<div class="stars cd-stars">${[0,1,2].map(k=>`<span class="s${k+1} ${k<g.st?'on':'off'}" style="--d:${.2+k*.2}s">${STAR_P}</span>`).join('')}</div>`}
@@ -3603,7 +3613,7 @@ const CANDY=(function(){
       regen();const c=C(),w=W();
       if(c.hearts>=cap()){m.textContent=`쿠키 하트는 최대 ${CK_MAX}개까지 가질 수 있어요.`;NATIVE.buzz('bad');return}
       if(w.coins<CK_PRICE){m.textContent=`코인이 ${CK_PRICE-w.coins}개 부족해요. 라운드를 깨서 모아 보세요.`;NATIVE.buzz('bad');return}
-      w.coins-=CK_PRICE;c.hearts++;walletChanged();m.textContent='';NATIVE.buzz('win');SFX.play('buy');
+      w.coins-=CK_PRICE;c.hearts++;walletChanged();m.textContent='';NATIVE.buzz('win');SFX.play('heart');
       const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#e8a65a','#ffe0b3','#7a4a2c']});FX.text('쿠키 +1',p.x,p.y-40,{size:26,color:'#e8a65a'});ui();
     });
     sh.querySelector('#csHint').addEventListener('click',e=>{
@@ -4118,7 +4128,7 @@ function openShop(msg){
     if(w.hearts>=heartCap()){m.textContent=`하트는 최대 ${HEART_MAX}개까지 가질 수 있어요.`;NATIVE.buzz('bad');return}
     if(w.coins<HEART_PRICE){m.textContent=`코인이 ${HEART_PRICE-w.coins}개 부족해요. 라운드를 깨서 모아 보세요.`;NATIVE.buzz('bad');return}
     w.coins-=HEART_PRICE;w.hearts++;walletChanged();
-    m.textContent='';NATIVE.buzz('win');SFX.play('buy');
+    m.textContent='';NATIVE.buzz('win');SFX.play('heart');
     const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#ff6b81','#ffc9d4','#ffd43b']});
     FX.text('하트 +1',p.x,p.y-40,{size:26,color:'#ff6b81'});
     const hb=sh.querySelector('.shop-wallet div:nth-child(2) b');if(hb)FX.bump(hb);
@@ -4375,6 +4385,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['5.5','2026-11-05','새 효과음 40가지',['대표가 고른 효과음 40개로 바꿈(클로드·지팀장 시안)','새 소리: 준비~·시작!, 확대, × 표시, 퍼즐 자리 바꿈·제자리, 도전 라운드 시작·첫 클리어, 천국 천마 마차, 하트 구매, 과자 나라 친구·×·오늘의 과자 도장, 구간 열림','앱을 내리면 이동 소리가 멈춤, 연속 칠하기 소리 간격 조절']],
   ['5.4','2026-11-05','틀린그림 부분 변화·도전 라운드',['새 차이: 물건 안의 한 부분(지붕·창문·장식 등)만 색이 바뀜','단계별 차이 구성: 쉬움 물건 변화 위주, 보통·어려움은 부분 변화와 미세한 차이를 섞음','거울 라운드 = 도전 라운드: 지역마다 몇 개, 지도에 ⇄ 표시, 처음 깨면 보너스 50코인','도전 라운드는 틀린 곳 한두 개 적게, 처음 만날 때 설명 화면']],
   ['5.3','2026-11-04','천마 날갯짓',['하늘섬↔천국 이동에서 천마 날개가 다시 퍼덕이게']],
   ['5.2','2026-11-04','천마 마차 다시 그림',['천마 끈 끝이 마차 끌채 끝에 이어진 한 장 그림으로','날개를 천마 등(어깨)에서 뒤쪽으로 펼쳐 날갯짓']],
