@@ -133,6 +133,8 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .cell.x::after{content:"×"}
 .cell:hover{box-shadow:inset 0 0 0 2px var(--accent)}
 .nono.won .cell.x::after{content:""}
+/* 로직판은 기기 다크 모드와 상관없이 늘 흰 배경 + 검은 도트(종이처럼). 색 변수만 밝게 고정하면 아래 모든 규칙이 밝은 값으로 계산됨 */
+.nono-wrap{--card:#ffffff;--ink:#1b2742;--line:#cfd8e6;--soft:#e4eaf3;--muted:#5d6a84;--paper:#eef2f7;--hud-bg:#ffffff}
 
 /* stage 3 */
 .jig-area{display:flex;justify-content:center}
@@ -1215,7 +1217,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.0</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.1</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4449,6 +4451,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['6.1','2026-11-05','로직판 색 고정',['휴대폰 다크 모드에서도 네모네모 로직판은 늘 흰 배경에 검은 칸으로 보여요']],
   ['6.0','2026-11-05','로직 색·돋보기',['네모네모 로직은 풀 때 검은색, 다 풀면 그림 색이 나타나요','로직 확대 돋보기 버튼을 없앴어요(두 손가락으로 확대·이동)']],
   ['5.9','2026-11-05','운영 도구·안정화',['운영진 도구에 비밀번호 재설정(운영진만)','자잘한 개선']],
   ['5.8','2026-11-05','앱 자동 업데이트',['앱을 켤 때 새 버전이 있으면 ‘새 버전이 나왔어요’ 안내','받기를 누르면 앱 안에서 내려받아 바로 업데이트(기록 그대로)','설정에 ‘업데이트 확인’ 버튼']],
