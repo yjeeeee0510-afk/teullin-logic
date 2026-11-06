@@ -38,6 +38,6 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 새 버전 APK 설치(다운로드 페이지판). 플레이스토어 판에서는 빼야 함 -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- REQUEST_INSTALL_PACKAGES(새 버전 APK 자체 설치)는 sideload 플레이버에만 둔다.
+         play 플레이버(구글 플레이)에서는 넣지 않는다 → src/sideload/AndroidManifest.xml -->
 </manifest>

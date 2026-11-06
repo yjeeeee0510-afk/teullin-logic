@@ -13,6 +13,23 @@ def pc = found ? (patch.group(1).toInteger() * 10 + patch.group(2).toInteger()) 
 android {
     namespace = "com.jungdok.teullinlogic"
     compileSdk = rootProject.ext.compileSdkVersion
+    buildFeatures {
+        buildConfig true
+    }
+    // 배포 경로 두 가지:
+    //  sideload — 다운로드 페이지에서 APK 받아 설치(자체 업데이트 O, REQUEST_INSTALL_PACKAGES)
+    //  play     — 구글 플레이(자체 업데이트 X, 권한·안내 없음) → AAB 업로드
+    flavorDimensions "dist"
+    productFlavors {
+        sideload {
+            dimension "dist"
+            buildConfigField "boolean", "PLAY_STORE", "false"
+        }
+        play {
+            dimension "dist"
+            buildConfigField "boolean", "PLAY_STORE", "true"
+        }
+    }
     defaultConfig {
         applicationId "com.jungdok.teullinlogic"
         minSdkVersion rootProject.ext.minSdkVersion

@@ -4262,8 +4262,8 @@ const UPD=(function(){
       <p class="lead">${info?`지금 앱이 가장 새 버전(패치 ${esc(info.version)})이에요.`:'인터넷 연결을 확인하고 다시 해 주세요.'}</p>
       <div class="row"><button class="btn primary" type="button" id="updOk">확인</button></div>`).querySelector('#updOk').addEventListener('click',closeSheet);
   }
-  if(NATIVE.native)setTimeout(auto,1500);
-  return {manual,on:()=>NATIVE.native&&NATIVE.platform==='android'};
+  if(NATIVE.native&&!window.__PLAY_STORE)setTimeout(auto,1500);  // 구글 플레이 판은 자체 업데이트 안내 안 함
+  return {manual,on:()=>NATIVE.native&&NATIVE.platform==='android'&&!window.__PLAY_STORE};
 })();
 function backToIntro(){paused=false;closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')}
 const ID_RE=/^[a-z0-9_]{4,20}$/;

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>틀린로직맞추기 개인정보처리방침</title>
+<meta name="description" content="틀린로직맞추기 개인정보처리방침">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#eef2f7;--card:#fff;--ink:#1b2742;--muted:#5d6a86;--accent:#ffb703;--line:#dfe5f1}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1522;--card:#172036;--ink:#e4eaf6;--muted:#98a4bd;--line:#2c3854}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:max(24px,env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) 48px max(18px,env(safe-area-inset-left,0px))}
+.hero{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.hero img{width:64px;height:64px;border-radius:18px;box-shadow:0 6px 18px rgba(20,30,60,.2)}
+h1{margin:0;font-size:24px;line-height:1.25}
+.sub{margin:3px 0 0;color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:14px 0}
+h2{font-size:18px;margin:0 0 8px}
+h3{font-size:15px;margin:14px 0 4px}
+p{margin:6px 0}ul{margin:6px 0;padding-left:20px}li{margin:4px 0}
+a{color:#1f6feb;word-break:break-all}
+small,.muted{color:var(--muted);font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:rgba(127,127,127,.08);white-space:nowrap}
+</style></head><body><div class="wrap">
+<div class="hero"><img src="icons/icon-192.png" alt=""><div><h1>개인정보처리방침</h1><p class="sub">틀린로직맞추기 · Made by 중독 게임사</p></div></div>
+<p class="muted">시행일: 2026년 11월 6일 · 최종 수정일: 2026년 11월 6일</p>
+
+<div class="card">
+<p>‘틀린로직맞추기’(이하 ‘게임’)는 이용자의 개인정보를 소중히 다룹니다. 이 게임은 <b>광고를 넣지 않으며, 제3자 광고·추적 도구를 사용하지 않습니다.</b> 이 방침은 게임이 어떤 정보를 어떻게 다루는지 설명합니다.</p>
+</div>
+
+<div class="card">
+<h2>1. 로그인 없이 즐길 때</h2>
+<p>아이디로 로그인하지 않고 게임을 하면, 진행 기록(깬 라운드·별·점수·코인·설정 등)은 <b>이용자의 기기(브라우저·앱) 안에만</b> 저장되고 서버로 보내지 않습니다. 앱을 지우거나 브라우저 저장소를 비우면 이 기록은 사라집니다.</p>
+</div>
+
+<div class="card">
+<h2>2. 아이디로 로그인할 때 모이는 정보</h2>
+<p>웹과 앱에서 기록을 이어서 하고 순위(랭킹)에 참여하려고 이용자가 <b>직접 아이디를 만들어 로그인</b>하면, 아래 정보가 순위·동기화 서버에 저장됩니다. 이름·전화번호·실제 이메일·주소·사진·위치 같은 정보는 받지 않습니다.</p>
+<table>
+<tr><th>항목</th><th>내용</th><th>목적</th></tr>
+<tr><td>아이디·비밀번호</td><td>이용자가 정한 로그인 아이디와 비밀번호(비밀번호는 암호화되어 저장)</td><td>로그인·본인 기록 구분</td></tr>
+<tr><td>닉네임·프로필</td><td>표시 이름, 고른 캐릭터(아바타)·칭호·테두리</td><td>순위표·지도에 표시</td></tr>
+<tr><td>게임 기록</td><td>최고 라운드, 별 수, 점수, 클리어 횟수, 평균 시간, 진행 상황</td><td>기록 이어하기·순위 집계</td></tr>
+<tr><td>접속 상태</td><td>현재 접속 중인지, 마지막 접속 시간</td><td>지도에 다른 플레이어 표시</td></tr>
+</table>
+<p class="muted">※ 아이디는 내부적으로 <code>아이디@teullin.game</code> 형식으로 저장되며, 이는 로그인 처리를 위한 것일 뿐 실제 메일 주소가 아닙니다.</p>
+</div>
+
+<div class="card">
+<h2>3. 정보를 맡아 두는 곳</h2>
+<p>위 정보는 데이터베이스 서비스 <b>Supabase</b>에 저장·처리됩니다. 모든 통신은 암호화(HTTPS)되어 오갑니다. 게임 제작자는 이 정보를 순위·기록 기능 외의 목적으로 쓰지 않고, 제3자에게 팔거나 넘기지 않습니다.</p>
+</div>
+
+<div class="card">
+<h2>4. 기기 권한</h2>
+<ul>
+<li><b>인터넷</b> — 순위·기록 동기화에 사용합니다.</li>
+<li><b>진동</b> — 일부 상황에서 짧은 진동 피드백에 사용합니다.</li>
+</ul>
+<p>카메라·마이크·연락처·위치·사진 등 민감한 권한은 요청하지 않습니다.</p>
+</div>
+
+<div class="card">
+<h2>5. 보관 기간과 삭제</h2>
+<p>저장된 정보는 이용자가 삭제를 요청하기 전까지 보관됩니다. 게임 안 <b>설정 → 계정 삭제</b>를 누르면 서버에 저장된 이용자의 계정·기록이 삭제됩니다. 기기에만 있는 기록은 앱을 지우거나 저장소를 비우면 삭제됩니다. 삭제를 돕는 것이 필요하면 아래 연락처로 요청해 주세요.</p>
+</div>
+
+<div class="card">
+<h2>6. 아동</h2>
+<p>이 게임은 특정 연령대를 겨냥하지 않는 일반 이용자용 퍼즐 게임이며, 닉네임 외에 아동의 개인정보를 일부러 모으지 않습니다.</p>
+</div>
+
+<div class="card">
+<h2>7. 방침 변경</h2>
+<p>내용이 바뀌면 이 페이지를 고치고 위의 ‘최종 수정일’을 갱신합니다.</p>
+</div>
+
+<div class="card">
+<h2>8. 연락처</h2>
+<p>개인정보 관련 문의: <a href="mailto:yjeeeee0510@gmail.com">yjeeeee0510@gmail.com</a></p>
+</div>
+
+<p style="text-align:center"><a class="muted" href="./">← 게임으로 돌아가기</a></p>
+</div></body></html>

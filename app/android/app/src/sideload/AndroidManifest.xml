@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- sideload 플레이버 전용: 다운로드 페이지에서 받은 새 버전 APK를 앱 안에서 설치하는 권한.
+     play 플레이버(구글 플레이)에는 병합되지 않는다. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+</manifest>
