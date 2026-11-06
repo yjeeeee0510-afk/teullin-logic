@@ -751,7 +751,9 @@ body.candy-play #ghScoreBox{display:none}
 .gm-menu{flex:none;width:46px;height:46px;border-radius:12px;border:1.5px solid var(--ink);background:var(--card);display:grid;place-items:center;padding:0;box-shadow:0 3px 0 var(--ink)}
 .gm-menu svg,.gm-menu img.uico{width:24px;height:24px}
 .gm-menu:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
-body.game-mode #board{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+body.game-mode #board{flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding-top:6px}
+/* 틀린그림(두 그림)은 세로로 꽉 차므로 가운데 정렬 유지 */
+body.game-mode #board:has(.pics){align-items:center;padding-top:0}
 body.game-mode .gdock{display:flex;justify-content:flex-end;flex:none}
 body.game-mode #pTools{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px}
 body.game-mode #pTools .btn{min-height:48px;padding:8px 16px;border-radius:12px;font-size:15px;box-shadow:0 3px 0 var(--ink)}
@@ -762,8 +764,8 @@ body.game-mode #pTools .hint-btn .ico{width:20px;height:20px}
 body.game-mode .pics{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%}
 body.game-mode .pics.side{flex-direction:row}
 body.game-mode .pic{position:relative;flex:none;gap:3px}
-/* '원본'·'다른 그림' 글씨는 그림 위가 아니라 그림 바깥 왼쪽 위에 */
-body.game-mode .pic figcaption{align-self:flex-start;height:19px;line-height:19px;background:rgba(27,39,66,.78);color:#fff;border-radius:6px;padding:0 8px;font-size:11px;letter-spacing:.02em;pointer-events:none}
+/* 라벨은 없앴고(그림 키우려고), 거울 라운드 표시만 그림 왼쪽 위에 작게 겹쳐 둠 */
+body.game-mode .pic figcaption{position:absolute;top:6px;left:6px;z-index:2;background:rgba(27,39,66,.72);color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;letter-spacing:.02em;pointer-events:none}
 body.game-mode .pic canvas.frame{width:var(--picw,100%)}
 body.game-mode .jig-area{width:100%;height:100%;align-items:center}
 body.game-mode .jig{width:var(--jigw,100%)}
@@ -1149,7 +1151,7 @@ body.candy-play #board{flex-direction:column}
 .cd-friends .fs span{font-size:16px;font-weight:800;color:#f3a6c4}
 .cd-friends .fs.on{background:#fff;border:2px solid #ffd43b;box-shadow:0 1px 4px rgba(255,160,180,.4)}
 .cd-friends .fs.on img{width:100%;height:100%;object-fit:contain}
-.cd-friends .fs.pop{animation:cdSit .4s cubic-bezier(.3,1.7,.5,1)}
+.cd-friends .fs.cdpop{animation:cdSit .4s cubic-bezier(.3,1.7,.5,1)}
 .cd-board{--side:min(94vw,calc(100dvh - 262px),560px);width:var(--side);height:var(--side);display:grid;grid-template-columns:repeat(var(--n),1fr);grid-template-rows:repeat(var(--n),1fr);gap:0;
   padding:7px;border-radius:18px;background:linear-gradient(#8a5130,#5c3218);box-shadow:0 6px 0 #3f200e,0 12px 26px rgba(60,25,5,.35);touch-action:none;user-select:none;-webkit-user-select:none}
 .cd-board .cc{position:relative;border:0;padding:0;margin:0;background-size:118% 118%;background-position:center;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;
@@ -1234,7 +1236,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.4</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.5</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1740,10 +1742,10 @@ const FX=(function(){
     kick();
   }
   function text(str,x,y,o){
-    o=o||{};const el=document.createElement('div');el.className='pop';
+    o=o||{};const el=document.createElement('div');el.className='pop'+(o.cls?' '+o.cls:'');
     el.innerHTML=str;el.style.left=x+'px';el.style.top=y+'px';el.style.fontSize=(o.size||38)+'px';
     if(o.color)el.style.color=o.color;
-    document.body.appendChild(el);setTimeout(()=>el.remove(),1000);
+    document.body.appendChild(el);setTimeout(()=>el.remove(),o.ms||1000);return el;
   }
   function shake(el){if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400)}
   function bump(el){if(!el)return;el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}
@@ -2339,8 +2341,10 @@ function lineFx(list){
     clue.classList.remove('flash');void clue.offsetWidth;clue.classList.add('flash');
     const p=FX.center(clue);FX.burst(p.x,p.y,{count:12,speed:5,ringR:40,size:5});
   });
-  const last=list[list.length-1][2],p=FX.center(last);
-  FX.text(list.length>1?`더블!<small>${list.length}줄 완성</small>`:'한 줄 완성!',Math.min(Math.max(p.x,90),window.innerWidth-90),p.y-24,{size:list.length>1?36:28,color:list.length>1?'#ff6b9d':'#69db7c'});
+  // 줄 완성 글자는 판 바로 위 한 곳에만(연속 완성이어도 겹치지 않게 이전 것 지움)
+  const nb=$('#nono').getBoundingClientRect();
+  document.querySelectorAll('.pop.lcomp').forEach(e=>e.remove());
+  FX.text(list.length>1?`더블!<small>${list.length}줄 완성</small>`:'한 줄 완성!',nb.left+nb.width/2,Math.max(nb.top-6,10),{size:list.length>1?26:22,color:list.length>1?'#ff6b9d':'#2f9e44',cls:'lcomp'});
   NATIVE.buzz('ok');SFX.play('line');
 }
 // 다 풀면 칸에 그림 색: 물건 그림은 LOGIC_COLORS(tools/logic/colors.py), 도형은 정해진 색, 무늬는 무지개
@@ -2513,7 +2517,7 @@ function buildSpot(){
     if(Array.isArray(S.found))S.found.forEach(i=>{if(spot.diffs[i])spot.diffs[i].found=true});
     $('#pDesc').textContent=`${spot.sc.theme.name} · ${STAGES[0].desc}`;
     tools.innerHTML=`<span class="chip" id="spotCount"></span><span class="chip warn" id="spotMiss"></span><button class="btn" id="spZoomBtn" type="button" data-sfx="none" aria-label="두 그림 함께 확대 (두 손가락으로도 확대·이동)">🔍</button><button class="btn hint-btn" id="hintBtn" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
-    board.innerHTML=`<div class="pics"><figure class="pic"><figcaption>원본</figcaption><canvas class="frame" id="picL" width="800" height="600" aria-label="원본 그림"></canvas></figure><figure class="pic${spot.mirror?' mirror':''}"><figcaption>${spot.mirror?'거울 그림 ⇄':'다른 그림'}</figcaption><canvas class="frame" id="picR" width="800" height="600" aria-label="틀린 곳이 있는 그림"></canvas></figure></div>`;
+    board.innerHTML=`<div class="pics"><figure class="pic"><canvas class="frame" id="picL" width="800" height="600" aria-label="원본 그림"></canvas></figure><figure class="pic${spot.mirror?' mirror':''}">${spot.mirror?'<figcaption>거울 ⇄</figcaption>':''}<canvas class="frame" id="picR" width="800" height="600" aria-label="틀린 곳이 있는 그림"></canvas></figure></div>`;
     spot.vz={z:1,cx:SW/2,cy:SH/2};bindSpotGestures();
     $('#spZoomBtn').addEventListener('click',()=>{SFX.play('zoom');const z=spot.vz.z;zoomSpot(z>=2.9?1:z<1.9?2:3)});
     $('#hintBtn').addEventListener('click',spotHint);
@@ -3181,7 +3185,7 @@ function fitBoard(){
   const pics=b.querySelector('.pics');
   if(pics){
     const side=W>H*1.25;pics.classList.toggle('side',side);
-    const CAP=22,w=side?Math.min((W-8)/2,(H-CAP)*4/3):Math.min(W,(H-8-2*CAP)/2*4/3);
+    const CAP=0,w=side?Math.min((W-8)/2,(H-CAP)*4/3):Math.min(W,(H-8-2*CAP)/2*4/3);
     pics.style.setProperty('--picw',Math.floor(w)+'px');
   }
   const jg=b.querySelector('.jig');
@@ -3438,7 +3442,8 @@ const CANDY=(function(){
     $('#ghInfo').querySelectorAll('.mv').forEach(e=>e.remove());
     $('#pTools').innerHTML=`<span class="chip cd-miss" id="cdMiss">실수 0 / ${CMISS}</span>
       <button class="btn cd-undo" id="cdClr" type="button">× 지우기</button><button class="btn hint-btn" id="cdHint" type="button">${ICON.bulb}힌트 <b data-hints>${W().hints}</b></button>`;
-    $('#board').innerHTML=`<div class="cd-wrap"><p class="cd-how">한 번 누르면 <b>×</b>, 한 번 더 누르면 <b>친구</b>가 앉아요. ×는 손가락으로 쭉 그어도 돼요.</p><div class="cd-friends" id="cdFriends" aria-label="숨은 친구"></div><div class="cd-board" id="cdBoard" data-sfx="none" style="--n:${N}"></div></div>`;
+    const cdHowN=store.get('sekan-cdhow')|0,showHow=cdHowN<3;if(showHow)store.set('sekan-cdhow',cdHowN+1);
+    $('#board').innerHTML=`<div class="cd-wrap">${showHow?'<p class="cd-how">한 번 누르면 <b>×</b>, 한 번 더 누르면 <b>친구</b>가 앉아요. ×는 손가락으로 쭉 그어도 돼요.</p>':''}<div class="cd-friends" id="cdFriends" aria-label="숨은 친구"></div><div class="cd-board" id="cdBoard" data-sfx="none" style="--n:${N}"></div></div>`;
     gameDock();
     $('#cdHint').addEventListener('click',hint);
     $('#cdClr').addEventListener('click',()=>{if(!G)return;G.cell=G.cell.map(v=>v===1?0:v);draw()});
@@ -3449,7 +3454,7 @@ const CANDY=(function(){
   function updateFriends(pop){
     const el=$('#cdFriends');if(!el||!G)return;
     const order=G.seatOrder||[],N=G.N;let h='';
-    for(let k=0;k<N;k++)h+=k<order.length?`<div class="fs on${pop&&k===order.length-1?' pop':''}">${ZODIAC.face(order[k])}</div>`:'<div class="fs"><span>?</span></div>';
+    for(let k=0;k<N;k++)h+=k<order.length?`<div class="fs on${pop&&k===order.length-1?' cdpop':''}">${ZODIAC.face(order[k])}</div>`:'<div class="fs"><span>?</span></div>';
     el.innerHTML=h;
   }
   const rc=(N,i)=>[Math.floor(i/N),i%N];
@@ -4495,6 +4500,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['6.5','2026-11-06','QA 반영',['틀린그림: ‘원본’·‘다른 그림’ 글씨 없애고 두 그림을 크게','로직·퍼즐 판을 위로 올려 화면을 꽉 차게','네모네모 로직 ‘한 줄 완성!’이 숫자·판을 안 가리게','과자 나라 숨은 친구 얼굴이 왼쪽부터 제대로 나오게 고침','과자 조작 안내는 처음 몇 번만']],
   ['6.4','2026-11-06','업데이트 안내 개선',['앱을 켜면 시작 화면에서 바로 ‘새 버전이 나왔어요’ 안내','안내를 더 간단하게(바뀐 점 목록은 빼고)']],
   ['6.3','2026-11-06','상단 새 모습·숨은 친구',['상단에 라운드·점수·시간, 그 아래 목숨 하트(실수하면 하나씩 사라져요)','과자 나라에 숨은 친구 줄 — 친구를 앉힐 때마다 얼굴이 하나씩 나와요','로직판 두 손가락 확대 없앰(두 손가락은 판 밀기만)','시작 화면 배경 새 그림']],
   ['6.2','2026-11-05','십이지 친구 새 얼굴',['십이지 친구 12명을 새 그림체(말랑한 점토 인형)로 새로 그렸어요','프로필·지도·랭킹의 친구 얼굴이 모두 바뀌었어요']],
