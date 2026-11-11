@@ -557,6 +557,146 @@
     }
    ],
    "prompt": "A game sprite sheet of 3 separate pedestals for characters to stand on, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 1 row x 3 columns, every item centered in its own cell, wide even spacing, nothing touching, nothing cut off. Each pedestal is a flat, wide oval platform seen from a slight angle above (about 3:1 wide), with a flat top surface where a character can stand, filling about 80% of the cell width, no character on it. Cell 1: a faceted purple crystal gem base. Cell 2: a round pile of glowing yellow stars. Cell 3: a round golden podium with a small step. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. "
+  },
+  {
+   "id": "V1",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "지역 이동 배",
+   "cols": 3,
+   "items": [
+    {
+     "id": "vyBoatOrange",
+     "ko": "주황 배"
+    },
+    {
+     "id": "vyBoatBlue",
+     "ko": "파랑 배"
+    },
+    {
+     "id": "vyBoatPurple",
+     "ko": "보라 배"
+    }
+   ],
+   "prompt": "A game sprite sheet of 3 small side-view sailboats, each each an isolated cutout floating on a perfectly flat, uniform solid pure green background (#00B140) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke. No text, no numbers, no logos, no watermark. Image size 1536x1024. 1 rows x 3 columns, every item centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Cell 1: the orange sailboat from the attached reference (art-src S6 sheet), same design, colours, sail and flag, seen from the side facing right. Cell 2: the blue sailboat from the attached reference (art-src S6 sheet), same design, colours, sail and flag, seen from the side facing right. Cell 3: the purple sailboat from the attached reference (art-src S6 sheet), same design, colours, sail and flag, seen from the side facing right. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, line-free clay finish.  IMPORTANT: draw each boat ALONE with NO water, NO waves, NO foam, NO splash and NO shadow painted on or under it. The hull must be drawn completely down to its flat keel at the bottom so that water can be placed in front of it later. Each boat fills about 80% of its cell width."
+  },
+  {
+   "id": "V2",
+   "bg": "초록",
+   "hex": "#00B140",
+   "region": "물보라",
+   "cols": 3,
+   "items": [
+    {
+     "id": "foamPuffA",
+     "ko": "거품 덩이 A"
+    },
+    {
+     "id": "foamPuffB",
+     "ko": "거품 덩이 B"
+    },
+    {
+     "id": "foamPuffC",
+     "ko": "거품 덩이 C"
+    },
+    {
+     "id": "splashFan",
+     "ko": "물보라 부채"
+    },
+    {
+     "id": "dropsA",
+     "ko": "물방울 A"
+    },
+    {
+     "id": "dropsB",
+     "ko": "물방울 B"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate water foam and splash pieces, each an isolated cutout floating on a perfectly flat, uniform solid pure green background (#00B140) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 3 columns, every item centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Cell 1: a soft white foam clump made of 4 round bubbles. Cell 2: a flatter long white foam streak made of small bubbles. Cell 3: a small round white foam puff. Cell 4: a small white-and-light-blue splash crown seen from the side, spreading upward and outward. Cell 5: a loose cluster of 5 round water droplets of different sizes, light blue with white highlights. Cell 6: a loose cluster of 3 water droplets flying up and to the right. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, line-free clay finish. "
+  },
+  {
+   "id": "BD1",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "대표 배지 아이콘",
+   "cols": 3,
+   "items": [
+    {
+     "id": "badge_clear",
+     "ko": "라운드 정복"
+    },
+    {
+     "id": "badge_zone0",
+     "ko": "꽃 언덕"
+    },
+    {
+     "id": "badge_zone1",
+     "ko": "푸른 바다"
+    },
+    {
+     "id": "badge_zone2",
+     "ko": "눈 덮인 산"
+    },
+    {
+     "id": "badge_zone3",
+     "ko": "별빛 하늘"
+    },
+    {
+     "id": "badge_zone4",
+     "ko": "하늘섬"
+    },
+    {
+     "id": "badge_zone5",
+     "ko": "천국"
+    },
+    {
+     "id": "badge_star",
+     "ko": "별 모으기"
+    },
+    {
+     "id": "badge_type0",
+     "ko": "틀린그림 칭호"
+    }
+   ],
+   "prompt": "A game sprite sheet of 9 separate achievement badge icons, each a round emblem artwork (NO outer ring, NO medal frame, NO text), each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke. No text, no numbers, no logos, no watermark. Image size 1536x1024. 3 rows x 3 columns, every item centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Cell 1: a small golden trophy with a little flag on top. Cell 2: a pink flower on a tiny green hill. Cell 3: a blue wave with a pink seashell. Cell 4: a snow-capped mountain with a tiny pine tree. Cell 5: a crescent moon with a glowing star on a night-purple patch. Cell 6: a small floating island with a cloud below it. Cell 7: a pair of golden angel wings with a glow. Cell 8: a big smiling yellow star. Cell 9: a magnifying glass over two small pictures. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, line-free clay finish.  Each icon is a simple, bold, centered emblem that fits inside a circle and fills about 75% of its cell, all with the same size, same lighting and the same bold outline-free clay look."
+  },
+  {
+   "id": "BD2",
+   "bg": "마젠타",
+   "hex": "#FF00FF",
+   "region": "대표 배지 아이콘",
+   "cols": 3,
+   "items": [
+    {
+     "id": "badge_type1",
+     "ko": "로직 칭호"
+    },
+    {
+     "id": "badge_type2",
+     "ko": "퍼즐 칭호"
+    },
+    {
+     "id": "badge_candyClear",
+     "ko": "과자 라운드 정복"
+    },
+    {
+     "id": "badge_candyStar",
+     "ko": "과자 별"
+    },
+    {
+     "id": "badge_candyDaily",
+     "ko": "오늘의 과자"
+    },
+    {
+     "id": "badge_up",
+     "ko": "별 올리기"
+    },
+    {
+     "id": "badge_back",
+     "ko": "오뚝이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 7 separate achievement badge icons, each a round emblem artwork (NO outer ring, NO medal frame, NO text), each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke. No text, no numbers, no logos, no watermark. Image size 1536x1024. 3 rows x 3 columns, every item centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Cell 1: a 5x5 grid where some squares are filled dark blue forming a heart. Cell 2: one colourful jigsaw puzzle piece. Cell 3: a chocolate-chip cookie with a tiny flag. Cell 4: a star-shaped cookie with pink icing. Cell 5: a small tear-off calendar with a cookie on it. Cell 6: a yellow star with a green arrow pointing up. Cell 7: a red roly-poly tumbler toy with a friendly face. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, line-free clay finish.  Each icon is a simple, bold, centered emblem that fits inside a circle and fills about 75% of its cell, all with the same size, same lighting and the same bold outline-free clay look."
   }
  ],
  "bgs": [
