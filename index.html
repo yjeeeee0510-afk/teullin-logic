@@ -139,9 +139,10 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* stage 3 */
 .jig-area{display:flex;justify-content:center}
 .jig{position:relative;width:min(100%,600px);aspect-ratio:1/1;max-width:100%;display:grid;gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.tile{border:0;padding:0;background-image:var(--img);background-repeat:no-repeat;transition:transform .15s ease,filter .15s;touch-action:manipulation;position:relative}
-.tile.sel{z-index:2;transform:scale(.92);box-shadow:0 0 0 3px #fff,0 0 0 6px #1b2742,0 8px 18px rgba(0,0,0,.35);outline:3px dashed #ffd43b;outline-offset:-5px}
-.tile.ok{box-shadow:inset 0 0 0 2px rgba(47,158,68,.85)}
+.tile{border:0;padding:0;background-image:var(--img);background-repeat:no-repeat;transition:transform .18s ease,filter .15s;touch-action:manipulation;position:relative;transform:rotate(var(--rot,0deg))}
+.tile.sel{z-index:2;transform:rotate(var(--rot,0deg)) scale(.92);box-shadow:0 0 0 3px #fff,0 0 0 6px #1b2742,0 8px 18px rgba(0,0,0,.35);outline:3px dashed #ffd43b;outline-offset:-5px}
+.tile.ok{box-shadow:inset 0 0 0 2px rgba(47,158,68,.85);cursor:default}
+.rot-hint{font-size:12px}
 .tile.ok::after{content:"✓";position:absolute;right:3px;bottom:3px;width:clamp(13px,32%,20px);height:clamp(13px,32%,20px);border-radius:50%;background:#2f9e44;color:#fff;font:900 clamp(9px,22%,14px)/1 system-ui,sans-serif;display:grid;place-items:center;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.35)}
 .jig.won{gap:0}
 .jig.won .tile::after{display:none}
@@ -1462,7 +1463,7 @@ function shuffle(r,a){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1)
 const STAGES=[
   {name:'틀린그림 찾기',desc:'두 그림을 비교해 원본과 다른 곳을 누르세요(어느 그림을 눌러도 돼요). 엉뚱한 곳을 누르면 실수예요. 두 손가락이나 🔍로 두 그림을 함께 확대할 수 있어요.'},
   {name:'네모네모 로직',desc:'줄 옆 숫자는 연속해서 칠할 칸의 길이입니다. 숫자 순서대로, 덩어리 사이엔 한 칸 이상 비워 두세요.'},
-  {name:'퍼즐 맞추기',desc:'그림이 조각났어요. 조각 두 개를 차례로 누르면 자리가 바뀝니다.'}
+  {name:'퍼즐 맞추기',desc:'그림이 조각났어요. 조각 두 개를 차례로 누르면 자리가 바뀝니다. 제자리에 맞게 둔 조각은 고정돼요.'}
 ];
 // 지역마다 라운드 수가 다를 수 있음: 지역 z 는 ZSTART[z]+1 ~ ZSTART[z+1] 라운드
 const ZSTART=[0,90,180,270,360,510,720],MAXR=ZSTART[ZSTART.length-1],TSIZE=30;
@@ -1865,8 +1866,9 @@ function ensureArt(){
   return artReady;
 }
 // 틀린그림·퍼즐 장면: 배경 지역 하나 + 다른 지역 2곳의 물건을 섞음 (낮 배경엔 별빛 하늘 물건을 쓰지 않음, 예전 그림은 안 씀)
-function mixTheme(seed){
-  const r=rng(seed^0x5bd1e995),bgT=pick(r,REGION_THEMES);
+const PLAIN_BG=['beach','nightsky','skyisland'];   // 한 색 영역이 넓은 배경(바다·밤하늘·하늘섬)
+function mixTheme(seed,bias){
+  const r=rng(seed^0x5bd1e995),bgT=(bias>0&&r()<bias)?pick(r,REGION_THEMES.filter(t=>PLAIN_BG.includes(t.bg))):pick(r,REGION_THEMES);
   const others=shuffle(r,REGION_THEMES.filter(t=>t!==bgT&&(bgT.night||!t.night))).slice(0,2),pool=[bgT,...others];
   const uniq=a=>[...new Set(a)];
   return {name:pool.map(t=>t.name).join(' · '),zone:bgT.zone,bg:bgT.bg,backDY:bgT.backDY,night:bgT.night,lights:bgT.lights,
@@ -1874,8 +1876,8 @@ function mixTheme(seed){
 }
 // tall: 퍼즐용 정사각형 그림(1:1)(가운데 JIG_X~JIG_X+JIG_W만 잘라 씀) — 물건을 그 띠 안에만 놓음
 const JIG_X=100,JIG_W=600;
-function makeScene(seed,tall){
-  const r=rng(seed),theme=mixTheme(seed),o=[];let id=0;
+function makeScene(seed,tall,bias){
+  const r=rng(seed),theme=mixTheme(seed,bias),o=[];let id=0;
   const X0=tall?JIG_X:0,XW=tall?JIG_W:SW;
   const add=(spr,x,y,row)=>o.push({id:id++,spr,x,y,h:spriteH(spr,r),row,k:1,flip:r()<0.3&&(/^cloud|^bush|^cactus|^house/.test(spr)||ART_FLIP.has(spr)),hue:0,gone:false});
   // 하늘: 해/달 하나 + 구름 셋
@@ -2002,6 +2004,11 @@ const CHAL_SET=(()=>{const st=new Set(),Z=[0,90,180,270,360];
   for(const z0 of Z){const len=z0===360?120:90;for(const f of [.3,.62,.9]){let r=z0+1+Math.floor(len*f);while((r-1)%3!==0)r++;if(r<z0+len)st.add(r)}}return st})();
 const isMirror=r=>typeOf(r)===0&&(r>=511?(r-511)%6===0:r>=481?(r-481)%9===0:CHAL_SET.has(r));
 const CHAL_BONUS=50;   // 도전 라운드를 처음 깨면 더 받는 코인
+// 회전 라운드(6.6) = 퍼즐 도전 라운드: 541~ 퍼즐 12라운드마다(543·555·…·711). 조각을 한 번 더 누르면 90도 돌아가고, 자리와 방향이 모두 맞아야 고정
+const isRotate=r=>typeOf(r)===2&&r>=543&&(r-543)%12===0;
+const isChal=r=>isMirror(r)||isRotate(r);
+// 비슷한 조각이 많은 장면(하늘·바다처럼 한 색 영역이 넓은 배경)을 후반 퍼즐에 더 자주: 361~ 50%, 541~ 70%
+const jigBias=r=>r>=541?0.7:r>=361?0.5:0;
 // 거울 라운드는 비교가 힘드니 틀린 곳을 한두 개 줄임
 const spotCount=r=>{const n=SIZE.spot(r);return isMirror(r)?n-(n>=12?2:1):n};
 function diffKinds(o,lv){
@@ -2444,13 +2451,15 @@ window.addEventListener('pointercancel',()=>{dragging=false});
 /* ---------- stage 3: jigsaw ---------- */
 let jig=null;
 function initJig(){
-  const n=SIZE.jig(S.round),r=rng(sceneSeed()+53);
-  const sc=makeScene(sceneSeed(),true);
+  const n=SIZE.jig(S.round),r=rng(sceneSeed()+53),rot=isRotate(S.round);
+  const sc=makeScene(sceneSeed(),true,jigBias(S.round));
   let uri;try{const c=document.createElement('canvas');c.width=JIG_W*2;c.height=SH*2;const x=c.getContext('2d');x.setTransform(2,0,0,2,-JIG_X*2,0);drawScene(x,sc,sc.objs);uri=c.toDataURL('image/jpeg',0.9)}catch(e){uri=embedded(`img/scenes/${sc.theme.bg}.${BG_JPG.has(sc.theme.bg)?'jpg':'png'}`)}
   let order;
-  do{order=shuffle(r,[...Array(n*n).keys()])}while(order.filter((v,i)=>v===i).length>Math.floor(n*n/4));
-  if(Array.isArray(S.jo)&&S.jo.length===n*n)order=S.jo.slice();
-  jig={n,order,sel:-1,uri,peek:false,paid:!!S.jp};
+  do{order=shuffle(r,[...Array(n*n).keys()])}while(order.some((v,i)=>v===i));   // 6.6: 처음부터 제자리인 조각 없음
+  let rots=Array(n*n).fill(0);
+  if(rot)rots=rots.map(()=>1+Math.floor(r()*3));   // 회전 라운드: 모든 조각이 자리도 방향도 틀리게 시작
+  if(Array.isArray(S.jo)&&S.jo.length===n*n){order=S.jo.slice();if(Array.isArray(S.jr)&&S.jr.length===n*n)rots=S.jr.slice()}
+  jig={n,order,rots,rot,sel:-1,uri,peek:false,paid:!!S.jp};
 }
 function renderJig(){
   const {n,order,sel}=jig,el=$('#jig');
@@ -2458,12 +2467,12 @@ function renderJig(){
   el.style.gridTemplateColumns=`repeat(${n},1fr)`;el.style.gridTemplateRows=`repeat(${n},1fr)`;
   let h='';
   order.forEach((p,i)=>{
-    const px=p%n,py=Math.floor(p/n);
-    h+=`<button type="button" class="tile${i===sel?' sel':''}${p===i?' ok':''}" data-i="${i}" aria-label="조각 ${i+1}" style="background-size:${n*100}% ${n*100}%;background-position:${px/(n-1)*100}% ${py/(n-1)*100}%"></button>`;
+    const px=p%n,py=Math.floor(p/n),good=p===i&&((jig.rots[i]%4)+4)%4===0;
+    h+=`<button type="button" class="tile${i===sel?' sel':''}${good?' ok':''}" data-i="${i}" aria-label="조각 ${i+1}${good?' (제자리, 고정)':''}" style="--rot:${jig.rots[i]*90}deg;background-size:${n*100}% ${n*100}%;background-position:${px/(n-1)*100}% ${py/(n-1)*100}%"></button>`;
   });
   if(jig.peek)h+='<div class="peek"></div>';
   el.innerHTML=h;
-  const ok=order.filter((v,i)=>v===i).length;
+  const ok=order.filter((v,i)=>v===i&&((jig.rots[i]%4)+4)%4===0).length;
   $('#jigCount').textContent=`제자리 ${ok} / ${n*n}`;
   $('#peekBtn').setAttribute('aria-pressed',jig.peek);
   $('#peekBtn').innerHTML=jig.peek?'원본 닫기':(jig.paid?'원본 보기':`${ICON.bulb}원본 보기 <small>힌트 1</small>`);
@@ -2471,30 +2480,38 @@ function renderJig(){
 function jigClick(e){
   const t=e.target.closest('.tile');if(!t||!running)return;
   const i=+t.dataset.i;
+  if(t.classList.contains('ok'))return;   // 6.6: 맞는 자리(방향도 맞음)에 둔 조각은 고정
   NATIVE.buzz('tick');SFX.play('pick');
+  const isOk=k=>jig.order[k]===k&&((jig.rots[k]%4)+4)%4===0;
+  const fin=()=>{if(jig.order.every((v,k)=>isOk(k))){$('#jig').classList.add('won');setTimeout(clearStage,550)}};
   if(jig.sel<0){jig.sel=i;renderJig();return}
-  if(jig.sel===i){jig.sel=-1;renderJig();return}
-  let swapped=null;
-  if(jig.sel<0){}else if(jig.sel===i){}
-  else{const a=jig.sel;[jig.order[a],jig.order[i]]=[jig.order[i],jig.order[a]];jig.sel=-1;swapped=[a,i]}
-  renderJig();
-  if(swapped){
-    let good=0;
-    for(const k of swapped){
-      const el=$('#jig').querySelector(`.tile[data-i="${k}"]`);if(!el)continue;
-      if(jig.order[k]===k){good++;el.classList.add('gotit');const p=FX.center(el);FX.burst(p.x,p.y,{count:16,speed:6,ringR:50})}
-      else el.classList.add('land');
+  if(jig.sel===i){
+    if(jig.rot){   // 회전 라운드: 고른 조각을 한 번 더 누르면 90도
+      jig.rots[i]++;SFX.play('piece');
+      if(isOk(i)){jig.sel=-1;renderJig();const el=$('#jig').querySelector(`.tile[data-i="${i}"]`);if(el){el.classList.add('gotit');const p=FX.center(el);FX.burst(p.x,p.y,{count:16,speed:6,ringR:50});FX.text('딱!',p.x,p.y-10,{size:30,color:'#ffd43b'});FX.bump($('#jigCount'))}SFX.play('fit')}
+      else renderJig();
+      fin();return;
     }
-    SFX.play(good?'fit':'piece');
-    if(good){const el=$('#jig').querySelector(`.tile[data-i="${swapped[1]}"]`),p=FX.center(el);FX.text(good>1?'더블 딱!':'딱!',p.x,p.y-10,{size:good>1?36:30,color:good>1?'#ff6b9d':'#ffd43b'});FX.bump($('#jigCount'))}
+    jig.sel=-1;renderJig();return;
   }
-  if(jig.order.every((v,i)=>v===i)){$('#jig').classList.add('won');setTimeout(clearStage,550)}
+  const a=jig.sel;
+  [jig.order[a],jig.order[i]]=[jig.order[i],jig.order[a]];[jig.rots[a],jig.rots[i]]=[jig.rots[i],jig.rots[a]];   // 조각은 방향도 같이 옮겨짐
+  jig.sel=-1;renderJig();
+  let good=0;
+  for(const k of [a,i]){
+    const el=$('#jig').querySelector(`.tile[data-i="${k}"]`);if(!el)continue;
+    if(isOk(k)){good++;el.classList.add('gotit');const p=FX.center(el);FX.burst(p.x,p.y,{count:16,speed:6,ringR:50})}
+    else el.classList.add('land');
+  }
+  SFX.play(good?'fit':'piece');
+  if(good){const el=$('#jig').querySelector(`.tile[data-i="${i}"]`),p=FX.center(el);FX.text(good>1?'더블 딱!':'딱!',p.x,p.y-10,{size:good>1?36:30,color:good>1?'#ff6b9d':'#ffd43b'});FX.bump($('#jigCount'))}
+  fin();
 }
 
 /* ---------- flow ---------- */
 function renderTrack(){
   $('#track').innerHTML=STAGES.map((s,i)=>{
-    const sz=i===0?`${spotCount(S.round)}곳`:i===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각`;
+    const sz=i===0?`${spotCount(S.round)}곳`:i===1?`${SIZE.logic(S.round)}×${SIZE.logic(S.round)}`:`${SIZE.jig(S.round)}×${SIZE.jig(S.round)} 조각${isRotate(S.round)?' · 회전':''}`;
     const st=i<S.stage?'done':i===S.stage?'now':'';
     return`<div class="step ${st}" ${st==='now'?'aria-current="step"':''}><span class="no">${i<S.stage?'✓':i+1}</span><div style="min-width:0"><div class="nm">${s.name}</div><div class="sub">${sz}</div></div></div>`;
   }).join('');
@@ -2539,13 +2556,20 @@ function buildSpot(){
 function buildJig(){
   const tools=$('#pTools'),board=$('#board');
     initJig();
-    tools.innerHTML=`<span class="chip" id="jigCount"></span><button class="btn hint-btn" id="peekBtn" type="button" aria-pressed="false">원본 보기</button><span class="chip hint-left">${ICON.bulb}<b data-hints>${W().hints}</b></span>`;
+    tools.innerHTML=`<span class="chip" id="jigCount"></span>${jig.rot?'<span class="chip rot-hint">⟳ 고른 조각을 또 누르면 돌아가요</span>':''}<button class="btn hint-btn" id="peekBtn" type="button" aria-pressed="false">원본 보기</button><span class="chip hint-left">${ICON.bulb}<b data-hints>${W().hints}</b></span>`;
     board.innerHTML=`<div class="jig-area"><div class="jig" id="jig"></div></div>`;
     $('#jig').addEventListener('click',jigClick);
     $('#peekBtn').addEventListener('click',()=>{
       if(!jig.peek&&!jig.paid){if(!useHint()){noHint();return}jig.paid=true;hints++;SFX.play('hint')}
       jig.peek=!jig.peek;jig.sel=-1;renderJig()});
     renderJig();gameDock();
+    if(jig.rot&&!P.rotSeen){P.rotSeen=1;saveP();
+      const sh=openSheet(`<div class="eyebrow">처음 만나는 도전 라운드</div><h3>⟳ 회전 라운드</h3>
+        <p class="pause-how">조각이 <b>돌아간 채로</b> 섞여 있어요. 조각을 눌러 고른 뒤 <b>다시 누르면 90도 돌아가고</b>, 다른 조각을 누르면 자리가 바뀌어요.<br>자리와 방향이 모두 맞으면 조각이 고정돼요. 처음 깨면 보너스 ${CHAL_BONUS}코인!</p>
+        <div class="row"><button class="btn primary" type="button" id="rotOk">알겠어요</button></div>`);
+      sh.querySelector('#rotOk').addEventListener('click',()=>{closeSheet();resumeGame()});
+    }
+    if(jig.rot)setTimeout(()=>SFX.play('chal'),S&&S.el?300:1250);
 }
 function startStage(){
   if(pendingNext){const n=pendingNext;pendingNext=0;startRound(n);return}
@@ -2602,7 +2626,7 @@ function snapRun(){
     S.el=Math.round(elapsed());S.hu=hints;S.cp=comboPts;
     if(S.stage===0&&spot&&spot.diffs)S.found=spot.diffs.map((d,i)=>d.found?i:-1).filter(i=>i>=0);
     if(S.stage===1&&logic&&logic.g){S.lg=logic.g.map(r=>r.join('')).join(',');S.lk=logic.lock.map(r=>r.map(v=>v?1:0).join('')).join(',')}
-    if(S.stage===2&&jig&&jig.order){S.jo=jig.order.slice();S.jp=!!jig.paid}
+    if(S.stage===2&&jig&&jig.order){S.jo=jig.order.slice();S.jr=jig.rots.slice();S.jp=!!jig.paid}
     save();
   }catch(e){}
 }
@@ -2673,7 +2697,7 @@ function clearStage(){
     // 코인 기능 바뀌기 전에 깬 라운드는 그때 별만큼 이미 받은 것으로 친다
     const achBefore=ACH.snapshot();ACH.onClear(round,prevStars,!!prev,rs);
     const paidStars=prev?Math.max(0,Math.min(3,typeof prev.cs==='number'?prev.cs:prevStars)):0;
-    const chalBonus=!prev&&isMirror(round)&&!isAdmin()?CHAL_BONUS:0;chalWon=!prev&&isMirror(round);
+    const chalBonus=!prev&&isChal(round)&&!isAdmin()?CHAL_BONUS:0;chalWon=!prev&&isChal(round);
     const coinGot=Math.max(0,STAR_COIN[rs]-STAR_COIN[paidStars])+chalBonus;coinSfx=coinGot;
     P.rounds[round]={cs:Math.max(rs,paidStars),best:Math.max(S.score,prev?prev.best:0),stars:Math.max(rs,prevStars),plays:(prev&&prev.plays||0)+1,time:prev&&prev.time?Math.min(secs,prev.time):secs,last:Date.now()};
     const opened=round<MAXR&&P.unlocked<round+1;
@@ -2965,7 +2989,7 @@ function showMenu(){
     const stars=rec?starRow(rec.stars||1):'';
     const label=rec?`라운드 ${n}, 별 ${rec.stars||1}개, 최고 ${rec.best.toLocaleString()}점`:open?`라운드 ${n} 도전`:`라운드 ${n} 잠김`;
     h+=`<div class="node ${cls}${n===MAXR?' final':''}" style="left:${mapX(n)}%;top:${mapY(n)}px;--c:${ZODIAC.COLORS[ZODIAC.idx(n)]}">${stars}
-      <button type="button" class="nd" data-r="${n}" ${open?'':'disabled'} aria-label="${label} (${ZODIAC.NAMES[ZODIAC.idx(n)]})">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span><i class="ty t${typeOf(n)}" title="${STAGES[typeOf(n)].name}">${TYPE_ICON[typeOf(n)]}</i>${isMirror(n)?'<i class="chal" title="도전 라운드 · 거울">⇄</i>':''}${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
+      <button type="button" class="nd" data-r="${n}" ${open?'':'disabled'} aria-label="${label} (${ZODIAC.NAMES[ZODIAC.idx(n)]})">${ZODIAC.face(ZODIAC.idx(n))}<span class="num">${n}</span><i class="ty t${typeOf(n)}" title="${STAGES[typeOf(n)].name}">${TYPE_ICON[typeOf(n)]}</i>${isMirror(n)?'<i class="chal" title="도전 라운드 · 거울">⇄</i>':isRotate(n)?'<i class="chal" title="도전 라운드 · 회전">⟳</i>':''}${open||rec?'':`<i class="lk">${LOCK}</i>`}</button>
       ${cls==='next'?`${mePin()}<span class="tag">도전 · ${TYPE_SHORT[typeOf(n)]}</span>`:n===MAXR&&!rec?'<span class="tag">FINAL</span>':''}</div>`;
   }
   h+=`</div></div><div class="map-hint"><button type="button" id="toCur">↓ 지금 라운드로</button></div>
@@ -3213,7 +3237,7 @@ function openPause(){
       <button class="btn" type="button" id="pzSet">설정</button>
       ${isAdmin()?'<button class="btn adm-btn" type="button" id="pzWin">운영진 · 바로 클리어</button>':''}
     </div>`);
-  const pw=sh.querySelector('#pzWin');if(pw)pw.addEventListener('click',()=>{paused=false;closeSheet();if(!running){t0=performance.now()-elapsedFrozen;running=true}if(S.stage===2&&jig){jig.order=jig.order.map((_,i)=>i);renderJig()}clearStage()});
+  const pw=sh.querySelector('#pzWin');if(pw)pw.addEventListener('click',()=>{paused=false;closeSheet();if(!running){t0=performance.now()-elapsedFrozen;running=true}if(S.stage===2&&jig){jig.order=jig.order.map((_,i)=>i);jig.rots=jig.rots.map(()=>0);renderJig()}clearStage()});
   sh.querySelector('#pzGo').addEventListener('click',()=>closeSheet());
   sh.querySelector('#pzRe').addEventListener('click',()=>{paused=false;closeSheet();startRound(S.round)});
   sh.querySelector('#pzMap').addEventListener('click',()=>{paused=false;closeSheet();showMenu()});
@@ -4430,7 +4454,7 @@ async function doLogout(){
 function fmtTime(t){t=Math.round(t||0);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
 function openRoundSheet(n){
   const rec=P.rounds[n],t=typeOf(n),z=ZODIAC.idx(n),stars=rec?(rec.stars||1):0;
-  const sz=t===0?`틀린 곳 ${spotCount(n)}개${isMirror(n)?' · 거울':''}`:t===1?`${SIZE.logic(n)}×${SIZE.logic(n)} 로직`:`${SIZE.jig(n)}×${SIZE.jig(n)} 조각`;
+  const sz=t===0?`틀린 곳 ${spotCount(n)}개${isMirror(n)?' · 거울':''}`:t===1?`${SIZE.logic(n)}×${SIZE.logic(n)} 로직`:`${SIZE.jig(n)}×${SIZE.jig(n)} 조각${isRotate(n)?' · 회전':''}`;
   const resumeHere=S&&S.round===n;
   const recHtml=rec?`<div class="rs-rec">
       <div><small>최고 점수</small><b>${Number(rec.best).toLocaleString()}</b></div>
@@ -4446,6 +4470,7 @@ function openRoundSheet(n){
     <h3>라운드 ${n}</h3>
     <div class="rs-type"><i class="ty t${t}">${TYPE_ICON[t]}</i><span>${STAGES[t].name}</span><em>${sz}</em></div>
     ${isMirror(n)?`<p class="rs-chal"><b>⇄ 도전 라운드</b> 비교 그림이 좌우로 뒤집혀 있어요. 처음 깨면 보너스 ${CHAL_BONUS}코인!</p>`:''}
+    ${isRotate(n)?`<p class="rs-chal"><b>⟳ 도전 라운드</b> 조각이 돌아가 있어요. 고른 조각을 한 번 더 누르면 돌아가요. 처음 깨면 보너스 ${CHAL_BONUS}코인!</p>`:''}
     ${recHtml}
     ${isAdmin()?'':`<p class="rs-heart">${ICON.heart}<span>${resumeHere?'하트 1개를 걸고 하던 판이에요':`하트 1개를 걸고 시작해요 · 지금 <b data-hearts>${W().hearts}</b>개`}<br><small>${rec?'이미 깬 라운드라 다시 하면 하트 1개를 써요':t===2?'깨면 그대로, 중간에 그만두면 1개 줄어요':`깨면 그대로, 실수 ${MISS_MAX}번이거나 그만두면 1개 줄어요`}</small></span></p>`}
     ${(!isAdmin()&&t!==2&&W().shields>0)?`<p class="rs-shield">${SHIELD_ICO}<span>방패 <b>${W().shields}</b>개 · 실수 ${MISS_MAX}번째에 자동으로 막아 줘요</span></p>`:''}
