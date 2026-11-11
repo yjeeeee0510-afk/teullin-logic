@@ -832,6 +832,8 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 .pf-scroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:12px;overscroll-behavior:contain}
 .pf-stage{position:relative;padding:7px;border-radius:26px;background:var(--fb,linear-gradient(135deg,#b8860b,#ffe066,#f08c00,#fff3bf,#b8860b));box-shadow:var(--fs,0 0 14px rgba(255,212,59,.7));flex:none}
 .pf-stage.big{flex:1;min-height:200px}
+.pfscreen.other{z-index:28}
+li.cardable{cursor:pointer}li.cardable:active{filter:brightness(.96)}
 .pf-stage.small{height:224px}
 .pf-bg{position:relative;height:100%;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;isolation:isolate}
 .pf-cst{position:relative;flex:1;min-height:0}
@@ -3350,7 +3352,7 @@ $('#gmMenu').addEventListener('click',openPause);
 
 $('#menuBtn').addEventListener('click',showMenu);
 // 안드로이드 뒤로 버튼: 창 닫기 → 게임 중이면 일시정지 메뉴 → 지도에선 앱 내리기
-window.__sekanBack=()=>{if($('#sheet')){closeSheet();if(paused)resumeGame();return true}if(window.__pfBack&&window.__pfBack())return true;if(inGame){const b=$('#gmMenu');if(b&&!b.hidden&&b.offsetParent){b.click();return true}showMenu();return true}return false};
+window.__sekanBack=()=>{if(document.querySelector('#pfScreen.other')){pfClose();return true}if($('#sheet')){closeSheet();if(paused)resumeGame();return true}if(window.__pfBack&&window.__pfBack())return true;if(inGame){const b=$('#gmMenu');if(b&&!b.hidden&&b.offsetParent){b.click();return true}showMenu();return true}return false};
 
 let armed=false,armT;
 $('#resetBtn').addEventListener('click',()=>{
@@ -3848,7 +3850,8 @@ const CANDY=(function(){
       if(!$('#sheet'))return;
       const av=r=>ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname));
       $('#rkMe').innerHTML=me?`<div class="me-card"><span class="rk">${me.rank}위</span><span class="nm">${esc(me.nickname)}</span><span class="st">${me.total}명 중 · 과자 라운드 ${me.candy_round} · ★ ${me.candy_stars}${me.candy_time?` · 평균 ${fmtTime(me.candy_time)}`:''}</span></div>`:'<p class="rank-note">아직 과자 나라 기록이 없어요. 라운드를 깨면 순위에 올라가요.</p>';
-      $('#rkList').innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${av(r)}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">R${r.candy_round} · ★${r.candy_stars}${r.candy_time?`<br><small>평균 ${fmtTime(r.candy_time)}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 과자 나라 기록이 없어요.</li>';
+      $('#rkList').innerHTML=(list&&list.length)?list.map((r,i)=>`<li class="${r.is_me?'me':''}" data-i="${i}" tabindex="0"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${av(r)}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">R${r.candy_round} · ★${r.candy_stars}${r.candy_time?`<br><small>평균 ${fmtTime(r.candy_time)}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 과자 나라 기록이 없어요.</li>';
+      bindCards($('#rkList'),list.map(r=>Object.assign({},r,{rank:r.main_rank,candy_rank:r.rank})));   // 과자 줄의 rank는 과자 순위라 카드용으로 바꿔 줌
     }catch(e){
       const ul=$('#rkList');if(!ul)return;
       ul.innerHTML=`<li class="rank-empty">${e&&e.code==='nocandy'?'과자 나라 순위는 곧 열려요. (서버 준비 중)':esc(RANK.explain(e))}</li>`;
@@ -3925,11 +3928,16 @@ const RANK=(function(){
     const row=Object.assign({id:s.user.id,nickname:n},mine());
     if(typeof P.avatar==='number')row.avatar=P.avatar;
     row.title=P.title?String(P.title).slice(0,20):null;
+    row.deco=COS.pack();   // 6.6 꾸미기 값(서버에 칸이 없으면 아래에서 빼고 다시 보냄)
     if(P.candy)Object.assign(row,CANDY.mine());
     const send=b=>api('/rest/v1/leaderboard?on_conflict=id',{method:'POST',headers:Object.assign(bearer(s),{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(b)});
     try{await send(row)}catch(e){
       // 서버 제한(라운드 510·별 1530)을 아직 안 넓혔으면 그 안으로 맞춰 다시 보냄 (천국 SQL 실행 전 대비)
       if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))&&(row.best_round>510||row.stars>1530)){row.best_round=Math.min(510,row.best_round);row.stars=Math.min(1530,row.stars);try{await send(row);store.set('sekan-rank-pending',false);return}catch(e4){e=e4}}
+      // 서버에 꾸미기 칸(deco)이 아직 없으면 그 칸만 빼고 다시 보냄 (6.6 SQL 실행 전 대비)
+      if('deco' in row&&e&&/deco/i.test(e.message||'')){delete row.deco;try{await send(row);store.set('sekan-rank-pending',false);return}catch(e5){e=e5}}
+      // 과자 나라 제한이 아직 300라운드·별 900이면 그 안으로 맞춰 다시 보냄 (6.6 SQL 실행 전 대비)
+      if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))&&(row.candy_round>300||row.candy_stars>900)){row.candy_round=Math.min(300,row.candy_round);row.candy_stars=Math.min(900,row.candy_stars);try{await send(row);store.set('sekan-rank-pending',false);return}catch(e6){e=e6}}
       // 서버에 과자 나라 칸이 아직 없으면 그 칸만 빼고 다시 보냄
       if('candy_round' in row&&e&&(e.code==='PGRST204'||/candy/i.test(e.message||''))){delete row.candy_round;delete row.candy_stars;delete row.candy_time;try{await send(row);store.set('sekan-rank-pending',false);return}catch(e3){e=e3}}
       // 서버에 새 칸(clears, avg_time)이 아직 없으면 예전 방식으로 다시 보냄
@@ -4038,9 +4046,10 @@ const OTHERS=(function(){
   function openList(n){
     const ps=(byRound()[n]||[]).slice().sort((a,b)=>(a.rank|0)-(b.rank|0));
     const sh=openSheet(`<div class="eyebrow">${ZONES[zoneOf(n)].name}</div><h3>라운드 ${n}에 있는 친구</h3>
-      <ul class="rlist">${ps.map(r=>`<li><span class="no">${r.rank||''}</span><span class="av">${ZODIAC.face(avOf(r))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">★${r.stars|0}<br>${(r.best_round|0)}라운드 클리어</span></li>`).join('')}</ul>
+      <ul class="rlist" id="othList">${ps.map((r,i)=>`<li data-i="${i}" tabindex="0"><span class="no">${r.rank||''}</span><span class="av">${ZODIAC.face(avOf(r))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">★${r.stars|0}<br>${(r.best_round|0)}라운드 클리어</span></li>`).join('')}</ul>
       <div class="row"><button class="btn primary" type="button" id="othClose">닫기</button></div>`);
     sh.querySelector('#othClose').addEventListener('click',closeSheet);
+    bindCards(sh.querySelector('#othList'),ps);
   }
   return {
     show(){if(list)paint();load().then(()=>paint())},
@@ -4192,7 +4201,8 @@ async function openRank(which){
     const meEl=$('#rkMe');
     meEl.innerHTML=me?`<div class="me-card"><span class="rk">${me.rank}위</span><span class="nm">${esc(me.nickname)}</span><span class="st">${me.total}명 중 · 라운드 ${me.best_round} · ★ ${me.stars} · ${Number(me.score).toLocaleString()}점${me.clears?` · 클리어 ${me.clears}회`:''}${me.avg_time?` · 평균 ${fmtTime(me.avg_time)}`:''}</span></div>`:'<p class="rank-note">아직 내 기록이 없어요. 라운드를 깨면 올라가요.</p>';
     const ul=$('#rkList');
-    ul.innerHTML=(list&&list.length)?list.map(r=>`<li class="${r.is_me?'me':''}"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
+    ul.innerHTML=(list&&list.length)?list.map((r,i)=>`<li class="${r.is_me?'me':''}" data-i="${i}" tabindex="0"><span class="no">${r.rank<=3?`<span class="medal m${r.rank}">${r.rank}</span>`:r.rank}</span><span class="av">${ZODIAC.face(Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname))}</span><span class="nm">${ACH.badge(r.title)}${esc(r.nickname)}</span><span class="st">R${r.best_round} · ★${r.stars}<br>${Number(r.score).toLocaleString()}점${r.clears?`<br><small>클리어 ${r.clears}회${r.avg_time?` · 평균 ${fmtTime(r.avg_time)}`:''}</small>`:''}</span></li>`).join(''):'<li class="rank-empty">아직 아무도 없어요. 첫 번째 주인공이 되어 보세요!</li>';
+    bindCards(ul,list);
   }catch(e){
     const ul=$('#rkList');if(ul)ul.innerHTML=`<li class="rank-empty">${esc(RANK.explain(e))}</li>`;
   }
@@ -4716,6 +4726,28 @@ function stageHTML(av,sel,inner,cls){
   return `<div class="pf-stage fr-${fr} ${cls||''}"><div class="pf-bg" style="background:${bg.css}">${fxHTML(fx)}<div class="pf-cst"><div class="pf-plat" style="${base.css}"></div>${bodies}</div>${bd?`<div class="pf-bdg">${bd}</div>`:''}${inner||''}</div></div>`;
 }
 const nameHTML=(name,sel,title)=>`<div class="pf-name"><b style="${(COS.find('tag',sel.tag)||COS.CAT.tag.items[0]).css}">${esc(name)}</b>${title?`<span class="pf-ttl">${esc(title)}</span>`:''}</div>`;
+
+// ----- 남의 프로필 카드 (6.6): 랭킹 줄·지도 목록·과자 랭킹 줄을 누르면 읽기 전용으로 열림 -----
+function bindCards(ul,list){
+  if(!ul||!list)return;
+  ul.querySelectorAll('li[data-i]').forEach(li=>{const open=()=>{const r=list[+li.dataset.i];if(r){NATIVE.buzz('tick');SFX.play('tap');openPlayerCard(r)}};
+    li.classList.add('cardable');li.addEventListener('click',open);li.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})});
+}
+function openPlayerCard(r){
+  const av=Number.isInteger(r.avatar)&&r.avatar>=0&&r.avatar<12?r.avatar:nickHash(r.nickname||'?');
+  const sel=COS.parse(r.deco),num=v=>(v==null||v==='')?'–':Number(v).toLocaleString();
+  const rk=r.rank?`<b>${r.rank}위</b><small>${r.total?r.total+'명 중':'본 게임 순위'}</small>`:'<b>–</b><small>순위 없음</small>';
+  const cd=(r.candy_round>0)?`${r.candy_rank?r.candy_rank+'위 · ':''}라운드 ${r.candy_round}`:((r.candy_round===0)?'기록 없음':'–');
+  const e=pfPlace(`<div class="pf-top"><span class="pf-sp"></span><h2>${esc(r.nickname||'')}</h2><button type="button" class="pf-x" id="pfX" aria-label="닫기">✕</button></div>
+    ${stageHTML(av,sel,'','big')}
+    ${nameHTML(r.nickname||'',sel,r.title)}
+    <div class="pf-sub">${ZODIAC.NAMES[av]} · ${ZODIAC.KINDS[av]}</div>
+    <div class="pf-grid"><div class="c rk"><small>순위</small>${rk}</div><div class="c"><small>최고 라운드</small><b>${num(r.best_round)}</b></div>
+    <div class="c"><small>★ 별</small><b>${num(r.stars)}</b></div><div class="c"><small>총점</small><b>${num(r.score)}</b></div>
+    <div class="c wide"><small>과자 나라</small><b>${cd}</b></div></div>`,`${r.nickname||''} 프로필`);
+  e.classList.add('other');pfMode='other';
+  e.querySelector('#pfX').addEventListener('click',()=>{NATIVE.buzz('tick');pfClose()});
+}
 let pfMode='me',pfTab='bg',pfPv=null;   // 화면 모드(me·deco), 꾸미기 탭, 사기 전 미리 보기
 function pfEl(){return document.getElementById('pfScreen')}
 function pfClose(){const e=pfEl();if(e)e.remove();document.body.classList.remove('pf-open');profRefresh()}
