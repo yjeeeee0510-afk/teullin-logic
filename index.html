@@ -823,6 +823,109 @@ button.pf-big{position:relative;padding:0;cursor:pointer}
 .fr-crown::after{content:"👑";position:absolute;top:-14px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:18px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
 .pf-av.fr,.pf-big.fr{position:relative;overflow:visible}
 .pf-av.fr>svg,.pf-big.fr>svg,.pf-av.fr>img,.pf-big.fr>img{border-radius:9px}
+/* 프로필 카드 · 꾸미기 (6.6) */
+.pfscreen{position:fixed;inset:0;z-index:24;display:flex;flex-direction:column;gap:8px;padding:max(14px,calc(max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px)) + 8px)) 16px max(14px,calc(max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px)) + 8px));background:linear-gradient(#fff8e1,#fff3d6 60%,#ffe9cc);color:#5a3a1a;overflow:hidden}
+.pf-top{display:flex;align-items:center;justify-content:space-between;flex:none}
+.pf-top h2{font-family:var(--f-display);font-weight:400;font-size:22px;color:#5a3a1a}
+.pf-x,.pf-sp{width:40px;height:40px;flex:none}
+.pf-x{border-radius:12px;background:#fff;border:2px solid #f0d9a8;color:#8a6a3a;font-size:19px;font-weight:800;display:grid;place-items:center;cursor:pointer;padding:0}
+.pf-scroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:12px;overscroll-behavior:contain}
+.pf-stage{position:relative;padding:7px;border-radius:26px;background:var(--fb,linear-gradient(135deg,#b8860b,#ffe066,#f08c00,#fff3bf,#b8860b));box-shadow:var(--fs,0 0 14px rgba(255,212,59,.7));flex:none}
+.pf-stage.big{flex:1;min-height:200px}
+.pf-stage.small{height:224px}
+.pf-bg{position:relative;height:100%;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;isolation:isolate}
+.pf-cst{position:relative;flex:1;min-height:0}
+.pf-plat{position:absolute;left:19%;right:19%;bottom:3%;height:9%;border-radius:50%}
+.pf-body,.pf-pair{position:absolute;left:50%;bottom:8%;height:90%;width:auto;max-width:92%;transform:translateX(-50%);object-fit:contain;filter:drop-shadow(0 4px 4px rgba(0,0,0,.18));transform-origin:50% 100%}
+.pf-body.wc{left:42%;height:84%;bottom:10%}
+.pf-comp{position:absolute;right:2%;bottom:6%;height:40%;width:auto;max-width:40%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.2));z-index:2}
+.pf-hint{position:absolute;right:10px;top:10px;z-index:4;border:0;border-radius:999px;background:rgba(255,255,255,.88);color:#8a5a2a;font:inherit;font-size:12px;padding:5px 11px;cursor:pointer}
+.pf-cbar{display:flex;gap:10px;padding:0 12px 12px;flex:none;position:relative;z-index:4}
+.pf-b{flex:1;height:46px;border-radius:14px;background:rgba(255,255,255,.95);border:2px solid #f0d9a8;color:#5a3a1a;font:inherit;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.pf-b .ico{width:22px;height:22px}
+.pf-b.p{background:#ff7a59;border-color:#e55a37;color:#fff;box-shadow:0 3px 0 #c4421f}
+.pf-bdg{position:absolute;left:10px;top:10px;z-index:4;display:flex;flex-direction:column;gap:7px}
+.pf-bd{position:relative;display:flex;align-items:center;gap:5px;height:32px;padding:0 9px 0 3px;border-radius:999px;background:rgba(255,255,255,.93);border:2px solid #f5c84c;font-style:normal;max-width:150px}
+.pf-bd .ico,.pf-bd img{width:22px;height:22px;object-fit:contain;flex:none}
+.pf-bd b{font-size:11px;font-weight:800;color:#5a3a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-bd.t1{border-color:#c98a55}.pf-bd.t2{border-color:#adb5bd}.pf-bd.t3{border-color:#f5c84c}.pf-bd.t4{border-color:#4dabf7}.pf-bd.t5{border-color:#b197fc}
+.pf-coin{position:absolute;right:12px;top:12px;z-index:5;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.92);border-radius:999px;padding:3px 11px 3px 6px;font-weight:800;color:#7a5200;font-size:14px}
+.pf-coin .ico{width:20px;height:20px}
+.pf-name{text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;flex:none}
+.pf-name b{font-family:var(--f-display);font-weight:400;font-size:24px}
+.pf-nick{border:0;background:none;color:#b08a4a;font-size:16px;cursor:pointer;padding:2px}
+.pf-ttl{background:#ffe066;color:#7a5200;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:800}
+.pf-sub{text-align:center;font-size:12px;color:#9a7a4a;margin-top:-4px;flex:none}
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:none}
+.pf-grid .c{background:#fff;border:2px solid #f0d9a8;border-radius:16px;padding:8px 6px;text-align:center}
+.pf-grid .c small{display:block;font-size:11px;color:#9a7a4a}
+.pf-grid .c b{font-size:17px;color:#5a3a1a;font-weight:800}
+.pf-grid .c.rk{background:linear-gradient(#fff3bf,#ffe066);border-color:#f5c84c}
+.pf-grid .c.rk b{font-size:19px;color:#b25e00}
+.pf-grid .c.wide{grid-column:span 2}
+.pf-lbl{font-size:11px;color:#9a7a4a;margin:2px 2px -4px}
+.pf-tabs{display:flex;gap:6px;flex:none}
+.pf-tab{flex:1;text-align:center;padding:8px 0;border-radius:12px;background:#fff;border:2px solid #f0d9a8;font:inherit;font-size:13px;font-weight:800;color:#7a5a2a;cursor:pointer}
+.pf-tabs.s6 .pf-tab{font-size:12px}
+.pf-tab.g{background:#fff8e6;border-style:dashed;color:#9a6a1a}
+.pf-tab.on{background:#ff7a59;border:2px solid #e55a37;color:#fff}
+.pf-items{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pf-items.f,.pf-items.b{grid-template-columns:repeat(3,1fr)}
+.pf-it{position:relative;border-radius:16px;background:#fff;border:2px solid #f0d9a8;padding:6px 4px;text-align:center;font:inherit;font-size:11px;color:#7a5a2a;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.pf-it.on{border-color:#ff7a59;box-shadow:0 0 0 2px #ff7a59 inset}
+.pf-it.pv{border-color:#4dabf7;box-shadow:0 0 0 2px #4dabf7 inset}
+.pf-it:disabled{cursor:default;opacity:.7}
+.pf-it .nm{font-weight:700;line-height:1.2}
+.pf-it .st{display:flex;align-items:center;gap:3px;font-weight:800;color:#7a5200;font-size:11px}
+.pf-it .st .ico{width:13px;height:13px}
+.pf-it .lk{position:absolute;top:4px;right:4px;width:16px;height:16px}
+.pf-it .lk .ico,.pf-it .lk img{width:16px;height:16px}
+.pf-it .sw{display:block;width:100%;height:44px;border-radius:10px;overflow:hidden;display:grid;place-items:center;font-size:22px}
+.pf-it .sw.base{background:#f1f3f5}.pf-it .sw.base i{display:block;width:70%;height:34%;border-radius:50%}
+.pf-it .sw.tg{background:#fff8e1}.pf-it .sw.tg b{font-size:15px}
+.pf-it .sw.mvs{background:#fff3bf}.pf-it .sw.mvs img{height:40px}
+.pf-it .sw.face{background:#fff3bf}.pf-it .sw.face svg,.pf-it .sw.face img{height:38px;width:auto}
+.pf-fsw{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;border:3px solid transparent;background:linear-gradient(var(--fin,#fff3bf),var(--fin,#fff3bf)) padding-box,var(--fb,linear-gradient(#f5c84c,#f5c84c)) border-box;box-shadow:var(--fs,none)}
+.pf-fsw img,.pf-fsw svg{width:38px;height:38px}
+.pf-bsw{display:grid;place-items:center;height:48px}
+.pf-buy{background:#fff;border:2px solid #f0d9a8;border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;text-align:center;font-size:12px;color:#7a5a2a}
+.pf-buy .row{display:flex;gap:8px}.pf-buy .btn{flex:1}
+.pf-tt{background:#fff;border:2px solid #f0d9a8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
+.pf-sm{font-size:12px;color:#7a5a2a;margin:0}.pf-sm.c{text-align:center}
+/* 카드 효과 */
+.pf-fx{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.pf-fx span{position:absolute;left:var(--x);font-size:var(--s);opacity:0}
+.pf-fx.rise span{bottom:-8%;animation:pfRise 4.4s linear var(--d) infinite}
+.pf-fx.fall span{top:-8%;animation:pfFall 5s linear var(--d) infinite}
+.pf-fx.aur{background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.35) 35%,rgba(177,151,252,.25) 50%,rgba(105,219,124,.25) 65%,transparent 80%);background-size:250% 100%;animation:pfAur 6s ease-in-out infinite}
+@keyframes pfRise{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:.95}100%{transform:translateY(-440px) rotate(25deg);opacity:0}}
+@keyframes pfFall{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:.95}100%{transform:translateY(460px) rotate(-30deg);opacity:0}}
+@keyframes pfAur{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+@keyframes tgGlitter{0%,100%{text-shadow:0 0 0 transparent}50%{text-shadow:0 0 8px #ffd43b,0 0 14px #fff}}
+/* 캐릭터 동작 */
+.mv-breathe{animation:mvBreathe 3.2s ease-in-out infinite}
+.mv-bounce{animation:mvBounce 1s ease-in-out infinite}
+.mv-wave{animation:mvWave 1.8s ease-in-out infinite}
+.mv-sway{animation:mvSway 2.6s ease-in-out infinite}
+.mv-spin{animation:mvSpin 4.5s ease-in-out infinite}
+.mv-float{animation:mvFloat 3s ease-in-out infinite}
+.mv-beat{animation:mvBeat 1.1s ease-in-out infinite}
+.mv-pop{animation:mvPop 3s ease-out infinite}
+.mv-dance{animation:mvDance 1.2s ease-in-out infinite}
+.mv-magic{animation:mvMagic 3.4s ease-in-out infinite}
+@keyframes mvBreathe{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.025)}}
+@keyframes mvBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4%)}}
+@keyframes mvWave{0%,100%{transform:translateX(-50%) rotate(-2deg)}50%{transform:translateX(-50%) rotate(2deg)}}
+@keyframes mvSway{0%,100%{transform:translateX(-54%)}50%{transform:translateX(-46%)}}
+@keyframes mvSpin{0%,70%,100%{transform:translateX(-50%) rotateY(0)}85%{transform:translateX(-50%) rotateY(180deg)}}
+@keyframes mvFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6%)}}
+@keyframes mvBeat{0%,100%{transform:translateX(-50%) scale(1)}25%{transform:translateX(-50%) scale(1.05)}50%{transform:translateX(-50%) scale(.99)}}
+@keyframes mvPop{0%,60%,100%{transform:translateX(-50%) scale(1);filter:drop-shadow(0 4px 4px rgba(0,0,0,.18))}70%{transform:translateX(-50%) scale(1.07);filter:drop-shadow(0 0 14px #fff)}}
+@keyframes mvDance{0%,100%{transform:translateX(-52%) rotate(-3deg) translateY(0)}25%{transform:translateX(-50%) rotate(0) translateY(-3%)}50%{transform:translateX(-48%) rotate(3deg) translateY(0)}75%{transform:translateX(-50%) rotate(0) translateY(-3%)}}
+@keyframes mvMagic{0%,80%,100%{transform:translateX(-50%) scale(1);filter:drop-shadow(0 4px 4px rgba(0,0,0,.18))}88%{transform:translateX(-50%) scale(1.1);filter:brightness(1.8) drop-shadow(0 0 16px #fff)}}
+@media (prefers-reduced-motion:reduce){[class*="mv-"],.pf-fx span,.pf-fx.aur{animation:none!important}}
+.pf-it .sw.mvs img{animation:none!important;position:static;transform:none}
+body.pf-open #fx{z-index:60}
 .fr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;max-height:56vh;overflow:auto;padding:14px 2px 2px}
 .fr-pick{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border:2px solid #e3e8f0;border-radius:14px;background:#fff;font:inherit;cursor:pointer}
 .fr-pick.on{border-color:#ffd43b;background:#fff9db}
@@ -3247,7 +3350,7 @@ $('#gmMenu').addEventListener('click',openPause);
 
 $('#menuBtn').addEventListener('click',showMenu);
 // 안드로이드 뒤로 버튼: 창 닫기 → 게임 중이면 일시정지 메뉴 → 지도에선 앱 내리기
-window.__sekanBack=()=>{if($('#sheet')){closeSheet();if(paused)resumeGame();return true}if(inGame){const b=$('#gmMenu');if(b&&!b.hidden&&b.offsetParent){b.click();return true}showMenu();return true}return false};
+window.__sekanBack=()=>{if($('#sheet')){closeSheet();if(paused)resumeGame();return true}if(window.__pfBack&&window.__pfBack())return true;if(inGame){const b=$('#gmMenu');if(b&&!b.hidden&&b.offsetParent){b.click();return true}showMenu();return true}return false};
 
 let armed=false,armT;
 $('#resetBtn').addEventListener('click',()=>{
@@ -4029,6 +4132,8 @@ const ACH=(function(){
   }
   return {
     A,LIST,ready,dot,open,openTitles,snapshot,newSince,gotOf:id=>{const a=LIST.find(x=>x.id===id);return a?got(a):0},
+    label:(id,t)=>{const a=LIST.find(x=>x.id===id);return a&&t>=1&&t<=a.tiers.length?tierLabel(a,t-1):''},
+    earned:()=>LIST.filter(a=>got(a)>0).map(a=>({id:a.id,tier:got(a),label:tierLabel(a,got(a)-1)})),
     // 클리어 직전 기록으로 끈기 업적 세기
     onClear(round,prevStars,hadPrev,newStars){const a=A();if(hadPrev&&prevStars<3&&newStars>=3)a.c.up=(a.c.up|0)+1;if(a.fail[round]){delete a.fail[round];a.c.back=(a.c.back|0)+1}},
     onFail(round){A().fail[round]=1;saveP()},
@@ -4340,6 +4445,7 @@ function mergeP(a,b){
   const tl=(a.titleAt||0)>=(b.titleAt||0)?a:b;if(typeof tl.title==='string'){o.title=tl.title;o.titleAt=tl.titleAt||0}
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
   {const fa=(a.frameAt||0)>=(b.frameAt||0)?a:b;if(fa.frame){o.frame=fa.frame;o.frameAt=fa.frameAt||0}}
+  {const cm=COS.merge(a,b);if(cm)o.cos=cm}
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
   else{const o2=av===a?b:a;if(typeof o2.avatar==='number'){o.avatar=o2.avatar;o.avatarAt=o2.avatarAt||0}}
   return o;
@@ -4490,25 +4596,6 @@ function profInner(){
     `<span class="pf-st"><span class="pf-star">★</span><b>${myStars().toLocaleString()}</b><span class="pf-dot"></span>라운드 <b>${P.unlocked}</b></span></span>`;
 }
 function profRefresh(){const b=$('#profBtn');if(b)b.innerHTML=profInner()}
-function openProfile(){
-  const acc=RANK.account(),cleared=Object.keys(P.rounds).length;
-  const total=Object.values(P.rounds).reduce((a,x)=>a+(x.best||0),0);
-  const sh=openSheet(`<div class="eyebrow">프로필</div>
-    <div class="pf-head"><button type="button" class="pf-big${frCls()}" id="pfAv" aria-label="프로필 사진 바꾸기">${profFace()}<span class="pf-edit" aria-hidden="true">✎</span></button><div style="min-width:0"><h3 class="pf-h">${esc(profName())}</h3>${P.title?`<p class="pf-ttl">${ACH.badge(P.title)}</p>`:''}
-    <p class="lead">${isAdmin()?'<span class="adm-badge">운영진</span> ':''}${RANK.enabled?(acc?`아이디 <b>${esc(acc)}</b>`:'로그인 없이 하는 중'):'이 기기에 저장 중'} · ${ZONES[zoneOf(P.unlocked)].lvl} 단계</p></div></div>
-    <dl class="pf-stats"><div><dt>별</dt><dd>★ ${myStars().toLocaleString()}</dd></div><div><dt>지금 라운드</dt><dd>${P.unlocked}</dd></div>
-    <div><dt>깬 라운드</dt><dd>${cleared}</dd></div><div><dt>총점</dt><dd>${total.toLocaleString()}</dd></div></dl>
-    <div class="row"><button class="btn" type="button" id="pfTitle">칭호 ${P.title?'바꾸기':'고르기'}</button><button class="btn" type="button" id="pfFrame">테두리 고르기</button></div>
-    <div class="row"><button class="btn" type="button" id="pfAch">${ICON.medal} 업적</button></div>
-    <div class="row">${RANK.enabled?`<button class="btn" type="button" id="pfNick">닉네임 ${RANK.nick()?'바꾸기':'정하기'}</button>`:''}
-    <button class="btn primary" type="button" id="pfClose">닫기</button></div>`);
-  const nb=sh.querySelector('#pfNick');if(nb)nb.addEventListener('click',()=>openNick(!RANK.nick()));
-  sh.querySelector('#pfAv').addEventListener('click',()=>{NATIVE.buzz('tick');openAvatar()});
-  sh.querySelector('#pfTitle').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.openTitles()});
-  sh.querySelector('#pfFrame').addEventListener('click',()=>{NATIVE.buzz('tick');openFrames()});
-  sh.querySelector('#pfAch').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});
-  sh.querySelector('#pfClose').addEventListener('click',closeSheet);
-}
 /* 프로필 테두리: 업적 보상을 받으면 열림 (운영진은 모두 열림) */
 const FRAMES=[
   {id:'none',name:'기본',need:'처음부터',ok:()=>true},
@@ -4530,18 +4617,234 @@ function myFrame(){const f=FRAMES.find(x=>x.id===P.frame);return f&&frameOk(f)?f
 const frCls=()=>' fr fr-'+myFrame();
 // 지도에서 지금 내 차례인 라운드 위에 내 프로필 핀
 function mePin(){return `<span class="me-pin" aria-hidden="true"><span class="me-av${frCls()}">${profFace()}</span><b>나</b></span>`}
-function openFrames(){
-  const cur=myFrame();
-  const sh=openSheet(`<div class="eyebrow">프로필 테두리</div><h3>테두리 고르기</h3>
-    <p class="lead">업적 보상을 받으면 새 테두리가 열려요.</p>
-    <div class="fr-grid">${FRAMES.map(f=>{const ok=frameOk(f);return `<button type="button" class="fr-pick${f.id===cur?' on':''}" data-f="${f.id}" ${ok?'':'disabled'} aria-pressed="${f.id===cur}">
-      <span class="pf-big fr fr-${f.id}">${profFace()}${ok?'':'<i class="fr-lock">'+LOCK+'</i>'}</span><b>${f.name}</b><small>${ok?(f.id===cur?'쓰는 중':'고르기'):esc(f.need)}</small></button>`}).join('')}</div>
-    <div class="row"><button class="btn" type="button" id="frBack">돌아가기</button></div>`);
-  sh.querySelectorAll('.fr-pick').forEach(b=>b.addEventListener('click',()=>{if(b.disabled)return;
-    P.frame=b.dataset.f;P.frameAt=Date.now();saveP();NATIVE.buzz('ok');SFX.play('badge');profRefresh();openProfile();
-    FX.text(`${FRAMES.find(x=>x.id===P.frame).name} 테두리로 바꿨어요`,innerWidth/2,innerHeight*.25,{size:22,color:'#ffd43b'})}));
-  sh.querySelector('#frBack').addEventListener('click',openProfile);
+/* ---------- 프로필 카드 · 꾸미기 (6.6) ---------- */
+// 꾸미기 상품: 종류마다 10개(무료 1·200 3·500 4·1000 2), 동행 친구 11마리 500. 모두 코드로 그림(그림은 지팀장 요청 뒤에 교체)
+const COS=(function(){
+  const mk=(cat,arr)=>arr.map(([id,name,price,css,e,k])=>({id,name,price,css,e,k,cat}));
+  const BG=mk('bg',[
+    ['basic','기본',0,'#fff3bf'],
+    ['candy','하늘 솜사탕',200,'linear-gradient(#bfe3ff,#ffd9ec)'],
+    ['flower','꽃 언덕',200,'linear-gradient(#c9f2d0,#fff3bf)'],
+    ['sea','푸른 바다',200,'linear-gradient(#bde6ff,#e8f6ff)'],
+    ['snow','눈 덮인 산',500,'linear-gradient(#f4fbff,#cfe5f5)'],
+    ['night','별빛 하늘',500,'radial-gradient(circle at 72% 18%,rgba(255,255,255,.4),transparent 25%),linear-gradient(#141a4a,#3b2f86 60%,#6c4fb8)'],
+    ['dots','분홍 물방울',500,'radial-gradient(#fff 2px,transparent 3px) 0 0/16px 16px,#ffb3c7'],
+    ['sunset','노을',500,'linear-gradient(#ffd6a5,#ff9aa2 55%,#c3a6ff)'],
+    ['aurora','무지개 오로라',1000,'linear-gradient(135deg,#ffd43b,#ff8fb1,#b197fc,#4dabf7)'],
+    ['gold','황금 빛',1000,'radial-gradient(circle at 50% 30%,#fff7c2,#ffd43b 60%,#f08c00)']]);
+  const BASE=mk('base',[
+    ['pink','분홍 원판',0,'background:radial-gradient(#ff9ec4,#ff6fa5);box-shadow:0 6px 0 #d94a85'],
+    ['cloud','구름',200,'background:radial-gradient(#ffffff,#dbe9ff);box-shadow:0 6px 0 #b8c9e6'],
+    ['grass','잔디',200,'background:radial-gradient(#b2f2bb,#69db7c);box-shadow:0 6px 0 #37b24d'],
+    ['stump','그루터기',200,'background:repeating-radial-gradient(#d9a066 0 6px,#b97a43 6px 12px);box-shadow:0 6px 0 #7a4a22'],
+    ['ice','얼음',500,'background:radial-gradient(#f1fbff,#a5d8ff);box-shadow:0 6px 0 #74c0fc'],
+    ['cookie','쿠키',500,'background:radial-gradient(circle at 30% 40%,#5a3a1a 3px,transparent 4px) 0 0/22px 18px,radial-gradient(#f0c987,#d9a35b);box-shadow:0 6px 0 #a8742e'],
+    ['macaron','마카롱',500,'background:linear-gradient(#ffc9de 0 38%,#fff 38% 62%,#ffc9de 62%);box-shadow:0 6px 0 #f06595'],
+    ['gem','보석',500,'background:conic-gradient(#c3a6ff,#8e6fd8,#e5dbff,#8e6fd8,#c3a6ff);box-shadow:0 6px 0 #5b3f9a'],
+    ['stars','별무리',1000,'background:radial-gradient(circle,#fff3bf 2px,transparent 3px) 0 0/14px 14px,radial-gradient(#ffe066,#fab005);box-shadow:0 6px 0 #e67700,0 0 14px #ffd43b'],
+    ['throne','황금 왕좌',1000,'background:linear-gradient(90deg,#b8860b,#ffe066,#b8860b);box-shadow:0 6px 0 #8a6508,0 0 16px rgba(255,212,59,.8)']]);
+  const TAG=mk('tag',[
+    ['brown','갈색',0,'color:#5a3a1a'],
+    ['blue','파랑',200,'color:#1c7ed6'],
+    ['green','초록',200,'color:#2f9e44'],
+    ['purple','보라',200,'color:#7048e8'],
+    ['pink','분홍 그라데이션',500,'background:linear-gradient(90deg,#ff6fa5,#ff9ec4,#ff6fa5);-webkit-background-clip:text;background-clip:text;color:transparent'],
+    ['sunset','노을 그라데이션',500,'background:linear-gradient(90deg,#ff922b,#f06595,#845ef7);-webkit-background-clip:text;background-clip:text;color:transparent'],
+    ['sea','바다 그라데이션',500,'background:linear-gradient(90deg,#1c7ed6,#15aabf,#1c7ed6);-webkit-background-clip:text;background-clip:text;color:transparent'],
+    ['gold','금빛',500,'color:#d4a017;text-shadow:0 0 6px rgba(255,212,59,.7)'],
+    ['rainbow','무지개',1000,'background:linear-gradient(90deg,#ff6b6b,#ffd43b,#69db7c,#4dabf7,#b197fc);-webkit-background-clip:text;background-clip:text;color:transparent'],
+    ['glitter','반짝 글씨',1000,'color:#5a3a1a;animation:tgGlitter 1.6s ease-in-out infinite']]);
+  const FXI=mk('fx',[
+    ['none','없음',0],
+    ['star','별 반짝',200,'','⭐✨','rise'],['heart','하트',200,'','💗💖','rise'],['petal','꽃잎',200,'','🌸','fall'],
+    ['snow','눈송이',500,'','❄️','fall'],['bubble','비눗방울',500,'','🫧','rise'],['note','음표',500,'','🎵🎶','rise'],['fire','불꽃',500,'','🔥','rise'],
+    ['aurora','오로라',1000,'','','aurora'],['dust','금가루',1000,'','✨','fall']]);
+  const MV=mk('move',[
+    ['breathe','숨쉬기',0],['bounce','통통 뛰기',200],['wave','손 흔들기',200],['sway','좌우 흔들',200],
+    ['spin','빙글',500],['float','둥실',500],['beat','콩닥',500],['pop','반짝 등장',500],['dance','춤추기',1000],['magic','마법 변신',1000]]);
+  const COMP=[{id:'none',name:'혼자서',price:0,cat:'comp'}].concat(ZODIAC.NAMES.map((nm,i)=>({id:String(i),name:nm,price:500,cat:'comp'})));
+  const CAT={bg:{name:'배경',items:BG},base:{name:'받침',items:BASE},tag:{name:'이름표',items:TAG},fx:{name:'효과',items:FXI},move:{name:'동작',items:MV},comp:{name:'동행',items:COMP}};
+  const ORDER=['bg','base','tag','fx','move','comp'];
+  function S(){if(!P.cos||typeof P.cos!=='object')P.cos={};const c=P.cos;if(!Array.isArray(c.own))c.own=[];if(!c.on||typeof c.on!=='object')c.on={};if(!Array.isArray(c.on.g))c.on.g=[];return c}
+  const key=it=>it.cat+'.'+it.id;
+  const has=it=>it.price===0||isAdmin()||S().own.includes(key(it));
+  const find=(cat,id)=>CAT[cat].items.find(x=>x.id===String(id));
+  // 장착 중인 것(없거나 못 쓰면 기본)
+  function on(cat){const it=find(cat,S().on[cat]);return it&&has(it)?it:CAT[cat].items[0]}
+  function equip(cat,id){const c=S();c.on[cat]=String(id);c.at=Date.now();saveP();RANK.submitQuiet()}
+  function buy(it){const w=W();if(has(it))return 'own';if(w.coins<it.price)return 'coin';w.coins-=it.price;S().own.push(key(it));walletChanged();equip(it.cat,it.id);return 'ok'}
+  // 내 꾸미기 선택(화면 그리기·서버 보내기 공용)
+  function mine(){const c=S();return {bg:on('bg').id,base:on('base').id,tag:on('tag').id,fx:on('fx').id,move:on('move').id,comp:on('comp').id,frame:myFrame(),badges:c.on.g.slice(0,3)}}
+  function pack(){const m=mine();return JSON.stringify({b:m.bg,p:m.base,t:m.tag,f:m.fx,m:m.move,c:m.comp,r:m.frame,g:m.badges})}
+  // 서버에서 받은 글자 → 안전한 선택(정해진 목록 값만)
+  function parse(str){
+    let o={};try{o=typeof str==='string'?JSON.parse(str):(str||{})}catch(e){o={}}
+    const ok=(cat,v)=>find(cat,v)?String(v):CAT[cat].items[0].id;
+    const g=Array.isArray(o.g)?o.g.filter(x=>typeof x==='string'&&/^[a-zA-Z0-9]{3,14}:\d{1,2}$/.test(x)).slice(0,3):[];
+    return {bg:ok('bg',o.b),base:ok('base',o.p),tag:ok('tag',o.t),fx:ok('fx',o.f),move:ok('move',o.m),comp:ok('comp',o.c),frame:FRAMES.some(f=>f.id===o.r)?o.r:'none',badges:g};
+  }
+  function merge(a,b){const ca=(a&&a.cos)||{},cb=(b&&b.cos)||{};if(!ca.own&&!cb.own&&!ca.on&&!cb.on)return null;
+    const own=[...new Set([...(ca.own||[]),...(cb.own||[])])],nw=(ca.at||0)>=(cb.at||0)?ca:cb;return {own,on:Object.assign({},nw.on||{}),at:nw.at||0}}
+  return {CAT,ORDER,S,has,find,on,equip,buy,mine,pack,parse,merge,key};
+})();
+// 동행 그림 쌍(두 친구가 같이 선 그림): 지팀장 그림이 오면 '작은번호_큰번호'를 여기에 추가(img/pair/pair<작은>_<큰>.webp)
+const PAIRS_READY=new Set();
+// 대표 배지 그림이 있는 업적 종류(img/badge/badge_<id>.webp), 없으면 메달 아이콘
+const BADGE_IMG=new Set();
+function badgeHTML(g){
+  const [id,t]=String(g).split(':'),tier=+t,label=ACH.label(id,tier);if(!label)return '';
+  const ic=BADGE_IMG.has(id)?`<img src="${embedded('img/badge/badge_'+id+'.webp')}" alt="">`:ICON.medal;
+  return `<i class="pf-bd t${Math.min(5,tier)}" title="${esc(label)}">${ic}<b>${esc(label)}</b></i>`;
 }
+function fxHTML(it){
+  if(!it||it.id==='none')return '';
+  if(it.k==='aurora')return '<div class="pf-fx aur"></div>';
+  const em=[...it.e];let h='';
+  for(let i=0;i<9;i++)h+=`<span style="--x:${(i*37+11)%90}%;--d:-${((i*0.61)%3.6).toFixed(2)}s;--s:${14+(i*5)%11}px">${em[i%em.length]}</span>`;
+  return `<div class="pf-fx ${it.k}" aria-hidden="true">${h}</div>`;
+}
+// 큰 캐릭터 카드(내 프로필·꾸미기·남의 프로필 공용). sel = COS.mine() 모양, inner = 카드 안에 얹을 HTML
+function stageHTML(av,sel,inner,cls){
+  const C=COS.CAT,get=cat=>COS.find(cat,sel[cat])||C[cat].items[0];
+  const bg=get('bg'),base=get('base'),mv=get('move'),fx=get('fx');
+  const cp=+sel.comp,comp=(sel.comp!=null&&sel.comp!=='none'&&cp>=0&&cp<12&&cp!==av)?cp:-1;
+  const fr=FRAMES.some(f=>f.id===sel.frame)?sel.frame:'none';
+  const pk=comp>=0?Math.min(av,comp)+'_'+Math.max(av,comp):'';
+  const bodies=(comp>=0&&PAIRS_READY.has(pk))?`<img class="pf-pair mv-${mv.id}" src="${embedded('img/pair/pair'+pk+'.webp')}" alt="">`
+    :`<img class="pf-body mv-${mv.id}${comp>=0?' wc':''}" src="${embedded('img/zbody/b'+av+'.webp')}" alt="">${comp>=0?`<img class="pf-comp" src="${embedded('img/zbody/b'+comp+'.webp')}" alt="">`:''}`;
+  const bd=(sel.badges||[]).slice(0,3).map(badgeHTML).join('');
+  return `<div class="pf-stage fr-${fr} ${cls||''}"><div class="pf-bg" style="background:${bg.css}">${fxHTML(fx)}<div class="pf-cst"><div class="pf-plat" style="${base.css}"></div>${bodies}</div>${bd?`<div class="pf-bdg">${bd}</div>`:''}${inner||''}</div></div>`;
+}
+const nameHTML=(name,sel,title)=>`<div class="pf-name"><b style="${(COS.find('tag',sel.tag)||COS.CAT.tag.items[0]).css}">${esc(name)}</b>${title?`<span class="pf-ttl">${esc(title)}</span>`:''}</div>`;
+let pfMode='me',pfTab='bg',pfPv=null;   // 화면 모드(me·deco), 꾸미기 탭, 사기 전 미리 보기
+function pfEl(){return document.getElementById('pfScreen')}
+function pfClose(){const e=pfEl();if(e)e.remove();document.body.classList.remove('pf-open');profRefresh()}
+function pfPlace(html,label){
+  let e=pfEl();
+  if(!e){e=document.createElement('div');e.id='pfScreen';e.className='pfscreen';e.setAttribute('role','dialog');document.body.appendChild(e);document.body.classList.add('pf-open')}
+  e.setAttribute('aria-label',label);e.innerHTML=html;return e;
+}
+// 뒤로 가기(안드로이드) : 꾸미기 → 프로필 → 닫기
+window.__pfBack=()=>{if(!pfEl())return false;if(pfMode==='deco'){openProfile()}else pfClose();return true};
+function openProfile(){
+  closeSheet();pfMode='me';pfPv=null;
+  const sel=COS.mine(),av=myAvatar();
+  const inner=`<button type="button" class="pf-hint" id="pfAv">✎ 캐릭터 바꾸기</button><div class="pf-cbar"><button type="button" class="pf-b" id="pfAch">${ICON.medal}업적</button><button type="button" class="pf-b p" id="pfDeco">✨ 꾸미기</button></div>`;
+  const e=pfPlace(`<div class="pf-top"><span class="pf-sp"></span><h2>내 프로필</h2><button type="button" class="pf-x" id="pfX" aria-label="닫기">✕</button></div>
+    ${stageHTML(av,sel,inner,'big')}
+    <div class="pf-name"><b style="${COS.on('tag').css}">${esc(profName())}</b><button type="button" class="pf-nick" id="pfNick" aria-label="닉네임 바꾸기">✎</button>${P.title?`<span class="pf-ttl">${esc(P.title)}</span>`:''}${isAdmin()?'<span class="adm-badge">운영진</span>':''}</div>
+    <div class="pf-sub">${ZODIAC.NAMES[av]} · ${ZODIAC.KINDS[av]}${RANK.account()?` · 아이디 ${esc(RANK.account())}`:''}</div>
+    <div class="pf-grid" id="pfGrid">${infoCells(null,null)}</div>`,'내 프로필');
+  e.querySelector('#pfX').addEventListener('click',()=>{NATIVE.buzz('tick');pfClose()});
+  e.querySelector('#pfAv').addEventListener('click',()=>{NATIVE.buzz('tick');openAvatar()});
+  e.querySelector('#pfNick').addEventListener('click',()=>{NATIVE.buzz('tick');openNick(!RANK.nick(),()=>openProfile())});
+  e.querySelector('#pfAch').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});
+  e.querySelector('#pfDeco').addEventListener('click',()=>{NATIVE.buzz('tick');SFX.play('tap');openDeco()});
+  pfLoadInfo();
+}
+// 정보 칸 5개: 순위·최고 라운드·별·총점·과자 나라. me/cme = 서버에서 받은 내 줄(없으면 내 기기 기록)
+function infoCells(me,cme,msg){
+  const best=Math.max(0,...Object.keys(P.rounds).map(Number)),total=Object.values(P.rounds).reduce((a,x)=>a+(x.best||0),0);
+  const rk=me?`<b>${me.rank}위</b><small>${me.total}명 중</small>`:`<b>–</b><small>${msg||'불러오는 중…'}</small>`;
+  const cd=cme?`${cme.rank}위 · 라운드 ${cme.candy_round}`:((P.candy&&Object.keys(P.candy.rounds||{}).length)?`라운드 ${Math.max(...Object.keys(P.candy.rounds).map(Number))}`:'기록 없음');
+  return `<div class="c rk"><small>순위</small>${rk}</div><div class="c"><small>최고 라운드</small><b>${me?me.best_round:best}</b></div>
+    <div class="c"><small>★ 별</small><b>${(me?me.stars:myStars()).toLocaleString()}</b></div><div class="c"><small>총점</small><b>${Number(me?me.score:total).toLocaleString()}</b></div>
+    <div class="c wide"><small>과자 나라</small><b>${cd}</b></div>`;
+}
+async function pfLoadInfo(){
+  const g=()=>document.getElementById('pfGrid');
+  let msg='';
+  if(isAdmin())msg='운영진은 순위 제외';else if(!RANK.enabled)msg='';else if(!RANK.account())msg='로그인하면 순위가 보여요';
+  if(msg||!RANK.enabled||!RANK.nick()){if(g())g().innerHTML=infoCells(null,null,msg);return}
+  try{
+    const [me,cme]=await Promise.all([RANK.me().catch(()=>null),RANK.candyMe().catch(()=>null)]);
+    if(g()&&pfMode==='me')g().innerHTML=infoCells(me,cme,me?'':'랭킹에 아직 없어요');
+  }catch(e){if(g())g().innerHTML=infoCells(null,null,'순위를 못 불러왔어요')}
+}
+// ----- 꾸미기 모드 -----
+const DECO_TABS=[['bg','배경'],['base','받침'],['tag','이름표'],['fx','효과'],['move','동작'],['comp','동행']];
+const ACH_TABS=[['frame','테두리'],['title','칭호'],['badge','대표 배지']];
+function decoSel(){const s=COS.mine();if(pfPv)s[pfPv.cat]=pfPv.id;return s}
+function openDeco(tab){
+  pfMode='deco';if(tab)pfTab=tab;
+  const sel=decoSel(),av=myAvatar();
+  const coin=`<span class="pf-coin">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span>`;
+  const tabs=`<div class="pf-lbl">코인으로 꾸미기</div><div class="pf-tabs s6">${DECO_TABS.map(([k,n])=>`<button type="button" class="pf-tab${pfTab===k?' on':''}" data-t="${k}">${n}</button>`).join('')}</div>
+    <div class="pf-lbl">업적으로 열려요</div><div class="pf-tabs g">${ACH_TABS.map(([k,n])=>`<button type="button" class="pf-tab g${pfTab===k?' on':''}" data-t="${k}">${n}</button>`).join('')}</div>`;
+  const e=pfPlace(`<div class="pf-top"><button type="button" class="pf-x" id="pfBack" aria-label="뒤로">‹</button><h2>꾸미기</h2><button type="button" class="pf-x" id="pfX" aria-label="닫기">✕</button></div>
+    <div class="pf-scroll">${stageHTML(av,sel,coin,'small')}${nameHTML(profName(),sel,P.title)}${tabs}<div id="pfItems"></div><div id="pfBar"></div></div>`,'꾸미기');
+  e.querySelector('#pfX').addEventListener('click',()=>{NATIVE.buzz('tick');pfClose()});
+  e.querySelector('#pfBack').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
+  e.querySelectorAll('.pf-tab').forEach(b=>b.addEventListener('click',()=>{NATIVE.buzz('tick');pfTab=b.dataset.t;pfPv=null;openDeco()}));
+  decoItems();
+}
+// 위쪽 큰 카드·이름표만 다시 그림(스크롤 위치 유지)
+function decoStageRefresh(){
+  const sc=document.querySelector('#pfScreen .pf-scroll');if(!sc)return;
+  const sel=decoSel(),av=myAvatar(),old=sc.querySelector('.pf-stage'),nm=sc.querySelector('.pf-name');
+  const coin=`<span class="pf-coin">${ICON.coin}<b data-coins>${W().coins.toLocaleString()}</b></span>`;
+  const t=document.createElement('div');t.innerHTML=stageHTML(av,sel,coin,'small')+nameHTML(profName(),sel,P.title);
+  old.replaceWith(t.children[0]);nm.replaceWith(t.children[0]);
+}
+function decoItems(){
+  const box=document.getElementById('pfItems'),bar=document.getElementById('pfBar');if(!box)return;
+  const cur=COS.mine();bar.innerHTML='';
+  if(COS.CAT[pfTab]){
+    const items=COS.CAT[pfTab].items.filter(it=>!(pfTab==='comp'&&it.id===String(myAvatar())));
+    box.innerHTML=`<div class="pf-items">${items.map(it=>{
+      const own=COS.has(it),onNow=String(cur[pfTab])===it.id,pv=pfPv&&pfPv.cat===pfTab&&pfPv.id===it.id;
+      return `<button type="button" class="pf-it${onNow?' on':''}${pv?' pv':''}" data-id="${it.id}">${swatch(it)}<span class="nm">${esc(it.name)}</span><span class="st">${onNow?'쓰는 중':own?(it.price?'가지고 있어요':'무료'):`${ICON.coin}${it.price}`}</span>${own?'':`<i class="lk">${LOCK}</i>`}</button>`}).join('')}</div>`;
+    box.querySelectorAll('.pf-it').forEach(b=>b.addEventListener('click',()=>{
+      const it=COS.find(pfTab,b.dataset.id);NATIVE.buzz('tick');
+      if(COS.has(it)){pfPv=null;COS.equip(pfTab,it.id);SFX.play('badge');decoStageRefresh();decoItems();return}
+      pfPv={cat:pfTab,id:it.id};SFX.play('tap');decoStageRefresh();decoItems();
+    }));
+    if(pfPv&&pfPv.cat===pfTab){
+      const it=COS.find(pfTab,pfPv.id),can=W().coins>=it.price;
+      bar.innerHTML=`<div class="pf-buy"><span>미리 보기 중 · 사면 바로 적용돼요</span><div class="row"><button type="button" class="btn" id="pfNo">되돌리기</button><button type="button" class="btn primary${can?'':' dim'}" id="pfBuy">${ICON.coin}${it.price} 사기</button></div><p class="formmsg" id="pfMsg" aria-live="polite"></p></div>`;
+      setTimeout(()=>{try{bar.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}},30);
+      bar.querySelector('#pfNo').addEventListener('click',()=>{pfPv=null;decoStageRefresh();decoItems()});
+      bar.querySelector('#pfBuy').addEventListener('click',e=>{
+        const r=COS.buy(it);const m=bar.querySelector('#pfMsg');
+        if(r==='coin'){m.textContent=`코인이 ${it.price-W().coins}개 부족해요. 라운드를 깨서 모아 보세요.`;NATIVE.buzz('bad');return}
+        NATIVE.buzz('win');SFX.play('buy');const p=FX.center(e.currentTarget);FX.burst(p.x,p.y,{count:18,speed:6,ringR:46,colors:['#ffd43b','#fff3bf','#ff922b']});FX.text(`${it.name} 샀어요!`,p.x,p.y-40,{size:24,color:'#ffd43b'});
+        pfPv=null;decoStageRefresh();decoItems();
+      });
+    }
+    return;
+  }
+  if(pfTab==='frame'){
+    box.innerHTML=`<div class="pf-items f">${FRAMES.map(f=>{const ok=frameOk(f),on=f.id===myFrame();return `<button type="button" class="pf-it${on?' on':''}" data-f="${f.id}" ${ok?'':'disabled'}><span class="pf-fsw fr-${f.id}">${profFace()}</span><span class="nm">${f.name}</span><span class="st">${ok?(on?'쓰는 중':'쓸 수 있어요'):esc(f.need)}</span>${ok?'':`<i class="lk">${LOCK}</i>`}</button>`}).join('')}</div>`;
+    box.querySelectorAll('.pf-it:not([disabled])').forEach(b=>b.addEventListener('click',()=>{
+      P.frame=b.dataset.f;P.frameAt=Date.now();saveP();RANK.submitQuiet();NATIVE.buzz('ok');SFX.play('badge');decoStageRefresh();decoItems()}));
+    return;
+  }
+  if(pfTab==='title'){
+    box.innerHTML=`<div class="pf-tt"><p class="lead">지금 칭호: <b>${esc(P.title||'없음')}</b></p><p class="pf-sm">틀린그림·로직·퍼즐·과자 나라마다 별 3개로 깬 라운드가 10·50·100·200개면 초보·중수·고수·달인 칭호를 받아요.</p><button type="button" class="btn primary" id="pfTtl">칭호 고르기</button></div>`;
+    box.querySelector('#pfTtl').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.openTitles(()=>{closeSheet();openDeco('title')})});
+    return;
+  }
+  if(pfTab==='badge'){
+    const earned=ACH.earned(),sel=COS.S().on.g;
+    box.innerHTML=earned.length?`<p class="pf-sm c">받은 업적 중 <b>3개</b>까지 카드에 전시돼요 (${sel.length}/3)</p><div class="pf-items b">${earned.map(a=>{const g=a.id+':'+a.tier,on=sel.includes(g);
+      return `<button type="button" class="pf-it${on?' on':''}" data-g="${g}"><span class="pf-bsw">${badgeHTML(g)}</span><span class="nm">${esc(a.label)}</span><span class="st">${on?'전시 중':'눌러서 전시'}</span></button>`}).join('')}</div>`
+      :`<p class="pf-sm c">아직 받은 업적이 없어요. 라운드를 깨고 업적 보상을 받으면 여기서 전시할 수 있어요.</p>`;
+    box.querySelectorAll('.pf-it').forEach(b=>b.addEventListener('click',()=>{
+      const c=COS.S(),g=b.dataset.g,i=c.on.g.indexOf(g);
+      if(i>=0)c.on.g.splice(i,1);else{if(c.on.g.length>=3){NATIVE.buzz('bad');const m=document.querySelector('.pf-sm.c');if(m)m.textContent='3개까지만 전시할 수 있어요. 하나를 빼고 골라 주세요.';return}c.on.g.push(g)}
+      c.at=Date.now();saveP();RANK.submitQuiet();NATIVE.buzz('ok');SFX.play('tap');decoStageRefresh();decoItems()}));
+  }
+}
+function swatch(it){
+  if(it.cat==='bg')return `<span class="sw" style="background:${it.css}"></span>`;
+  if(it.cat==='base')return `<span class="sw base"><i style="${it.css}"></i></span>`;
+  if(it.cat==='tag')return `<span class="sw tg"><b style="${it.css}">가나다</b></span>`;
+  if(it.cat==='fx')return `<span class="sw fxs">${it.id==='none'?'–':it.k==='aurora'?'🌈':[...it.e][0]}</span>`;
+  if(it.cat==='move')return `<span class="sw mvs"><img class="mv-${it.id}" src="${embedded('img/zbody/b'+myAvatar()+'.webp')}" alt=""></span>`;
+  if(it.cat==='comp')return it.id==='none'?'<span class="sw fxs">–</span>':`<span class="sw face">${ZODIAC.face(+it.id)}</span>`;
+  return '';
+}
+
 function openAvatar(){
   const cur=myAvatar();
   const sh=openSheet(`<div class="eyebrow">프로필 사진</div><h3>친구 고르기</h3>
