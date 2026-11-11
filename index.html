@@ -3944,6 +3944,7 @@ const RANK=(function(){
     if(e instanceof TypeError||(e&&!e.status))return '인터넷 연결을 확인한 뒤 다시 시도해 주세요.';
     return '잠시 후 다시 시도해 주세요. ('+(e&&e.message||'알 수 없는 오류')+')';
   }
+  let noDeco=false;   // 서버에 deco 칸이 없다고 한 번 확인되면 이 접속 동안은 안 보냄
   async function submit(newNick){
     const n=newNick||nick();if(!enabled||!n)return;
     if(QA||ADMIN_IDS.includes(account())){store.set('sekan-rank-pending',false);return}
@@ -3951,14 +3952,14 @@ const RANK=(function(){
     const row=Object.assign({id:s.user.id,nickname:n},mine());
     if(typeof P.avatar==='number')row.avatar=P.avatar;
     row.title=P.title?String(P.title).slice(0,20):null;
-    row.deco=COS.pack();   // 6.6 꾸미기 값(서버에 칸이 없으면 아래에서 빼고 다시 보냄)
+    if(!noDeco)row.deco=COS.pack();   // 6.6 꾸미기 값(서버에 칸이 없으면 아래에서 빼고 다시 보냄)
     if(P.candy)Object.assign(row,CANDY.mine());
     const send=b=>api('/rest/v1/leaderboard?on_conflict=id',{method:'POST',headers:Object.assign(bearer(s),{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(b)});
     try{await send(row)}catch(e){
       // 서버 제한(라운드 510·별 1530)을 아직 안 넓혔으면 그 안으로 맞춰 다시 보냄 (천국 SQL 실행 전 대비)
       if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))&&(row.best_round>510||row.stars>1530)){row.best_round=Math.min(510,row.best_round);row.stars=Math.min(1530,row.stars);try{await send(row);store.set('sekan-rank-pending',false);return}catch(e4){e=e4}}
       // 서버에 꾸미기 칸(deco)이 아직 없으면 그 칸만 빼고 다시 보냄 (6.6 SQL 실행 전 대비)
-      if('deco' in row&&e&&/deco/i.test(e.message||'')){delete row.deco;try{await send(row);store.set('sekan-rank-pending',false);return}catch(e5){e=e5}}
+      if('deco' in row&&e&&/deco/i.test(e.message||'')){noDeco=true;delete row.deco;try{await send(row);store.set('sekan-rank-pending',false);return}catch(e5){e=e5}}
       // 과자 나라 제한이 아직 300라운드·별 900이면 그 안으로 맞춰 다시 보냄 (6.6 SQL 실행 전 대비)
       if(e&&(e.code==='23514'||/check constraint/i.test(e.message||''))&&(row.candy_round>300||row.candy_stars>900)){row.candy_round=Math.min(300,row.candy_round);row.candy_stars=Math.min(900,row.candy_stars);try{await send(row);store.set('sekan-rank-pending',false);return}catch(e6){e=e6}}
       // 서버에 과자 나라 칸이 아직 없으면 그 칸만 빼고 다시 보냄
