@@ -697,6 +697,24 @@
     }
    ],
    "prompt": "A game sprite sheet of 7 separate achievement badge icons, each a round emblem artwork (NO outer ring, NO medal frame, NO text), each an isolated cutout floating on a perfectly flat, uniform solid pure magenta background (#FF00FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke. No text, no numbers, no logos, no watermark. Image size 1536x1024. 3 rows x 3 columns, every item centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Cell 1: a 5x5 grid where some squares are filled dark blue forming a heart. Cell 2: one colourful jigsaw puzzle piece. Cell 3: a chocolate-chip cookie with a tiny flag. Cell 4: a star-shaped cookie with pink icing. Cell 5: a small tear-off calendar with a cookie on it. Cell 6: a yellow star with a green arrow pointing up. Cell 7: a red roly-poly tumbler toy with a friendly face. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, line-free clay finish.  Each icon is a simple, bold, centered emblem that fits inside a circle and fills about 75% of its cell, all with the same size, same lighting and the same bold outline-free clay look."
+  },
+  {
+   "id": "T1",
+   "bg": "흰색",
+   "hex": "#FFFFFF",
+   "region": "과자 칸 (11×11·12×12용)",
+   "cols": 2,
+   "items": [
+    {
+     "id": "tileLemon",
+     "ko": "레몬 캔디"
+    },
+    {
+     "id": "tileSoda",
+     "ko": "소다 젤리"
+    }
+   ],
+   "prompt": "A game sprite sheet of 2 separate square candy tiles for a puzzle board, each an isolated tile on a perfectly flat, uniform solid pure white background (#FFFFFF), no gradient, no texture, no cast shadow. 1 row x 2 columns, each tile centered in its own cell, wide even spacing, nothing touching, nothing cut off. Image size 1536x1024. Each tile is a rounded square with the same size, same thickness and same glossy look as the attached existing candy tiles (strawberry jelly, chocolate bar, butter cookie, mint candy, blueberry jelly, grape jelly, orange candy, matcha cookie, vanilla wafer, cherry candy), viewed straight from the front, filling about 75% of its cell. Cell 1: a bright yellow lemon jelly tile with a halved lemon slice and a green leaf. Cell 2: a light turquoise soda jelly tile with small white bubbles and a lime-green fizz swirl. Colors must be clearly different from every existing tile. Cute soft 3D clay toy style exactly like the attached style references (the existing candy tile sheet): rounded chunky shapes, glossy jelly or baked-cookie surface, bright pastel colors, soft light from the top-left. "
   }
  ],
  "bgs": [
