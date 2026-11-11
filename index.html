@@ -4245,7 +4245,8 @@ const HEART_MAX=5,HEART_EVERY=10*60*1000,HEART_PRICE=100,MISS_MAX=5;
 // 실수 방패(6.6~): 실수가 MISS_MAX번째가 되면 자동으로 1개 쓰고 실수 4로 되돌려 계속한다. 본 게임·과자 나라 공통.
 const SHIELD_MAX=5,SHIELD_PRICE=200,SHIELD_ICO='<span class="shield-ico" aria-hidden="true">🛡️</span>';
 function W(){if(typeof P.coins!=='number'){P.coins=0;P.hints=HINT_START;P.hintAt=Date.now();P.walletAt=0}if(typeof P.hearts!=='number'){P.hearts=HEART_MAX;P.heartAt=Date.now()}
-  if(P.hearts>HEART_MAX)P.hearts=HEART_MAX;if(P.hints>HINT_MAX)P.hints=HINT_MAX;   // 6.6: 최대 5개로 줄어서 더 가진 만큼은 맞춤
+  if(P.hearts>HEART_MAX)P.hearts=HEART_MAX;   // 6.6: 최대 5개로 줄어서 더 가진 만큼은 맞춤
+  if(!P.hc66){P.hc66=1;if(P.hints>HINT_MAX)P.hints=HINT_MAX}   // 힌트는 업적 보상으로 5개를 넘을 수 있어 한 번만 맞춤
   if(typeof P.shields!=='number')P.shields=0;else if(P.shields>SHIELD_MAX)P.shields=SHIELD_MAX;return P}
 function takeShield(){const w=W();if(w.shields<=0)return false;w.shields--;walletChanged();return true}
 function shieldFx(){SFX.play('badge');NATIVE.buzz('ok');FX.text('방패가 막아 줬어요! 실수 −1',innerWidth/2,innerHeight*.32,{size:22,color:'#74c0fc'});const sm=$('#spotMiss');if(sm)sm.textContent=`실수 ${misses} / ${MISS_MAX}`}
@@ -4479,6 +4480,8 @@ function mergeP(a,b){
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
   {const fa=(a.frameAt||0)>=(b.frameAt||0)?a:b;if(fa.frame){o.frame=fa.frame;o.frameAt=fa.frameAt||0}}
   {const cm=COS.merge(a,b);if(cm)o.cos=cm}
+  if(a.hc66||b.hc66)o.hc66=1;
+  if(a.mirrorSeen||b.mirrorSeen)o.mirrorSeen=1;if(a.rotSeen||b.rotSeen)o.rotSeen=1;
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
   else{const o2=av===a?b:a;if(typeof o2.avatar==='number'){o.avatar=o2.avatar;o.avatarAt=o2.avatarAt||0}}
   return o;
