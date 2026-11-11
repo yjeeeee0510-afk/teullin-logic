@@ -1,0 +1,618 @@
+{
+ "sheets": [
+  {
+   "id": "P01",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair0_1",
+     "ko": "찍찍이+음메"
+    },
+    {
+     "id": "pair0_2",
+     "ko": "찍찍이+어흥이"
+    },
+    {
+     "id": "pair0_3",
+     "ko": "찍찍이+깡총이"
+    },
+    {
+     "id": "pair0_4",
+     "ko": "찍찍이+미르"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the mouse friend \"찍찍이\" on the left and the cow friend \"음메\" on the right. Cell 2 (row 1, column 2): the mouse friend \"찍찍이\" on the left and the tiger friend \"어흥이\" on the right. Cell 3 (row 2, column 1): the mouse friend \"찍찍이\" on the left and the rabbit friend \"깡총이\" on the right. Cell 4 (row 2, column 2): the mouse friend \"찍찍이\" on the left and the dragon friend \"미르\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P02",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair0_5",
+     "ko": "찍찍이+스르르"
+    },
+    {
+     "id": "pair0_6",
+     "ko": "찍찍이+다그닥"
+    },
+    {
+     "id": "pair0_7",
+     "ko": "찍찍이+몽실이"
+    },
+    {
+     "id": "pair0_8",
+     "ko": "찍찍이+끼끼"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the mouse friend \"찍찍이\" on the left and the snake friend \"스르르\" on the right. Cell 2 (row 1, column 2): the mouse friend \"찍찍이\" on the left and the horse friend \"다그닥\" on the right. Cell 3 (row 2, column 1): the mouse friend \"찍찍이\" on the left and the sheep friend \"몽실이\" on the right. Cell 4 (row 2, column 2): the mouse friend \"찍찍이\" on the left and the monkey friend \"끼끼\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P03",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair0_9",
+     "ko": "찍찍이+꼬꼬"
+    },
+    {
+     "id": "pair0_10",
+     "ko": "찍찍이+멍멍이"
+    },
+    {
+     "id": "pair0_11",
+     "ko": "찍찍이+꿀꿀이"
+    },
+    {
+     "id": "pair1_2",
+     "ko": "음메+어흥이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the mouse friend \"찍찍이\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 2 (row 1, column 2): the mouse friend \"찍찍이\" on the left and the dog friend \"멍멍이\" on the right. Cell 3 (row 2, column 1): the mouse friend \"찍찍이\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 4 (row 2, column 2): the cow friend \"음메\" on the left and the tiger friend \"어흥이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P04",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair1_3",
+     "ko": "음메+깡총이"
+    },
+    {
+     "id": "pair1_4",
+     "ko": "음메+미르"
+    },
+    {
+     "id": "pair1_5",
+     "ko": "음메+스르르"
+    },
+    {
+     "id": "pair1_6",
+     "ko": "음메+다그닥"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the cow friend \"음메\" on the left and the rabbit friend \"깡총이\" on the right. Cell 2 (row 1, column 2): the cow friend \"음메\" on the left and the dragon friend \"미르\" on the right. Cell 3 (row 2, column 1): the cow friend \"음메\" on the left and the snake friend \"스르르\" on the right. Cell 4 (row 2, column 2): the cow friend \"음메\" on the left and the horse friend \"다그닥\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P05",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair1_7",
+     "ko": "음메+몽실이"
+    },
+    {
+     "id": "pair1_8",
+     "ko": "음메+끼끼"
+    },
+    {
+     "id": "pair1_9",
+     "ko": "음메+꼬꼬"
+    },
+    {
+     "id": "pair1_10",
+     "ko": "음메+멍멍이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the cow friend \"음메\" on the left and the sheep friend \"몽실이\" on the right. Cell 2 (row 1, column 2): the cow friend \"음메\" on the left and the monkey friend \"끼끼\" on the right. Cell 3 (row 2, column 1): the cow friend \"음메\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 4 (row 2, column 2): the cow friend \"음메\" on the left and the dog friend \"멍멍이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P06",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair1_11",
+     "ko": "음메+꿀꿀이"
+    },
+    {
+     "id": "pair2_3",
+     "ko": "어흥이+깡총이"
+    },
+    {
+     "id": "pair2_4",
+     "ko": "어흥이+미르"
+    },
+    {
+     "id": "pair2_5",
+     "ko": "어흥이+스르르"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the cow friend \"음메\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 2 (row 1, column 2): the tiger friend \"어흥이\" on the left and the rabbit friend \"깡총이\" on the right. Cell 3 (row 2, column 1): the tiger friend \"어흥이\" on the left and the dragon friend \"미르\" on the right. Cell 4 (row 2, column 2): the tiger friend \"어흥이\" on the left and the snake friend \"스르르\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P07",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair2_6",
+     "ko": "어흥이+다그닥"
+    },
+    {
+     "id": "pair2_7",
+     "ko": "어흥이+몽실이"
+    },
+    {
+     "id": "pair2_8",
+     "ko": "어흥이+끼끼"
+    },
+    {
+     "id": "pair2_9",
+     "ko": "어흥이+꼬꼬"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the tiger friend \"어흥이\" on the left and the horse friend \"다그닥\" on the right. Cell 2 (row 1, column 2): the tiger friend \"어흥이\" on the left and the sheep friend \"몽실이\" on the right. Cell 3 (row 2, column 1): the tiger friend \"어흥이\" on the left and the monkey friend \"끼끼\" on the right. Cell 4 (row 2, column 2): the tiger friend \"어흥이\" on the left and the rooster friend \"꼬꼬\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P08",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair2_10",
+     "ko": "어흥이+멍멍이"
+    },
+    {
+     "id": "pair2_11",
+     "ko": "어흥이+꿀꿀이"
+    },
+    {
+     "id": "pair3_4",
+     "ko": "깡총이+미르"
+    },
+    {
+     "id": "pair3_5",
+     "ko": "깡총이+스르르"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the tiger friend \"어흥이\" on the left and the dog friend \"멍멍이\" on the right. Cell 2 (row 1, column 2): the tiger friend \"어흥이\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 3 (row 2, column 1): the rabbit friend \"깡총이\" on the left and the dragon friend \"미르\" on the right. Cell 4 (row 2, column 2): the rabbit friend \"깡총이\" on the left and the snake friend \"스르르\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P09",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair3_6",
+     "ko": "깡총이+다그닥"
+    },
+    {
+     "id": "pair3_7",
+     "ko": "깡총이+몽실이"
+    },
+    {
+     "id": "pair3_8",
+     "ko": "깡총이+끼끼"
+    },
+    {
+     "id": "pair3_9",
+     "ko": "깡총이+꼬꼬"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the rabbit friend \"깡총이\" on the left and the horse friend \"다그닥\" on the right. Cell 2 (row 1, column 2): the rabbit friend \"깡총이\" on the left and the sheep friend \"몽실이\" on the right. Cell 3 (row 2, column 1): the rabbit friend \"깡총이\" on the left and the monkey friend \"끼끼\" on the right. Cell 4 (row 2, column 2): the rabbit friend \"깡총이\" on the left and the rooster friend \"꼬꼬\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P10",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair3_10",
+     "ko": "깡총이+멍멍이"
+    },
+    {
+     "id": "pair3_11",
+     "ko": "깡총이+꿀꿀이"
+    },
+    {
+     "id": "pair4_5",
+     "ko": "미르+스르르"
+    },
+    {
+     "id": "pair4_6",
+     "ko": "미르+다그닥"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the rabbit friend \"깡총이\" on the left and the dog friend \"멍멍이\" on the right. Cell 2 (row 1, column 2): the rabbit friend \"깡총이\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 3 (row 2, column 1): the dragon friend \"미르\" on the left and the snake friend \"스르르\" on the right. Cell 4 (row 2, column 2): the dragon friend \"미르\" on the left and the horse friend \"다그닥\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P11",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair4_7",
+     "ko": "미르+몽실이"
+    },
+    {
+     "id": "pair4_8",
+     "ko": "미르+끼끼"
+    },
+    {
+     "id": "pair4_9",
+     "ko": "미르+꼬꼬"
+    },
+    {
+     "id": "pair4_10",
+     "ko": "미르+멍멍이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the dragon friend \"미르\" on the left and the sheep friend \"몽실이\" on the right. Cell 2 (row 1, column 2): the dragon friend \"미르\" on the left and the monkey friend \"끼끼\" on the right. Cell 3 (row 2, column 1): the dragon friend \"미르\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 4 (row 2, column 2): the dragon friend \"미르\" on the left and the dog friend \"멍멍이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P12",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair4_11",
+     "ko": "미르+꿀꿀이"
+    },
+    {
+     "id": "pair5_6",
+     "ko": "스르르+다그닥"
+    },
+    {
+     "id": "pair5_7",
+     "ko": "스르르+몽실이"
+    },
+    {
+     "id": "pair5_8",
+     "ko": "스르르+끼끼"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the dragon friend \"미르\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 2 (row 1, column 2): the snake friend \"스르르\" on the left and the horse friend \"다그닥\" on the right. Cell 3 (row 2, column 1): the snake friend \"스르르\" on the left and the sheep friend \"몽실이\" on the right. Cell 4 (row 2, column 2): the snake friend \"스르르\" on the left and the monkey friend \"끼끼\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P13",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair5_9",
+     "ko": "스르르+꼬꼬"
+    },
+    {
+     "id": "pair5_10",
+     "ko": "스르르+멍멍이"
+    },
+    {
+     "id": "pair5_11",
+     "ko": "스르르+꿀꿀이"
+    },
+    {
+     "id": "pair6_7",
+     "ko": "다그닥+몽실이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the snake friend \"스르르\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 2 (row 1, column 2): the snake friend \"스르르\" on the left and the dog friend \"멍멍이\" on the right. Cell 3 (row 2, column 1): the snake friend \"스르르\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 4 (row 2, column 2): the horse friend \"다그닥\" on the left and the sheep friend \"몽실이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P14",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair6_8",
+     "ko": "다그닥+끼끼"
+    },
+    {
+     "id": "pair6_9",
+     "ko": "다그닥+꼬꼬"
+    },
+    {
+     "id": "pair6_10",
+     "ko": "다그닥+멍멍이"
+    },
+    {
+     "id": "pair6_11",
+     "ko": "다그닥+꿀꿀이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the horse friend \"다그닥\" on the left and the monkey friend \"끼끼\" on the right. Cell 2 (row 1, column 2): the horse friend \"다그닥\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 3 (row 2, column 1): the horse friend \"다그닥\" on the left and the dog friend \"멍멍이\" on the right. Cell 4 (row 2, column 2): the horse friend \"다그닥\" on the left and the pig friend \"꿀꿀이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P15",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair7_8",
+     "ko": "몽실이+끼끼"
+    },
+    {
+     "id": "pair7_9",
+     "ko": "몽실이+꼬꼬"
+    },
+    {
+     "id": "pair7_10",
+     "ko": "몽실이+멍멍이"
+    },
+    {
+     "id": "pair7_11",
+     "ko": "몽실이+꿀꿀이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the sheep friend \"몽실이\" on the left and the monkey friend \"끼끼\" on the right. Cell 2 (row 1, column 2): the sheep friend \"몽실이\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 3 (row 2, column 1): the sheep friend \"몽실이\" on the left and the dog friend \"멍멍이\" on the right. Cell 4 (row 2, column 2): the sheep friend \"몽실이\" on the left and the pig friend \"꿀꿀이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P16",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair8_9",
+     "ko": "끼끼+꼬꼬"
+    },
+    {
+     "id": "pair8_10",
+     "ko": "끼끼+멍멍이"
+    },
+    {
+     "id": "pair8_11",
+     "ko": "끼끼+꿀꿀이"
+    },
+    {
+     "id": "pair9_10",
+     "ko": "꼬꼬+멍멍이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 4 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the monkey friend \"끼끼\" on the left and the rooster friend \"꼬꼬\" on the right. Cell 2 (row 1, column 2): the monkey friend \"끼끼\" on the left and the dog friend \"멍멍이\" on the right. Cell 3 (row 2, column 1): the monkey friend \"끼끼\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 4 (row 2, column 2): the rooster friend \"꼬꼬\" on the left and the dog friend \"멍멍이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "P17",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "동행 쌍",
+   "cols": 2,
+   "items": [
+    {
+     "id": "pair9_11",
+     "ko": "꼬꼬+꿀꿀이"
+    },
+    {
+     "id": "pair10_11",
+     "ko": "멍멍이+꿀꿀이"
+    }
+   ],
+   "prompt": "A game sprite sheet of 2 separate duo illustrations, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, each duo centered in its own 768x512 cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. Each duo shows TWO of the twelve zodiac friends standing side by side, FULL BODY from head to feet, close together, both facing the viewer, with one friendly interaction (an arm around the other's shoulder, a high five, or leaning together). Both characters have the same height and the same size in every cell, each about 40% of the cell width, feet on the same imaginary line. Cell 1 (row 1, column 1): the rooster friend \"꼬꼬\" on the left and the pig friend \"꿀꿀이\" on the right. Cell 2 (row 1, column 2): the dog friend \"멍멍이\" on the left and the pig friend \"꿀꿀이\" on the right. Keep every character EXACTLY as in the attached full-body character sheets (species, main colours, signature item, eye shape, blush): do not redesign them, do not change their colours. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. Bold simple silhouettes with strong colour contrast against the blue background."
+  },
+  {
+   "id": "C1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "소품",
+   "cols": 3,
+   "items": [
+    {
+     "id": "accCrown",
+     "ko": "왕관"
+    },
+    {
+     "id": "accBow",
+     "ko": "리본"
+    },
+    {
+     "id": "accParty",
+     "ko": "고깔모자"
+    },
+    {
+     "id": "accFlower",
+     "ko": "꽃관"
+    },
+    {
+     "id": "accWizard",
+     "ko": "마법사 모자"
+    },
+    {
+     "id": "accPhones",
+     "ko": "헤드폰"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate head accessories, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 3 columns, every item centered in its own square cell, wide even spacing, nothing touching, nothing cut off. Each item is drawn ALONE (no character, no head), seen straight from the front, perfectly left-right symmetrical, with a flat bottom edge so it can sit on top of a character's head, filling about 70% of its cell. Cell 1: a small gold crown with a red gem. Cell 2: a big pink ribbon bow. Cell 3: a striped party hat with a pom-pom. Cell 4: a flower crown of small pink and white flowers. Cell 5: a purple wizard hat with gold stars. Cell 6: chunky mint-green headphones with a headband. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. "
+  },
+  {
+   "id": "C2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "소품",
+   "cols": 3,
+   "items": [
+    {
+     "id": "accBeret",
+     "ko": "베레모"
+    },
+    {
+     "id": "accSanta",
+     "ko": "산타 모자"
+    },
+    {
+     "id": "accChef",
+     "ko": "요리사 모자"
+    },
+    {
+     "id": "accStraw",
+     "ko": "밀짚모자"
+    },
+    {
+     "id": "accHalo",
+     "ko": "천사 고리"
+    },
+    {
+     "id": "accStar",
+     "ko": "별 머리띠"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate head accessories, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 3 columns, every item centered in its own square cell, wide even spacing, nothing touching, nothing cut off. Each item is drawn ALONE (no character, no head), seen straight from the front, perfectly left-right symmetrical, with a flat bottom edge so it can sit on top of a character's head, filling about 70% of its cell. Cell 1: a red beret with a little stem. Cell 2: a red santa hat with a white fur trim and pom-pom. Cell 3: a tall white chef hat. Cell 4: a yellow straw sun hat with a blue ribbon. Cell 5: a glowing golden halo ring. Cell 6: a headband with a big yellow star on top. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. "
+  },
+  {
+   "id": "B1",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "받침",
+   "cols": 3,
+   "items": [
+    {
+     "id": "pedCloud",
+     "ko": "구름 받침"
+    },
+    {
+     "id": "pedGrass",
+     "ko": "잔디 받침"
+    },
+    {
+     "id": "pedStump",
+     "ko": "그루터기 받침"
+    },
+    {
+     "id": "pedIce",
+     "ko": "얼음 받침"
+    },
+    {
+     "id": "pedCookie",
+     "ko": "쿠키 받침"
+    },
+    {
+     "id": "pedMacaron",
+     "ko": "마카롱 받침"
+    }
+   ],
+   "prompt": "A game sprite sheet of 6 separate pedestals for characters to stand on, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 3 columns, every item centered in its own cell, wide even spacing, nothing touching, nothing cut off. Each pedestal is a flat, wide oval platform seen from a slight angle above (about 3:1 wide), with a flat top surface where a character can stand, filling about 80% of the cell width, no character on it. Cell 1: a fluffy white cloud. Cell 2: a round patch of green grass with tiny flowers. Cell 3: a wooden tree stump top with visible rings. Cell 4: a pale-blue ice slab with a snowy edge. Cell 5: a big round chocolate-chip cookie. Cell 6: a pink macaron with cream filling seen from a slight angle. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. "
+  },
+  {
+   "id": "B2",
+   "bg": "파랑",
+   "hex": "#0047FF",
+   "region": "받침",
+   "cols": 3,
+   "items": [
+    {
+     "id": "pedGem",
+     "ko": "보석 받침"
+    },
+    {
+     "id": "pedStars",
+     "ko": "별무리 받침"
+    },
+    {
+     "id": "pedGold",
+     "ko": "황금 왕좌 받침"
+    }
+   ],
+   "prompt": "A game sprite sheet of 3 separate pedestals for characters to stand on, each an isolated cutout floating on a perfectly flat, uniform solid pure blue background (#0047FF) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke around the characters. No text, no numbers, no logos, no watermark. Image size 1536x1024. 1 row x 3 columns, every item centered in its own cell, wide even spacing, nothing touching, nothing cut off. Each pedestal is a flat, wide oval platform seen from a slight angle above (about 3:1 wide), with a flat top surface where a character can stand, filling about 80% of the cell width, no character on it. Cell 1: a faceted purple crystal gem base. Cell 2: a round pile of glowing yellow stars. Cell 3: a round golden podium with a small step. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. "
+  }
+ ],
+ "bgs": [
+  {
+   "id": "CB01",
+   "region": "카드 배경",
+   "ko": "하늘 솜사탕",
+   "prompt": "A vertical portrait game background, 1024x1536: a dreamy pastel sky with cotton-candy pink and blue clouds. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB02",
+   "region": "카드 배경",
+   "ko": "꽃 언덕",
+   "prompt": "A vertical portrait game background, 1024x1536: a sunny flower meadow with soft rolling green hills and a pale blue sky. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB03",
+   "region": "카드 배경",
+   "ko": "푸른 바다",
+   "prompt": "A vertical portrait game background, 1024x1536: a calm bright-blue sea with a sandy beach strip and a light sky. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB04",
+   "region": "카드 배경",
+   "ko": "눈 덮인 산",
+   "prompt": "A vertical portrait game background, 1024x1536: a snowy mountain valley with white pine trees and a soft pale-blue sky. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB05",
+   "region": "카드 배경",
+   "ko": "별빛 하늘",
+   "prompt": "A vertical portrait game background, 1024x1536: a deep purple-navy night sky full of glowing stars, a crescent moon and soft clouds. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB06",
+   "region": "카드 배경",
+   "ko": "분홍 물방울",
+   "prompt": "A vertical portrait game background, 1024x1536: a soft pink background with big white polka-dot bubbles. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB07",
+   "region": "카드 배경",
+   "ko": "노을",
+   "prompt": "A vertical portrait game background, 1024x1536: a warm sunset sky with orange, pink and lilac clouds over distant hills. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB08",
+   "region": "카드 배경",
+   "ko": "무지개 오로라",
+   "prompt": "A vertical portrait game background, 1024x1536: a pastel rainbow aurora ribbon over a twilight sky with tiny stars. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  },
+  {
+   "id": "CB09",
+   "region": "카드 배경",
+   "ko": "황금 빛",
+   "prompt": "A vertical portrait game background, 1024x1536: a luminous golden background with soft light rays and floating gold sparkles. Keep the middle and the lower half calm and fairly empty because a character will stand there; put details only near the top and the edges. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, same chibi proportions (big head, small body), same big glossy dark-brown eyes with two white highlights, same small pink blush cheeks, same friendly open smile, line-free clay finish. No characters, no text, no logos, no watermark."
+  }
+ ]
+}
