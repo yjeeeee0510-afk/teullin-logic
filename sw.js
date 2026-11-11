@@ -1,5 +1,5 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v95';
+const CACHE='sekan-v96';
 // 그림 주소 뒤 ?v= (index.html ASSET_V와 같게)
 const AV='43';
 const CORE=[
@@ -274,8 +274,10 @@ const CORE=[
   'img/candy/tileChoco.webp',
   'img/candy/tileGrape.webp',
   'img/candy/tileMatcha.webp',
+  'img/candy/tileLemon.webp',
   'img/candy/tileMint.webp',
   'img/candy/tileOrange.webp',
+  'img/candy/tileSoda.webp',
   'img/candy/tileStrawberry.webp',
   'img/candy/tileWafer.webp',
   'img/ui/icoCart.webp',
