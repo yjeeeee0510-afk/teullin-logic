@@ -302,3 +302,68 @@ begin
 end $$;
 revoke all on function public.admin_set_password(text, text) from public, anon;
 grant execute on function public.admin_set_password(text, text) to authenticated;
+
+-- 2026-11-12 · 패치 6.6 — 꾸미기 값(deco), 남의 프로필 카드용 목록 함수 확장, 과자 나라 600라운드 제한 (사용자가 SQL Editor에서 실행. 실행 전에도 게임은 동작: 칸이 없으면 빼고 보내고, 카드는 기본 모습으로 보임)
+alter table public.leaderboard add column if not exists deco text;
+alter table public.leaderboard drop constraint if exists leaderboard_deco_check;
+alter table public.leaderboard add constraint leaderboard_deco_check check (deco is null or char_length(deco) <= 200);
+
+alter table public.leaderboard drop constraint if exists leaderboard_candy_check;
+alter table public.leaderboard add constraint leaderboard_candy_check
+  check (candy_round between 0 and 600 and candy_stars between 0 and 1800 and candy_time between 0 and 86400);
+
+drop function if exists public.leaderboard_top(int);
+create function public.leaderboard_top(n int default 50)
+returns table (rank bigint, nickname text, best_round int, stars int, score int, clears int, avg_time int, avatar int, is_me boolean, title text, deco text, total bigint, candy_round int, candy_rank bigint)
+language sql stable security definer set search_path = public as $$
+  with c as (
+    select id, rank() over (order by candy_round desc, candy_stars desc, nullif(candy_time, 0) asc nulls last) as candy_rank
+    from public.leaderboard where candy_round > 0
+  )
+  select r.rank, r.nickname, r.best_round, r.stars, r.score, r.clears, r.avg_time, r.avatar,
+         coalesce(r.id = auth.uid(), false) as is_me, r.title, r.deco, r.total, r.candy_round, c.candy_rank
+  from (select l.*, rank() over (order by l.best_round desc, l.stars desc, l.score desc) as rank, count(*) over () as total
+        from public.leaderboard l) r
+  left join c on c.id = r.id
+  order by r.rank, r.updated_at
+  limit greatest(1, least(coalesce(n, 50), 200));
+$$;
+
+drop function if exists public.leaderboard_players(int);
+create function public.leaderboard_players(n int default 300)
+returns table (rank bigint, nickname text, best_round int, stars int, score int, avatar int, is_me boolean, title text, deco text, total bigint, candy_round int, candy_rank bigint)
+language sql stable security definer set search_path = public as $$
+  with c as (
+    select id, rank() over (order by candy_round desc, candy_stars desc, nullif(candy_time, 0) asc nulls last) as candy_rank
+    from public.leaderboard where candy_round > 0
+  )
+  select r.rank, r.nickname, r.best_round, r.stars, r.score, r.avatar,
+         coalesce(r.id = auth.uid(), false) as is_me, r.title, r.deco, r.total, r.candy_round, c.candy_rank
+  from (select l.*, rank() over (order by l.best_round desc, l.stars desc, l.score desc) as rank, count(*) over () as total
+        from public.leaderboard l) r
+  left join c on c.id = r.id
+  where coalesce(r.nickname, '') <> ''
+  order by r.rank, r.updated_at
+  limit greatest(1, least(coalesce(n, 300), 500));
+$$;
+
+drop function if exists public.leaderboard_candy_top(int);
+create function public.leaderboard_candy_top(n int default 50)
+returns table (rank bigint, nickname text, candy_round int, candy_stars int, candy_time int, avatar int, is_me boolean, title text, deco text, best_round int, stars int, score int, main_rank bigint, total bigint)
+language sql stable security definer set search_path = public as $$
+  with m as (
+    select id, rank() over (order by best_round desc, stars desc, score desc) as main_rank, count(*) over () as total
+    from public.leaderboard
+  )
+  select r.rank, r.nickname, r.candy_round, r.candy_stars, r.candy_time, r.avatar,
+         coalesce(r.id = auth.uid(), false) as is_me, r.title, r.deco, r.best_round, r.stars, r.score, m.main_rank, m.total
+  from (select l.*, rank() over (order by l.candy_round desc, l.candy_stars desc, nullif(l.candy_time, 0) asc nulls last) as rank
+        from public.leaderboard l where l.candy_round > 0) r
+  join m on m.id = r.id
+  order by r.rank, r.updated_at
+  limit greatest(1, least(coalesce(n, 50), 200));
+$$;
+
+grant execute on function public.leaderboard_top(int) to anon, authenticated;
+grant execute on function public.leaderboard_players(int) to anon, authenticated;
+grant execute on function public.leaderboard_candy_top(int) to anon, authenticated;
