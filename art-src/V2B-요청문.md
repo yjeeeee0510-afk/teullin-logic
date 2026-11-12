@@ -1,0 +1,8 @@
+# V2B 물보라 다시 요청 (지팀장에게)
+
+첨부: 스타일 참고 `art-src/new/S1.png`(또는 ref_candy_tiles 말고 기존 그림), 받은 V1 배 시트.
+저장 이름: `V2B.png`
+
+A game sprite sheet of 4 separate sea-water pieces for a boat voyage scene, each an isolated cutout floating on a perfectly flat, uniform solid pure green background (#00B140) with no gradient and no texture. No ground, no cast shadows, no reflections, no glow, no outline stroke. No text, no numbers, no logos, no watermark. Image size 1536x1024. 2 rows x 2 columns, every item centered in its own cell, wide even spacing, nothing touching or overlapping, nothing cut off at the edges. These are WATER pieces seen from the SIDE, NOT clouds and NOT round balls: flat-bottomed wavy shapes made of light-blue water with a thin white foam crest on top. Cell 1: a long wide wave band, about 4 times wider than tall, flat straight bottom edge, rolling gentle wave humps on top with a thin white foam line along the crests, light blue body that is a little darker at the bottom. Cell 2: the same kind of long wide wave band but with different hump positions and slightly lower waves, flat bottom edge. Cell 3: a small bow splash seen from the side, a curling wave that rises at the left and curls over to the left with a white foam crest and three small flying droplets, flat bottom edge. Cell 4: a long flat wake trail seen from the side, light-blue water streak that tapers to a point on the right, with a few small white foam patches on top, flat bottom edge. No big round white puffs anywhere. Cute soft 3D clay toy style exactly like the attached style references: rounded chunky shapes, gentle gloss, bright pastel colors, soft light from the top-left, line-free clay finish.
+
+(물방울 2종은 지난 V2 것을 그대로 씁니다.)
