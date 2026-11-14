@@ -978,6 +978,8 @@ body.pf-open #fx{z-index:60}
 .adm-list>b{font-size:13px;color:var(--muted);margin-top:4px}
 .adm-row{display:flex;flex-wrap:wrap;gap:6px}
 .mail-ico{font-size:20px;line-height:1}
+.shop-special{margin-top:12px;padding-top:8px;border-top:2px dashed #e3e8f0}.shop-sp-h{font-weight:800;margin:4px 0}.shop-sp-h small{color:#7a8699;font-weight:600}
+.shop-item.sp.dim{opacity:.75}.shop-item.sp .si-buy:disabled{background:#e3e8f0;color:#7a8699;border-color:#cfd6e0;box-shadow:none;cursor:default}.shop-item.sp .si-ico{font-size:22px}
 .mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
 .ml{border:2px solid #e3e8f0;border-radius:12px;padding:10px;background:#fff;color:#1b2430}.ml.un{border-color:#ffc21a;background:#fffbea}
 .ml-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.ml-h small{color:#7a8699;white-space:nowrap}
@@ -1384,7 +1386,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.9</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.0</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4068,6 +4070,7 @@ const RANK=(function(){
     pending:()=>store.get('sekan-rank-pending',false),
     async setNick(n){n=clean(n);store.set('sekan-nick',n);if(!enabled)return {name:n,synced:false,reason:onClaude?'claude':'config'};try{await submit(n);return {name:n,synced:true}}catch(e){store.set('sekan-rank-pending',true);return {name:n,synced:false,reason:'error',error:e}}},
     async top(n){const s=await auth();return api('/rest/v1/rpc/leaderboard_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})},
+    async flags(){return api('/rest/v1/rpc/app_flags',{method:'POST',body:'{}'})},
     async rpc(fn,args){const s=await auth();return api('/rest/v1/rpc/'+fn,{method:'POST',headers:bearer(s),body:JSON.stringify(args||{})})},
     async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
     // 운영진은 랭킹 기록이 막혀 있어서 닉네임이 접속 상태 표에만 남는다 → 로그인 때 거기서 되찾음
@@ -4415,6 +4418,7 @@ function openShop(msg){
       <div class="si-txt"><b>실수 방패 1개</b><span>실수가 ${MISS_MAX}번이 되면 자동으로 1개 쓰고 계속해요 · 본 게임·과자 나라 공통</span></div>
       <button class="btn primary si-buy" id="shShield" type="button">${ICON.coin}${SHIELD_PRICE}</button>
     </div>
+    ${PAY.shopHTML()}
     <p class="formmsg shop-msg" id="shMsg" aria-live="polite">${msg?esc(msg):''}</p>
     <p class="rank-note">라운드를 깨면 별 1개 ${STAR_COIN[1]}코인, 2개 ${STAR_COIN[2]}코인, 3개 ${STAR_COIN[3]}코인을 받아요. 같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요. 하트는 ${HEART_EVERY/60000}분마다 1개씩(최대 ${HEART_MAX}개), 힌트는 ${HINT_EVERY/60000}분마다 1개씩(최대 ${HINT_MAX}개) 무료로 채워져요.</p>
     <div class="row"><button class="btn" id="shClose" type="button">닫기</button></div></div>`);
@@ -4559,7 +4563,7 @@ async function afterLogin(){
   try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){}
   let me=null;try{me=await RANK.me()}catch(e){}
   await RANK.setNick(me&&me.nickname||RANK.nick()||await RANK.presenceNick()||RANK.label());
-  MAIL.refresh(true);
+  MAIL.refresh(true);PAY.sync();
 }
 function lgSheet(html){const sh=openSheet(html);sh.classList.add('lgsheet');return sh}
 async function googleGo(m){
@@ -4978,6 +4982,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['7.0','2026-11-14','특별 상점 준비',['상점에 "특별 상점" 자리가 생겼어요. 지금은 준비 중이라 살 수 없어요','프로모션 때 코인 묶음·꾸미기 패키지·스타터 팩이 열릴 예정이에요','지금 있는 꾸미기는 모두 그대로 코인으로 살 수 있어요']],
   ['6.9','2026-11-14','우편함',['우편함이 생겼어요! 운영진과 시스템이 보내는 우편을 받을 수 있어요 (로그인한 사람만)','우편으로 받은 하트·힌트·쿠키 하트는 5개를 넘어도 보관돼요','우편은 받은 날부터 30일 동안 보관돼요','운영진 모드 스위치와 우편 보내기 도구가 생겼어요 (운영진 전용)']],
   ['6.8','2026-11-14','구글 로그인',['로그인이 Google 로그인으로 바뀌었어요 (웹·앱 모두)','예전에 만든 아이디는 "기존 아이디로 로그인"으로 계속 쓸 수 있어요','로그인 없이 하던 기록은 구글로 로그인하면 그대로 이어져요','구글 이메일은 랭킹에 보이지 않아요']],
   ['6.7','2026-11-14','새 그림 대량 교체',['지역 이동 배를 물결 없는 새 배로, 앞 파도 띠·뱃머리 물보라·물방울을 새 그림으로 바꿨어요','꾸미기 받침 9종(구름·잔디·그루터기·얼음·쿠키·마카롱·보석·별무리·황금 왕좌)과 배경 9장이 그림으로 바뀌었어요','동행 친구 66쌍이 두 친구가 같이 서 있는 그림으로 바뀌었어요','대표 배지 16종 그림, 과자 나라 11·12번째 칸(레몬 캔디·소다 젤리) 새 그림']],
@@ -5066,6 +5071,7 @@ function openAdmin(){
       <b>지도 위치로 이동</b>
       <div class="adm-row">${ZONES.map((Z,z)=>g('go'+zLo(z),`${Z.lvl} (${zLo(z)}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
       <b>운영진 모드 (보기용)</b><div class="adm-row">${g('admmode',adminView()?'모드 켜짐 · 누르면 끔':'모드 꺼짐 · 누르면 켬')}</div>
+      <b>결제·광고 스위치 (읽기 전용)</b><div class="adm-row">${g('payflags','스위치 상태 보기')}</div>
       <b>우편</b><div class="adm-row">${g('mailsend','우편 보내기')}${g('maillog','보낸 기록')}${g('mailbox','내 우편함 보기')}</div>
       <b>계정</b><div class="adm-row">${g('pwreset','비밀번호 재설정')}</div>
     </div>
@@ -5089,6 +5095,7 @@ function openAdmin(){
     if(a.startsWith('fog')){closeSheet();const z=+a.slice(3);store.set('sekan-viewz',z-1);showMenu();travel(z-1,z);return}
     if(a==='pwreset'){openPwReset();return}
     if(a==='admmode'){store.set(ADMV,!adminView());closeSheet();showMenu();return}
+    if(a==='payflags'){PAY.load().then(()=>FX.text(`결제 ${PAY.flag('payments')?'켜짐':'꺼짐'} · 광고 ${PAY.flag('ads')?'켜짐':'꺼짐'}`,window.innerWidth/2,window.innerHeight*.3,{size:20,color:'#ffd43b'}));return}
     if(a==='mailsend'){openMailAdmin();return}
     if(a==='maillog'){openMailLog();return}
     if(a==='mailbox'){MAIL.open();return}
@@ -5272,13 +5279,59 @@ async function openMailLog(){
       <div class="ml-rw">${[m.coins?`<span>${ICON.coin}${m.coins}</span>`:'',m.hints?`<span>${ICON.bulb}${m.hints}</span>`:'',m.hearts?`<span>${ICON.heart}${m.hearts}</span>`:'',m.cookies?`<span>🍪${m.cookies}</span>`:''].join('')}</div></li>`).join('')+`</ul>`:'<p class="lead">보낸 우편이 없어요.</p>';
   }catch(e){box.innerHTML=`<p class="lead">${esc(mailErr(e))}</p>`}
 }
+/* ---------- 결제 (7.0): 스위치가 꺼진 채로 배포 · 프로모션 때 켠다 ---------- */
+const PAY=(function(){
+  let flags={},noPay=false;
+  // 상품 목록은 화면용. 무엇을 주는지는 서버(products)가 정한다. 가격은 Play 상품에서 가져온다(켜는 패치).
+  const PRODUCTS=[
+    {id:'coins_s',ico:ICON.coin,name:'코인 묶음 S',txt:'코인 1,000개'},
+    {id:'coins_m',ico:ICON.coin,name:'코인 묶음 M',txt:'코인 3,000개'},
+    {id:'coins_l',ico:ICON.coin,name:'코인 묶음 L',txt:'코인 8,000개'},
+    {id:'pack_bg',ico:'🖼️',name:'배경 패키지',txt:'배경 9종을 한꺼번에'},
+    {id:'pack_base',ico:'🟡',name:'받침 패키지',txt:'받침 9종을 한꺼번에'},
+    {id:'pack_comp',ico:'🐾',name:'동행 패키지',txt:'동행 친구 12종을 한꺼번에'},
+    {id:'starter',ico:'🎁',name:'스타터 팩',txt:'첫 구매 한 번만 · 코인 1,000 · 하트 5 · 힌트 5 · 꾸미기 2종'}];
+  const say=t=>FX.text(t,window.innerWidth/2,window.innerHeight*.3,{size:20,color:'#ffd43b'});
+  // 결제는 구글 플레이 앱에서만(D-002). 웹·사이드로드·테스트 모드는 스위치가 켜져도 안 된다.
+  const platformOk=()=>!!(window.__PLAY_STORE&&NATIVE.native&&NATIVE.platform==='android'&&!QA);
+  // 결제 플러그인은 '켜는 패치'에서 넣는다. 그 전에는 항상 없음.
+  const billing=()=>null;
+  const enabled=()=>!!(flags.payments&&platformOk()&&billing());
+  async function load(){try{const r=await RANK.flags();const f={};(r||[]).forEach(x=>{f[x.key]=!!x.enabled});flags=f}catch(e){}}
+  function shopHTML(){
+    const on=enabled();
+    return `<div class="shop-special"><div class="shop-sp-h">특별 상점 <small>${on?'':'준비 중'}</small></div>`
+      +PRODUCTS.map(p=>`<div class="shop-item sp${on?'':' dim'}"><div class="si-ico">${p.ico}</div><div class="si-txt"><b>${esc(p.name)}</b><span>${esc(p.txt)}</span></div><button class="btn${on?' primary':''} si-buy" type="button" ${on?`data-pay="${p.id}"`:'disabled'}>${on?'구매':'준비 중'}</button></div>`).join('')
+      +`<p class="rank-note">특별 상점은 프로모션 때 열려요. 지금 있는 꾸미기는 모두 코인으로 살 수 있어요. 결제는 구글 플레이 앱에서만 쓸 수 있어요.</p></div>`;
+  }
+  async function buy(id){say('결제를 준비하고 있어요')}   // 켜는 패치에서 Play 결제 → verify-purchase 호출로 바뀜
+  function apply(g){
+    const w=W();w.coins+=g.coins||0;w.hints+=g.hints||0;
+    if(g.hearts){w.hearts+=g.hearts;if(w.hearts>=HEART_MAX)w.heartAt=Date.now()}
+    if(g.cookies)CANDY.addCookies(g.cookies);
+    if(Array.isArray(g.own)&&g.own.length){const c=COS.S();g.own.forEach(k=>{if(!c.own.includes(k))c.own.push(k)});c.at=Date.now()}
+    walletChanged();SFX.play('buy');NATIVE.buzz('win');say('구매한 상품이 도착했어요!');
+  }
+  // 서버에 기록된 내 구매 중 아직 안 받은 것을 받아 간다 (서버가 한 번만 내줌)
+  async function sync(){
+    if(noPay||!RANK.enabled||!RANK.account())return;
+    try{
+      const list=await RANK.rpc('pay_pending');
+      for(const x of (list||[])){const r=await RANK.rpc('pay_claim',{p_id:x.id});if(r&&r.ok&&r.grant)apply(r.grant)}
+    }catch(e){if(e&&(e.status===404||e.code==='PGRST202'))noPay=true}   // 서버에 결제 SQL이 아직 없으면 조용히 멈춤
+  }
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pay]');if(b&&!b.disabled)buy(b.dataset.pay)});
+  setTimeout(load,2500);
+  return {load,sync,enabled,shopHTML,flag:k=>!!flags[k]};
+})();
+
 /* ---------- 접속 신호 (운영진 '접속 중인 사람' 창용) ---------- */
 (function(){
   const beat=()=>{if(!document.hidden)RANK.beat(true)};
   setTimeout(beat,3000);setInterval(beat,45000);
   document.addEventListener('visibilitychange',()=>RANK.beat(!document.hidden));
   addEventListener('pagehide',()=>RANK.beat(false));
-  const mailTick=()=>{if(!document.hidden&&MAIL.ready())MAIL.refresh(true)};
+  const mailTick=()=>{if(document.hidden)return;PAY.load();if(MAIL.ready()){MAIL.refresh(true);PAY.sync()}};
   setTimeout(mailTick,4000);setInterval(mailTick,300000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(mailTick,800)});
 })();

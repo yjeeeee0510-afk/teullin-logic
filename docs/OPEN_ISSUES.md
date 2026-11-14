@@ -15,3 +15,4 @@
 
 | O-011 | 6.8 배포 전 대표 작업: Supabase Authentication → URL Configuration의 Redirect URLs에 웹 주소(GitHub Pages) 등록, 서버 SQL(supabase/patch-6.8-google-login.sql) 실행, 앱은 AAB·APK 새로 빌드(플러그인 npm ci·cap sync 필요) 후 실기기 로그인 시험. 구글 동의 화면 '프로덕션 게시'는 출시 전 | 웹 로그인 동작·운영진 판별·앱 로그인 | 대표 실행·확인 |
 | O-012 | 6.9 배포 전 대표 작업: supabase/patch-6.9-mailbox.sql을 SQL Editor에서 실행(실행 전에는 우편함 버튼이 안 보임). 실서버 발송·수령·만료, 운영진 모드, 앱 실기기는 미검증 | 우편함·운영진 발송 | 대표 실행·확인 |
+| O-013 | **결제 켜는 날 체크리스트**(대표): ① Play 판매자 정보·세금 등록, 앱 대상 연령 확인(O-006) ② Play Console에 상품 등록(coins_s/m/l, pack_bg, pack_base, pack_comp, starter) ③ Play 앱 서명 키·구글 서비스 계정 연결(API 액세스) ④ 서비스 계정 JSON을 Supabase 비밀로 저장(채팅·저장소 금지) ⑤ supabase/functions/verify-purchase 배포 ⑥ 상품 수량·구성 확정 ⑦ 결제 플러그인 추가 패치 빌드·Play 비공개 테스트에서 시험 구매 ⑧ SQL로 app_flags 'payments'와 products.active 켜기 ⑨ privacy.html·Play 데이터 안전 양식에 구매 기록 추가 | 결제 개시 | 대표 실행 |
