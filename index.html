@@ -977,6 +977,17 @@ body.pf-open #fx{z-index:60}
 .adm-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-height:0;overscroll-behavior:contain}
 .adm-list>b{font-size:13px;color:var(--muted);margin-top:4px}
 .adm-row{display:flex;flex-wrap:wrap;gap:6px}
+.mail-ico{font-size:20px;line-height:1}
+.mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ml{border:2px solid #e3e8f0;border-radius:12px;padding:10px;background:#fff;color:#1b2430}.ml.un{border-color:#ffc21a;background:#fffbea}
+.ml-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.ml-h small{color:#7a8699;white-space:nowrap}
+.ml-b{margin:6px 0;white-space:pre-wrap;word-break:break-word}
+.ml-rw{display:flex;flex-wrap:wrap;gap:12px;margin:6px 0;font-weight:700}.ml-rw .ico{width:18px;height:18px;vertical-align:-3px}
+.ml-a{display:flex;gap:8px;align-items:center;justify-content:flex-end}.ml-done{color:#2f9e44;font-weight:700}
+.ma label{display:flex;flex-direction:column;gap:4px;margin:6px 0;font-weight:700}
+.ma select,.ma textarea{font:inherit;padding:8px;border-radius:10px;border:2px solid #cfd6e0}
+.ma .ma-rw{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ma .ml label{flex-direction:row;align-items:center;margin:0;font-weight:400}
 .adm-row .btn{font-size:13px;padding:6px 10px;border-radius:10px}
 .node.adm .nd{filter:saturate(.85)}
 
@@ -1373,7 +1384,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.8</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.9</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1583,7 +1594,11 @@ const ADMIN_ID='yjeeeee0510';
 // 운영진 아이디 목록 (랭킹 제외·모든 라운드 열림). 서버 트리거 leaderboard_skip_admin에도 같이 넣어야 함
 const ADMIN_IDS=[ADMIN_ID,'dhsb1234','yjeeeee0510@gmail.com'];
 let adminLiftZ=-1;
-function isAdmin(){if(QA)return true;try{return ADMIN_IDS.includes(RANK.account())}catch(e){return false}}
+function isStaff(){if(QA)return true;try{return ADMIN_IDS.includes(RANK.account())}catch(e){return false}}
+// 운영진 모드(6.9): 운영진 계정이 켜고 끄는 보기용 스위치. 기본은 켜짐(예전 동작 그대로). 켜고 끄는 것만으로는 진행 기록을 바꾸지 않는다.
+const ADMV='sekan-admin-view';
+const adminView=()=>store.get(ADMV,true)!==false;
+function isAdmin(){return isStaff()&&(QA||adminView())}
 function openMax(){return isAdmin()?MAXR:P.unlocked}
 // 테스트 모드(?qa=1): 모든 라운드 열림·하트 안 씀(운영진과 같음), 랭킹에 안 보냄, 기록은 'qa:' 칸에 따로 저장
 const QA=(()=>{try{const q=new URLSearchParams(location.search).get('qa');if(q==='1')sessionStorage.setItem('sekan-qa','1');if(q==='0')sessionStorage.removeItem('sekan-qa');return sessionStorage.getItem('sekan-qa')==='1'}catch(e){return false}})();
@@ -3136,7 +3151,7 @@ function showMenu(){
   if(isAdmin()||P.revealed>0){board.querySelector('.map-wrap').insertAdjacentHTML('beforeend',`<button type="button" class="zone-go" id="zoneGo" aria-label="가 본 지역으로 바로 이동"><img src="${embedded(`img/voyage/${ZONE_ISL[VIEWZ]}.webp`)}" alt=""><span>지역 이동</span></button>`);$('#zoneGo').addEventListener('click',openZoneList)}
   $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
   $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
-  $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});ACH.dot();
+  $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open()});ACH.dot();MAIL.mount();
   $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
   $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
   $('#hintChip').addEventListener('click',()=>{NATIVE.buzz('tick');openShop()});
@@ -3429,7 +3444,6 @@ const CANDY=(function(){
     if(!c.unlocked)c.unlocked=1;
     if(!c.rounds)c.rounds={};
     if(typeof c.hearts!=='number'){c.hearts=CK_MAX;c.heartAt=Date.now()}
-    if(c.hearts>CK_MAX)c.hearts=CK_MAX;
     if(!c.daily)c.daily={};
     if(!c.months)c.months={};
     return c;
@@ -3452,7 +3466,7 @@ const CANDY=(function(){
   }
   function ui(){
     if(!P)return;const c=C();
-    document.querySelectorAll('[data-cookies]').forEach(e=>e.textContent=c.hearts);
+    document.querySelectorAll('[data-cookies]').forEach(e=>{e.textContent=c.hearts;const m=e.nextElementSibling;if(m&&m.tagName==='SMALL')m.style.display=c.hearts>CK_MAX?'none':''});
     document.querySelectorAll('[data-cookie-next]').forEach(e=>e.textContent=nextTxt(false));
     document.querySelectorAll('[data-cookie-next-long]').forEach(e=>e.textContent=nextTxt(true));
     const b=document.getElementById('csCookie');if(b)b.classList.toggle('dim',W().coins<CK_PRICE||c.hearts>=cap());
@@ -3549,7 +3563,7 @@ const CANDY=(function(){
     $('#candyDaily').addEventListener('click',()=>{NATIVE.buzz('tick');openDaily()});
     $('#rankBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openRank()});
     $('#setBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openSettings()});
-    $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open('과자')});ACH.dot();
+    $('#achBtn').addEventListener('click',()=>{NATIVE.buzz('tick');ACH.open('과자')});ACH.dot();MAIL.mount();
     $('#profBtn').addEventListener('click',()=>{NATIVE.buzz('tick');openProfile()});
     $('#shopBtn').addEventListener('click',()=>{NATIVE.buzz('tick');shop()});
     $('#cookieChip').addEventListener('click',()=>{NATIVE.buzz('tick');shop()});
@@ -3721,7 +3735,7 @@ const CANDY=(function(){
     elapsedFrozen=performance.now()-t0;running=false;
     const secs=Math.round(elapsedFrozen/1000),g=G,N=g.N,c=C(),achBefore=ACH.snapshot();
     const ckSpent=!!(g.held&&!g.daily&&c.rounds[g.n]);
-    if(g.held){g.held=false;if(!ckSpent)c.hearts=Math.min(CK_MAX,c.hearts+1)}
+    if(g.held){g.held=false;if(!ckSpent)c.hearts+=1}
     let rows='',title,next='',coin=0;
     if(g.daily){
       const key=dkey(new Date()),first=!c.daily[key];
@@ -3905,7 +3919,8 @@ const CANDY=(function(){
   }
   return {
     isOn:()=>view,on(){view=true},off(){view=false},partFor:z=>{const p=PART.find(x=>x.z===z&&x.lo>1);return p?p.name:''},goBtn,enter,showMap,playing:()=>!!G,pause,resume,mine,merge,openRank:openRankCandy,tabs,bindTabs,
-    setMainRank(f){openRankMain=f},admin:{daily:()=>openDaily()}
+    setMainRank(f){openRankMain=f},admin:{daily:()=>openDaily()},
+    addCookies(n){const c=C();c.hearts+=n;if(c.hearts>=CK_MAX)c.heartAt=Date.now();walletChanged()}
   };
 })();
 
@@ -4053,6 +4068,7 @@ const RANK=(function(){
     pending:()=>store.get('sekan-rank-pending',false),
     async setNick(n){n=clean(n);store.set('sekan-nick',n);if(!enabled)return {name:n,synced:false,reason:onClaude?'claude':'config'};try{await submit(n);return {name:n,synced:true}}catch(e){store.set('sekan-rank-pending',true);return {name:n,synced:false,reason:'error',error:e}}},
     async top(n){const s=await auth();return api('/rest/v1/rpc/leaderboard_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})},
+    async rpc(fn,args){const s=await auth();return api('/rest/v1/rpc/'+fn,{method:'POST',headers:bearer(s),body:JSON.stringify(args||{})})},
     async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
     // 운영진은 랭킹 기록이 막혀 있어서 닉네임이 접속 상태 표에만 남는다 → 로그인 때 거기서 되찾음
     async presenceNick(){try{const s=await auth();const r=await api('/rest/v1/presence?select=nickname&id=eq.'+s.user.id,{headers:bearer(s)});return r&&r[0]&&r[0].nickname||''}catch(e){return ''}},
@@ -4281,7 +4297,7 @@ const HEART_MAX=5,HEART_EVERY=10*60*1000,HEART_PRICE=100,MISS_MAX=5;
 // 실수 방패(6.6~): 실수가 MISS_MAX번째가 되면 자동으로 1개 쓰고 실수 4로 되돌려 계속한다. 본 게임·과자 나라 공통.
 const SHIELD_MAX=5,SHIELD_PRICE=200,SHIELD_ICO='<span class="shield-ico" aria-hidden="true">🛡️</span>';
 function W(){if(typeof P.coins!=='number'){P.coins=0;P.hints=HINT_START;P.hintAt=Date.now();P.walletAt=0}if(typeof P.hearts!=='number'){P.hearts=HEART_MAX;P.heartAt=Date.now()}
-  if(P.hearts>HEART_MAX)P.hearts=HEART_MAX;   // 6.6: 최대 5개로 줄어서 더 가진 만큼은 맞춤
+  // 6.9: 우편으로 받은 하트는 5개를 넘어도 보관하고 쓰면서 줄어든다(자연 충전은 5개까지만). 6.6 보정은 이미 모두 끝나서 뺐다.
   if(!P.hc66){P.hc66=1;if(P.hints>HINT_MAX)P.hints=HINT_MAX}   // 힌트는 업적 보상으로 5개를 넘을 수 있어 한 번만 맞춤
   if(typeof P.shields!=='number')P.shields=0;else if(P.shields>SHIELD_MAX)P.shields=SHIELD_MAX;return P}
 function takeShield(){const w=W();if(w.shields<=0)return false;w.shields--;walletChanged();return true}
@@ -4305,7 +4321,7 @@ function regenHearts(){
 }
 function nextHeartIn(){const w=W();return w.hearts>=heartCap()?0:Math.max(0,HEART_EVERY-(Date.now()-w.heartAt))}
 function takeHeart(){regenHearts();const w=W();if(w.hearts<=0)return false;if(w.hearts>=heartCap())w.heartAt=Date.now();w.hearts--;walletChanged();return true}
-function refundHeart(){const w=W();w.hearts=Math.min(HEART_MAX,w.hearts+1);walletChanged()}
+function refundHeart(){const w=W();w.hearts+=1;walletChanged()}
 function heartNextTxt(long){
   const w=W();
   if(w.hearts>=HEART_MAX)return long?'하트가 가득 찼어요':'가득';
@@ -4327,12 +4343,12 @@ function fmtMS(ms){const t=Math.ceil(ms/1000);return `${Math.floor(t/60)}:${Stri
 function updWalletUI(){
   const w=W();
   document.querySelectorAll('[data-coins]').forEach(e=>e.textContent=w.coins.toLocaleString());
-  document.querySelectorAll('[data-hints]').forEach(e=>e.textContent=w.hints);
+  document.querySelectorAll('[data-hints]').forEach(e=>{e.textContent=w.hints;const m=e.nextElementSibling;if(m&&m.tagName==='SMALL')m.style.display=w.hints>HINT_MAX?'none':''});
   const nx=nextHintIn();
   document.querySelectorAll('[data-hint-next]').forEach(e=>e.textContent=w.hints>=HINT_MAX?'가득':fmtMS(nx));
   document.querySelectorAll('[data-hint-next-long]').forEach(e=>e.textContent=w.hints>=HINT_MAX?'힌트가 가득 찼어요':`다음 무료 힌트까지 ${fmtMS(nx)}`);
   const bb=document.getElementById('shBuy');if(bb)bb.classList.toggle('dim',w.coins<HINT_PRICE||w.hints>=HINT_MAX);
-  document.querySelectorAll('[data-hearts]').forEach(e=>e.textContent=w.hearts);
+  document.querySelectorAll('[data-hearts]').forEach(e=>{e.textContent=w.hearts;const m=e.nextElementSibling;if(m&&m.tagName==='SMALL')m.style.display=w.hearts>HEART_MAX?'none':''});
   document.querySelectorAll('[data-shields]').forEach(e=>e.textContent=w.shields);
   const sb=document.getElementById('shShield');if(sb)sb.classList.toggle('dim',w.coins<SHIELD_PRICE||w.shields>=SHIELD_MAX);
   const sb2=document.getElementById('csShield');if(sb2)sb2.classList.toggle('dim',w.coins<SHIELD_PRICE||w.shields>=SHIELD_MAX);
@@ -4543,6 +4559,7 @@ async function afterLogin(){
   try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){}
   let me=null;try{me=await RANK.me()}catch(e){}
   await RANK.setNick(me&&me.nickname||RANK.nick()||await RANK.presenceNick()||RANK.label());
+  MAIL.refresh(true);
 }
 function lgSheet(html){const sh=openSheet(html);sh.classList.add('lgsheet');return sh}
 async function googleGo(m){
@@ -4616,7 +4633,7 @@ async function doLogout(){
   // 서버에 아직 안 올라간 기록이 있으면 한 번 더 올려 보고, 그래도 안 되면 그 아이디 몫으로 따로 보관
   if(store.get('sekan-sync-pending',false)&&acc){clearTimeout(syncT);try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){store.set('sekan-stash:'+acc,P)}}
   P=freshP();store.set('sekan-progress',P);S=null;save();store.set('sekan-nick','');store.set('sekan-sync-pending',false);store.set(OWNER_KEY,'');
-  await RANK.logout();OTHERS.reset();backToIntro();
+  await RANK.logout();OTHERS.reset();MAIL.reset();backToIntro();
 }
 
 /* ---------- 라운드 기록 창 ---------- */
@@ -4961,6 +4978,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['6.9','2026-11-14','우편함',['우편함이 생겼어요! 운영진과 시스템이 보내는 우편을 받을 수 있어요 (로그인한 사람만)','우편으로 받은 하트·힌트·쿠키 하트는 5개를 넘어도 보관돼요','우편은 받은 날부터 30일 동안 보관돼요','운영진 모드 스위치와 우편 보내기 도구가 생겼어요 (운영진 전용)']],
   ['6.8','2026-11-14','구글 로그인',['로그인이 Google 로그인으로 바뀌었어요 (웹·앱 모두)','예전에 만든 아이디는 "기존 아이디로 로그인"으로 계속 쓸 수 있어요','로그인 없이 하던 기록은 구글로 로그인하면 그대로 이어져요','구글 이메일은 랭킹에 보이지 않아요']],
   ['6.7','2026-11-14','새 그림 대량 교체',['지역 이동 배를 물결 없는 새 배로, 앞 파도 띠·뱃머리 물보라·물방울을 새 그림으로 바꿨어요','꾸미기 받침 9종(구름·잔디·그루터기·얼음·쿠키·마카롱·보석·별무리·황금 왕좌)과 배경 9장이 그림으로 바뀌었어요','동행 친구 66쌍이 두 친구가 같이 서 있는 그림으로 바뀌었어요','대표 배지 16종 그림, 과자 나라 11·12번째 칸(레몬 캔디·소다 젤리) 새 그림']],
   ['6.6','2026-11-12','프로필 카드·꾸미기·과자 나라 600',['내 프로필이 큰 캐릭터 카드로: 순위·최고 라운드·별·총점·과자 나라, 업적·꾸미기 버튼','꾸미기 모드: 배경·받침·이름표·효과·동작·동행 친구는 코인으로(무료 기본 있음), 테두리·칭호·대표 배지 3칸은 업적으로','랭킹·지도 목록·과자 랭킹에서 다른 사람 줄을 누르면 그 사람의 프로필 카드(서버 SQL 필요, 없어도 기본 모습으로 보임)','하트·힌트·쿠키 하트 최대 5개, 클리어 코인 별 1·2·3개 = 10·20·40, 실수 방패(200코인): 실수 5번째를 한 번 막아 줘요','퍼즐: 처음부터 제자리인 조각 없음·맞는 자리에 두면 고정·최대 7×7, 543라운드부터 12라운드마다 회전 라운드(⟳, 보너스 50코인), 후반엔 하늘·바다처럼 비슷한 조각이 많은 그림이 더 자주','301~330 로직은 10×10 유지(12×12는 331부터)·틀린그림 덜 급하게, 로직 판 칸을 더 크게(단서 폭 줄임·화면 가장자리까지)','지역 이동 배: 파도가 배 아랫부분을 감싸고 꼬리 물결·물보라, 위아래·기울기를 따로 흔들림','과자 나라 600라운드: 301~450 11×11 별사탕 하늘, 451~600 12×12 구름 사탕섬(본 게임 별빛 하늘·하늘섬을 열면 열림), 업적 단계 450·600 추가']],
@@ -5032,7 +5050,7 @@ function openPatchNotes(){
 }
 /* ---------- 운영진 도구 ---------- */
 function openAdmin(){
-  if(!isAdmin())return;
+  if(!isStaff())return;
   const g=(id,t)=>`<button class="btn" type="button" data-a="${id}">${t}</button>`;
   const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> ${esc(RANK.account()||ADMIN_ID)}</div><h3>모든 화면 보기</h3>
     <p class="lead">운영진 아이디는 랭킹에 올라가지 않고, 1~${MAXR}라운드가 모두 열려 있어요. 아래 버튼으로 각 화면을 바로 볼 수 있어요.</p>
@@ -5047,6 +5065,8 @@ function openAdmin(){
       <div class="adm-row">${ZONES.slice(1).map((Z,i)=>g('fog'+(i+1),`${Z.name} 오픈`)).join('')}</div>
       <b>지도 위치로 이동</b>
       <div class="adm-row">${ZONES.map((Z,z)=>g('go'+zLo(z),`${Z.lvl} (${zLo(z)}~)`)).join('')}${g('go'+MAXR,MAXR+'라운드')}</div>
+      <b>운영진 모드 (보기용)</b><div class="adm-row">${g('admmode',adminView()?'모드 켜짐 · 누르면 끔':'모드 꺼짐 · 누르면 켬')}</div>
+      <b>우편</b><div class="adm-row">${g('mailsend','우편 보내기')}${g('maillog','보낸 기록')}${g('mailbox','내 우편함 보기')}</div>
       <b>계정</b><div class="adm-row">${g('pwreset','비밀번호 재설정')}</div>
     </div>
     <div class="row"><button class="btn primary" type="button" id="admClose">닫기</button></div>`);
@@ -5068,6 +5088,10 @@ function openAdmin(){
     if(a.startsWith('play')){closeSheet();startRound(+a.slice(4));return}
     if(a.startsWith('fog')){closeSheet();const z=+a.slice(3);store.set('sekan-viewz',z-1);showMenu();travel(z-1,z);return}
     if(a==='pwreset'){openPwReset();return}
+    if(a==='admmode'){store.set(ADMV,!adminView());closeSheet();showMenu();return}
+    if(a==='mailsend'){openMailAdmin();return}
+    if(a==='maillog'){openMailLog();return}
+    if(a==='mailbox'){MAIL.open();return}
     if(a.startsWith('go')){closeSheet();const n=+a.slice(2);store.set('sekan-viewz',zoneOf(n));showMenu();const m=$('#map');if(m)m.scrollTop=Math.max(0,mapY(n)-m.clientHeight*0.62);return}
   }));
 }
@@ -5102,15 +5126,164 @@ function openPwReset(){
     }
   });
 }
+/* ---------- 우편함 (6.9) ---------- */
+const MAIL=(function(){
+  let list=[],ok=false;const seen=new Set(store.get('sekan-mail-seen',[]));
+  const rw=m=>(m.coins||0)+(m.hints||0)+(m.hearts||0)+(m.cookies||0);
+  const claimable=m=>!m.claimed_at&&rw(m)>0;
+  const unread=()=>list.filter(m=>!m.read_at||claimable(m)).length;
+  const days=m=>Math.max(0,Math.ceil((Date.parse(m.expires_at)-Date.now())/864e5));
+  const chips=m=>[m.coins?`<span>${ICON.coin}${Number(m.coins).toLocaleString()}</span>`:'',m.hints?`<span>${ICON.bulb}${m.hints}</span>`:'',m.hearts?`<span>${ICON.heart}${m.hearts}</span>`:'',m.cookies?`<span>🍪${m.cookies}</span>`:''].join('');
+  const ready=()=>!!(RANK.enabled&&RANK.account());
+  const say=t=>FX.text(t,window.innerWidth/2,window.innerHeight*.3,{size:20,color:'#ffd43b'});
+  function dot(){const b=document.getElementById('mailBtn');if(b)b.classList.toggle('has',unread()>0)}
+  function mount(){
+    if(!ok)return;const a=document.getElementById('achBtn');if(!a||document.getElementById('mailBtn'))return;
+    a.insertAdjacentHTML('beforebegin','<button type="button" class="mb-btn ic ach-btn" id="mailBtn" aria-label="우편함"><span class="mail-ico" aria-hidden="true">✉️</span><i class="dot"></i></button>');
+    document.getElementById('mailBtn').addEventListener('click',()=>{NATIVE.buzz('tick');open()});dot();
+  }
+  async function load(){
+    if(!ready()){list=[];ok=false;return false}
+    try{const r=await RANK.rpc('mail_inbox');list=Array.isArray(r)?r:[];ok=true}
+    catch(e){if(e&&(e.status===404||e.code==='PGRST202'||/mail_inbox/i.test(e.message||''))){ok=false;list=[]}}   // 서버에 우편 SQL이 아직 없으면 조용히 숨김
+    return ok;
+  }
+  async function refresh(announce){
+    await load();mount();dot();
+    const fresh=list.filter(m=>!seen.has(m.id)&&!m.read_at&&!m.claimed_at);
+    if(announce&&fresh.length&&!inGame&&!document.hidden)say(`새 우편 ${fresh.length}통이 왔어요 ✉️`);
+    fresh.forEach(m=>seen.add(m.id));store.set('sekan-mail-seen',[...seen].slice(-200));
+  }
+  function apply(r){
+    const w=W();w.coins+=r.coins||0;w.hints+=r.hints||0;
+    if(r.hearts){w.hearts+=r.hearts;if(w.hearts>=HEART_MAX)w.heartAt=Date.now()}
+    if(r.cookies)CANDY.addCookies(r.cookies);
+    walletChanged();SFX.play('buy');NATIVE.buzz('win');
+    say([r.coins?`코인 +${r.coins}`:'',r.hints?`힌트 +${r.hints}`:'',r.hearts?`하트 +${r.hearts}`:'',r.cookies?`쿠키 하트 +${r.cookies}`:''].filter(Boolean).join(' · ')||'받았어요!');
+  }
+  async function claim(id){
+    try{const r=await RANK.rpc('mail_claim',{p_id:id});if(r&&r.ok){apply(r);return}say(r&&r.reason==='already'?'이미 받은 우편이에요':'받을 수 없는 우편이에요')}
+    catch(e){say('잠시 후 다시 해 주세요')}
+  }
+  async function claimAll(){
+    try{const r=await RANK.rpc('mail_claim_all');if(r&&r.ok&&r.count){apply(r);return}say('받을 우편이 없어요')}
+    catch(e){say('잠시 후 다시 해 주세요')}
+  }
+  function draw(sh){
+    const box=sh.querySelector('#mlBox');if(!box)return;
+    if(!ok){box.innerHTML='<p class="lead">우편함을 쓸 수 없어요. 로그인하면 우편을 받을 수 있어요.</p>';return}
+    if(!list.length){box.innerHTML='<p class="lead">받은 우편이 없어요.</p>';return}
+    const n=list.filter(claimable).length;
+    box.innerHTML=(n?`<button class="btn primary" type="button" data-ml="all">모두 받기 (${n}통)</button>`:'')+`<ul class="mlist">`+list.map(m=>`<li class="ml${!m.read_at?' un':''}" data-id="${esc(m.id)}">
+      <div class="ml-h"><b>${esc(m.title)}</b><small>${m.kind==='system'?'시스템':'운영진'} · ${days(m)}일 남음</small></div>
+      ${m.body?`<p class="ml-b">${esc(m.body)}</p>`:''}
+      ${rw(m)?`<div class="ml-rw">${chips(m)}</div>`:''}
+      <div class="ml-a">${claimable(m)?`<button class="btn primary" type="button" data-ml="claim">받기</button>`:(rw(m)?'<span class="ml-done">받음 ✓</span>':'')}<button class="btn" type="button" data-ml="del">삭제</button></div></li>`).join('')+`</ul>`;
+    box.onclick=async e=>{
+      const b=e.target.closest&&e.target.closest('[data-ml]');if(!b||b.disabled)return;
+      const kind=b.dataset.ml,li=b.closest('li'),id=li&&li.dataset.id;NATIVE.buzz('tick');
+      if(kind==='all'){b.disabled=true;await claimAll();await load();dot();draw(sh)}
+      else if(kind==='claim'){b.disabled=true;await claim(id);await load();dot();draw(sh)}
+      else if(kind==='del'){
+        const m=list.find(x=>x.id===id);
+        if(m&&claimable(m)&&!b.dataset.sure){b.dataset.sure='1';b.textContent='받지 않은 보상이 사라져요 · 한 번 더';return}
+        try{await RANK.rpc('mail_delete',{p_id:id})}catch(er){}
+        list=list.filter(x=>x.id!==id);dot();draw(sh);
+      }
+    };
+  }
+  async function open(){
+    const sh=openSheet(`<div class="eyebrow">우편함</div><h3>우편함</h3><div id="mlBox"><p class="lead">불러오는 중…</p></div>
+      <p class="rs-note">우편은 받은 날부터 30일 동안 보관돼요. 하트·힌트·쿠키 하트는 5개를 넘게 받아도 그대로 보관돼요.</p>
+      <div class="row"><button class="btn primary" type="button" id="mlClose">닫기</button></div>`);
+    sh.querySelector('#mlClose').addEventListener('click',closeSheet);
+    await load();draw(sh);
+    list.filter(m=>!m.read_at).forEach(m=>{m.read_at=new Date().toISOString();RANK.rpc('mail_read',{p_id:m.id}).catch(()=>{})});dot();
+  }
+  return {mount,refresh,open,ready,reset(){list=[];ok=false}};
+})();
+
+/* ---------- 운영진: 우편 보내기·보낸 기록 (6.9) ---------- */
+function openMailAdmin(){
+  if(!isStaff())return;
+  const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> 우편</div><h3>우편 보내기</h3>
+    <div class="ma">
+      <label>종류<select id="maKind"><option value="staff">운영진 우편</option><option value="system">시스템 우편</option></select></label>
+      <div class="adm-row"><button class="btn" type="button" data-tpl="maint">서식: 점검 보상</button><button class="btn" type="button" data-tpl="upd">서식: 업데이트 보상</button></div>
+      <label>대상<select id="maMode"><option value="all">전체 (보관 기간 안에 로그인하는 모든 계정)</option><option value="online">지금 접속 중인 사람</option><option value="round">특정 라운드 이상</option><option value="recent">최근 N일 접속한 사람</option><option value="ids">개별 (검색해서 고르기)</option></select></label>
+      <label id="maNWrap" hidden><span id="maNLab"></span><input id="maN" class="nick-in" type="number" min="1" value="10"></label>
+      <div id="maFind" hidden><div class="adm-row"><input id="maQ" class="nick-in" placeholder="닉네임 또는 계정" maxlength="40"><button class="btn" type="button" id="maSearch">검색</button></div><ul class="mlist" id="maRes"></ul><p class="lead" id="maPick">고른 사람 0명</p></div>
+      <label>제목<input id="maT" class="nick-in" maxlength="40" placeholder="40자 이하"></label>
+      <label>내용<textarea id="maB" class="nick-in" rows="3" maxlength="500" placeholder="500자 이하"></textarea></label>
+      <div class="ma-rw"><label>코인 (0~10000)<input id="maC" class="nick-in" type="number" min="0" max="10000" value="0"></label><label>힌트 (0~20)<input id="maH" class="nick-in" type="number" min="0" max="20" value="0"></label><label>하트 (0~20)<input id="maR" class="nick-in" type="number" min="0" max="20" value="0"></label><label>쿠키 하트 (0~20)<input id="maK" class="nick-in" type="number" min="0" max="20" value="0"></label></div>
+      <p class="formmsg" id="maMsg" aria-live="polite"></p>
+      <div class="row"><button class="btn" type="button" id="maLog">보낸 기록</button><button class="btn primary" type="button" id="maGo">인원 확인</button></div>
+    </div><div class="row"><button class="btn" type="button" id="maClose">닫기</button></div>`);
+  sh.querySelector('.card').classList.add('adm-card');
+  const $$=q=>sh.querySelector(q),msg=$$('#maMsg'),go=$$('#maGo'),picked=new Map();let armed=0;
+  const num=(id,max)=>Math.max(0,Math.min(max,Math.floor(+$$(id).value||0)));
+  const disarm=()=>{armed=0;go.textContent='인원 확인'};
+  const modeUI=()=>{const m=$$('#maMode').value;$$('#maNWrap').hidden=!(m==='round'||m==='recent');$$('#maFind').hidden=m!=='ids';$$('#maNLab').textContent=m==='round'?'몇 라운드 이상':'최근 며칠';disarm()};
+  $$('#maMode').addEventListener('change',modeUI);modeUI();
+  sh.addEventListener('input',disarm);
+  const TPL={maint:{k:'system',t:'점검 보상',b:'점검 때문에 불편을 드려 미안해요. 작은 선물이에요!',c:100,h:1,r:1,ck:0},upd:{k:'system',t:'업데이트 보상',b:'새 버전을 써 주셔서 고마워요!',c:100,h:1,r:0,ck:0}};
+  sh.querySelectorAll('[data-tpl]').forEach(b=>b.addEventListener('click',()=>{const t=TPL[b.dataset.tpl];$$('#maKind').value=t.k;$$('#maT').value=t.t;$$('#maB').value=t.b;$$('#maC').value=t.c;$$('#maH').value=t.h;$$('#maR').value=t.r;$$('#maK').value=t.ck;disarm()}));
+  $$('#maClose').addEventListener('click',closeSheet);
+  $$('#maLog').addEventListener('click',openMailLog);
+  const drawPick=()=>{$$('#maPick').textContent=`고른 사람 ${picked.size}명`};
+  $$('#maSearch').addEventListener('click',async()=>{
+    const q=$$('#maQ').value.trim();if(!q)return;const ul=$$('#maRes');ul.innerHTML='<li class="lead">찾는 중…</li>';
+    try{const rows=await RANK.rpc('admin_find_users',{p_q:q});
+      ul.innerHTML=rows.length?rows.map(r=>`<li class="ml"><label><input type="checkbox" data-id="${esc(r.id)}" ${picked.has(r.id)?'checked':''}> <b>${esc(r.nickname||'(닉네임 없음)')}</b> <small>${esc(r.account||'')}</small></label></li>`).join(''):'<li class="lead">찾은 사람이 없어요.</li>';
+      ul.querySelectorAll('input').forEach(i=>i.addEventListener('change',()=>{const r=rows.find(x=>x.id===i.dataset.id);if(i.checked)picked.set(r.id,r);else picked.delete(r.id);drawPick();disarm()}));
+    }catch(e){ul.innerHTML=`<li class="lead">${esc(mailErr(e))}</li>`}
+  });
+  go.addEventListener('click',async()=>{
+    const mode=$$('#maMode').value,title=$$('#maT').value.trim();
+    if(!title){msg.textContent='제목을 써 주세요.';return}
+    if(mode==='ids'&&!picked.size){msg.textContent='받을 사람을 한 명 이상 골라 주세요.';return}
+    const a={p_mode:mode,p_ids:mode==='ids'?[...picked.keys()]:null,p_min_round:mode==='round'?Math.max(1,Math.floor(+$$('#maN').value||1)):null,p_days:mode==='recent'?Math.max(1,Math.floor(+$$('#maN').value||1)):null,
+      p_kind:$$('#maKind').value,p_title:title,p_body:$$('#maB').value,p_coins:num('#maC',10000),p_hints:num('#maH',20),p_hearts:num('#maR',20),p_cookies:num('#maK',20)};
+    go.disabled=true;msg.textContent='';
+    try{
+      const r=await RANK.rpc('admin_send_mail',Object.assign({},a,{p_dry:!armed}));
+      if(!r||!r.ok){msg.textContent=r&&r.reason==='nobody'?'받을 사람이 없어요.':'보낼 수 없어요. ('+(r&&r.reason||'오류')+')'}
+      else if(!armed){armed=r.count;go.textContent=`${r.count}명에게 보내기 (되돌릴 수 없어요)`;msg.textContent=r.note}
+      else{disarm();msg.textContent=`보냈어요 ✓ ${r.note}`;NATIVE.buzz('win');$$('#maT').value='';$$('#maB').value=''}
+    }catch(e){msg.textContent=mailErr(e);disarm()}
+    go.disabled=false;
+  });
+}
+function mailErr(e){
+  if(e&&(e.code==='42501'||/not_admin/i.test(e.message||'')))return '운영진 구글 계정으로 로그인해야 쓸 수 있어요.';
+  if(e&&(e.status===404||e.code==='PGRST202'))return '서버에 우편 SQL이 아직 없어요. (supabase/patch-6.9-mailbox.sql 실행 필요)';
+  return RANK.explain(e);
+}
+async function openMailLog(){
+  if(!isStaff())return;
+  const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> 우편</div><h3>보낸 기록</h3><div id="mgBox"><p class="lead">불러오는 중…</p></div><div class="row"><button class="btn" type="button" id="mgBack">우편 보내기</button><button class="btn primary" type="button" id="mgClose">닫기</button></div>`);
+  sh.querySelector('.card').classList.add('adm-card');
+  sh.querySelector('#mgClose').addEventListener('click',closeSheet);sh.querySelector('#mgBack').addEventListener('click',openMailAdmin);
+  const box=sh.querySelector('#mgBox');
+  try{
+    const rows=await RANK.rpc('admin_mail_log');
+    box.innerHTML=rows.length?`<ul class="mlist">`+rows.map(m=>`<li class="ml"><div class="ml-h"><b>${esc(m.title)}</b><small>${m.kind==='system'?'시스템':'운영진'} · ${new Date(m.created_at).toLocaleString('ko-KR')}</small></div>
+      <p class="ml-b">${esc(m.note)} · 받은 사람 ${m.claimed}명</p>
+      <div class="ml-rw">${[m.coins?`<span>${ICON.coin}${m.coins}</span>`:'',m.hints?`<span>${ICON.bulb}${m.hints}</span>`:'',m.hearts?`<span>${ICON.heart}${m.hearts}</span>`:'',m.cookies?`<span>🍪${m.cookies}</span>`:''].join('')}</div></li>`).join('')+`</ul>`:'<p class="lead">보낸 우편이 없어요.</p>';
+  }catch(e){box.innerHTML=`<p class="lead">${esc(mailErr(e))}</p>`}
+}
 /* ---------- 접속 신호 (운영진 '접속 중인 사람' 창용) ---------- */
 (function(){
   const beat=()=>{if(!document.hidden)RANK.beat(true)};
   setTimeout(beat,3000);setInterval(beat,45000);
   document.addEventListener('visibilitychange',()=>RANK.beat(!document.hidden));
   addEventListener('pagehide',()=>RANK.beat(false));
+  const mailTick=()=>{if(!document.hidden&&MAIL.ready())MAIL.refresh(true)};
+  setTimeout(mailTick,4000);setInterval(mailTick,300000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(mailTick,800)});
 })();
 function openOnline(){
-  if(!isAdmin())return;
+  if(!isStaff())return;
   const sh=openSheet(`<div class="eyebrow"><span class="adm-badge">운영진</span> 접속 중인 사람</div><h3>지금 접속 중</h3>
     <p class="lead" id="onSum">불러오는 중…</p>
     <ul class="on-list" id="onList"></ul>
@@ -5136,12 +5309,12 @@ function openOnline(){
 function openSettings(){
   const acc=RANK.account();
   const sh=openSheet(`<div class="eyebrow">설정</div><h3>메뉴</h3>
-    ${RANK.enabled?`<div class="acc-box">${acc?`<b>${esc(acc)}</b> 아이디로 로그인 중이에요`:'로그인 없이 하는 중이에요'}</div>`:''}
+    ${RANK.enabled?`<div class="acc-box">${acc?(acc.includes('@')?'<b>구글 계정</b>으로 로그인 중이에요':`<b>${esc(acc)}</b> 아이디로 로그인 중이에요`):'로그인 없이 하는 중이에요'}</div>`:''}
     <div class="set-list">
-      ${RANK.enabled?(acc?`<button class="btn" type="button" id="stOut">로그아웃</button>`:`<button class="btn primary" type="button" id="stIn">로그인 · 아이디 만들기</button>`):''}
+      ${RANK.enabled?(acc?`<button class="btn" type="button" id="stOut">로그아웃</button>`:`<button class="btn primary" type="button" id="stIn">로그인</button>`):''}
       <button class="btn" type="button" id="stNick">닉네임 ${RANK.nick()?'바꾸기 · '+esc(RANK.nick()):'정하기'}</button>
       <button class="btn" type="button" id="stSfx" data-sfx="none" aria-pressed="${SFX.on}">효과음 ${SFX.on?'켜짐 🔊':'꺼짐 🔇'}</button>
-      ${isAdmin()?'<button class="btn adm-btn" type="button" id="stAdmin">운영진 도구 · 모든 화면 보기</button><button class="btn adm-btn" type="button" id="stPatch">운영진 · 패치 노트</button><button class="btn adm-btn" type="button" id="stOnline">운영진 · 접속 중인 사람</button>':''}
+      ${isStaff()?'<button class="btn adm-btn" type="button" id="stAdmin">운영진 도구 · 모든 화면 보기</button><button class="btn adm-btn" type="button" id="stPatch">운영진 · 패치 노트</button><button class="btn adm-btn" type="button" id="stOnline">운영진 · 접속 중인 사람</button>':''}
       ${!NATIVE.native&&/Android/i.test(navigator.userAgent)?'<a class="btn" id="stApk" href="download.html">📱 안드로이드 앱 받기</a>':''}
       ${UPD.on()?`<button class="btn" type="button" id="stUpd">🔄 업데이트 확인 · 지금 ${esc(NATIVE.ver)}</button>`:''}
       <button class="btn" type="button" id="stIntro">시작 화면으로</button>
