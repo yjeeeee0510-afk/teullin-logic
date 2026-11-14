@@ -52,3 +52,4 @@
 - 꾸미기: 받침 9종·배경 9장을 그림으로, 동행 쌍 66종 그림, 대표 배지 16종 그림. 소품(모자)은 캐릭터와 겹쳐 어색해서 없앰(원본 art-src/cos/C1·C2는 보관).
 - 과자 칸 레몬·소다를 새 그림으로. 흰 바탕이라 바깥 윤곽만 따서 안쪽을 채움.
 - 서버 SQL 변경 없음(꾸미기 글자에 소품 칸 안 씀).
+- **6.7 Play 스토어 AAB는 아직 못 만듦(2026-11-14)**: 이 세션 환경은 `dl.google.com` 등이 막혀 Android SDK를 못 받고, 서명 키(`teullinlogic-release.keystore`·`keystore.properties`)도 저장소에 없음. 개인 환경 `teullin-logic`(SDK·Gradle 주소 허용)을 만들어 둠 → 새 세션을 이 환경으로 시작하고 키 파일·비밀번호를 받으면 `python3 tools/app/release.py --play`(versionCode 67, `dist/teullinlogic-play.aab`), 사이드로드 APK는 `python3 tools/app/release.py` 후 커밋.
