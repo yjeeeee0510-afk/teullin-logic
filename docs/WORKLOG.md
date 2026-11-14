@@ -52,5 +52,7 @@
 - 꾸미기: 받침 9종·배경 9장을 그림으로, 동행 쌍 66종 그림, 대표 배지 16종 그림. 소품(모자)은 캐릭터와 겹쳐 어색해서 없앰(원본 art-src/cos/C1·C2는 보관).
 - 과자 칸 레몬·소다를 새 그림으로. 흰 바탕이라 바깥 윤곽만 따서 안쪽을 채움.
 - 서버 SQL 변경 없음(꾸미기 글자에 소품 칸 안 씀).
-- **6.7 Play 스토어 AAB는 아직 못 만듦(2026-11-14)**: 이 세션 환경은 `dl.google.com` 등이 막혀 Android SDK를 못 받고, 서명 키(`teullinlogic-release.keystore`·`keystore.properties`)도 저장소에 없음. 개인 환경 `teullin-logic`(SDK·Gradle 주소 허용)을 만들어 둠 → 새 세션을 이 환경으로 시작하고 키 파일·비밀번호를 받으면 `python3 tools/app/release.py --play`(versionCode 67, `dist/teullinlogic-play.aab`), 사이드로드 APK는 `python3 tools/app/release.py` 후 커밋.
+- **6.7 Play 스토어 AAB 빌드 완료(2026-11-14)** → `dist/teullinlogic-play.aab`(19MB, versionCode 67, 커밋 안 함, Play Console에 업로드). 사이드로드 APK(`download/teullinlogic.apk`)·`version.json`·`download.html`도 6.7로 갱신.
+  - 서명 키: 사용자 구글 드라이브 `앱서명키_보관용.zip`(키 파일+비밀번호 txt). 업로드 키 SHA-256 `ED:78:A7:35:4D:81:8B:F9:13:F0:BE:5E:A6:E4:8A:36:EB:1E:F7:58:9E:E1:43:2C:23:0E:35:35:9B:73:C7:AC`(Play Console 업로드 인증서와 일치 확인). Play 앱 서명 키(구글 보관)는 `4A:F2:C3:B5:…:00:0D`로 별개.
+  - 새 세션에서 빌드하는 법: 환경 `teullin-logic`(dl.google.com·maven·gradle 주소 허용) → 드라이브에서 zip을 받아 키를 저장소 밖(`/root/keys`)에 두고 `app/android/keystore.properties`로 링크(.gitignore 제외) → Android SDK(cmdline-tools, `platforms;android-36`, `build-tools;36.0.0`)를 `ANDROID_HOME`에 설치 → `cd app && npm ci` → `python3 tools/app/release.py --play`(APK는 옵션 없이). Maven이 429(요청 과다)를 주면 40초쯤 쉬고 다시 실행하면 캐시로 이어진다.
 - **서명 키 위치(2026-11-14 확인)**: 사용자 구글 드라이브 내 드라이브 최상위 `앱서명키_보관용.zip`(키 파일 `teullinlogic-release.keystore` + `서명키_비밀번호.txt`). 키 저장소·키 비밀번호는 같고 별칭 `teullinlogic`, keytool로 열림 확인. 새 세션은 Drive 커넥터로 내려받아(`download_file_content`가 파일로 저장) 새 빈 폴더에 풀고 `app/android/keystore.properties`(gitignore)를 만들어 쓰고, 끝나면 지운다. 비밀번호는 문서·커밋·대화에 쓰지 않는다.
