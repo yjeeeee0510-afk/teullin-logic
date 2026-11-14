@@ -1387,7 +1387,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.2</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.3</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4059,9 +4059,14 @@ const RANK=(function(){
   async function googleNative(){
     const SL=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.SocialLogin;
     if(!SL||!gId){const er=new Error('google-plugin');er.code='google';throw er}
-    await SL.initialize({google:{webClientId:gId}});
-    const r=await SL.login({provider:'google',options:{scopes:['email','profile']}});
-    const t=r&&r.result&&r.result.idToken;if(!t){const er=new Error('google-cancel');er.code='google';throw er}
+    let t;
+    try{
+      // 표준 앱에서 scopes 옵션은 실행 중에 거부된다(플러그인 설명서). idToken만 받으면 되므로 옵션 없이, 인증 단계 대기는 건너뜀.
+      await SL.initialize({google:{webClientId:gId,mode:'online',skipAuthOnlyAuthorizationAfterSignIn:true}});
+      const r=await SL.login({provider:'google',options:{}});
+      t=r&&r.result&&r.result.idToken;
+    }catch(e){const er=new Error(String((e&&(e.message||e.code))||'plugin'));er.code='google';throw er}   // 플러그인 오류를 '인터넷 연결' 안내로 가리지 않고 사유를 보여 줌
+    if(!t){const er=new Error('google-cancel');er.code='google';throw er}
     const s2=await api('/auth/v1/token?grant_type=id_token',{method:'POST',body:JSON.stringify({provider:'google',id_token:t})});
     session=fix(s2);store.set('sekan-auth',session);return session;
   }
@@ -4079,7 +4084,7 @@ const RANK=(function(){
     if(/already|exists|registered/i.test(m))return '이미 있는 아이디예요. 다른 아이디를 써 주세요.';
     if(/password/i.test(m))return '비밀번호는 6자 이상으로 해 주세요.';
     if(/email/i.test(m)&&/invalid|validate|format/i.test(m))return '이 아이디는 쓸 수 없어요. 영문 소문자와 숫자로 다시 해 주세요.';
-    if(e&&e.code==='google')return /cancel/i.test(e.message||'')?'구글 로그인을 취소했어요.':'구글 로그인을 마치지 못했어요. 잠시 후 다시 해 주세요.';
+    if(e&&e.code==='google'){const d=String(e.message||'');return /cancel/i.test(d)?'구글 로그인을 취소했어요.':'구글 로그인을 마치지 못했어요. 잠시 후 다시 해 주세요.'+(d&&d!=='google-plugin'?` (${d.slice(0,90)})`:'')}
     if(/signup.*disabled|not allowed/i.test(m))return '지금은 새 아이디를 만들 수 없어요.';
     if(e&&e.status===429)return '시도가 너무 많아요. 잠시 후 다시 해 주세요.';
     return explain(e);
@@ -5006,6 +5011,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['7.3','2026-11-14','구글 로그인 수정',['앱에서 구글 로그인이 되지 않던 문제를 고쳤어요']],
   ['7.2','2026-11-14','안정성 개선',['앱에서 쓰지 않는 광고 관련 권한을 빼고 안정성을 높였어요']],
   ['7.1','2026-11-14','광고 준비',['나중에 광고를 보고 하트·힌트를 더 받을 수 있도록 준비하고 있어요 (지금은 광고가 없어요)']],
   ['7.0','2026-11-14','특별 상점 준비',['상점에 "특별 상점" 자리가 생겼어요. 지금은 준비 중이라 살 수 없어요','프로모션 때 코인 묶음·꾸미기 패키지·스타터 팩이 열릴 예정이에요','지금 있는 꾸미기는 모두 그대로 코인으로 살 수 있어요']],

@@ -1,11 +1,11 @@
 {
- "version": "7.2",
- "code": 72,
+ "version": "7.3",
+ "code": 73,
  "size": "21.3MB",
  "date": "2026-11-14",
- "title": "안정성 개선",
+ "title": "구글 로그인 수정",
  "notes": [
-  "앱에서 쓰지 않는 광고 관련 권한을 빼고 안정성을 높였어요"
+  "앱에서 구글 로그인이 되지 않던 문제를 고쳤어요"
  ],
  "apk": "download/teullinlogic.apk"
 }
