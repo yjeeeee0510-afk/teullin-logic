@@ -46,3 +46,9 @@
 - `index.html`의 `UPD`의 `BASE`(`https://yjeeeee0510-afk.github.io/teullin-logic/`), `README.md`의 플레이 주소, `privacy.html` 주소(Play Console에 적은 것), `version.json`·`download.html`의 다운로드 주소.
 - GitHub Pages: 새 저장소 Settings → Pages → `main` 브랜치 루트.
 - 서명 키(`teullinlogic-release.keystore`)와 `keystore.properties`는 저장소에 없으니 따로 옮길 것.
+
+## 패치 6.7 (2026-11-14) — 지팀장 새 그림 교체
+- 이동 장면: V1 배(물결 없음), V2C 물결 띠(거울로 이어 붙임)·뱃머리 물보라·물방울. 꼬리 물결은 끊겨 보여 뺌.
+- 꾸미기: 받침 9종·배경 9장을 그림으로, 동행 쌍 66종 그림, 대표 배지 16종 그림. 소품(모자)은 캐릭터와 겹쳐 어색해서 없앰(원본 art-src/cos/C1·C2는 보관).
+- 과자 칸 레몬·소다를 새 그림으로. 흰 바탕이라 바깥 윤곽만 따서 안쪽을 채움.
+- 서버 SQL 변경 없음(꾸미기 글자에 소품 칸 안 씀).

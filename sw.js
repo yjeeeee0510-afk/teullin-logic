@@ -1,7 +1,7 @@
 // 틀린로직맞추기 오프라인 캐시 (웹·홈 화면 앱용, 네이티브 앱에서는 쓰이지 않음)
-const CACHE='sekan-v96';
+const CACHE='sekan-v97';
 // 그림 주소 뒤 ?v= (index.html ASSET_V와 같게)
-const AV='43';
+const AV='44';
 const CORE=[
   'img/voyage/pegCoach.webp',
   'img/bg/zone5-heaven.jpg',
@@ -128,6 +128,11 @@ const CORE=[
   'img/voyage/sea.jpg',
   'img/voyage/vyBoatBlue.webp',
   'img/voyage/vyBoatOrange.webp',
+  'img/voyage/waveBandA.webp',
+  'img/voyage/waveBandB.webp',
+  'img/voyage/bowSplash.webp',
+  'img/voyage/dropsA.webp',
+  'img/voyage/dropsB.webp',
   'img/voyage/vyBoatPurple.webp',
   'img/scenes/beach.jpg',
   'img/scenes/flowerhill.jpg',
