@@ -4054,9 +4054,11 @@ const RANK=(function(){
     async setNick(n){n=clean(n);store.set('sekan-nick',n);if(!enabled)return {name:n,synced:false,reason:onClaude?'claude':'config'};try{await submit(n);return {name:n,synced:true}}catch(e){store.set('sekan-rank-pending',true);return {name:n,synced:false,reason:'error',error:e}}},
     async top(n){const s=await auth();return api('/rest/v1/rpc/leaderboard_top',{method:'POST',headers:bearer(s),body:JSON.stringify({n:n||50})})},
     async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
+    // 운영진은 랭킹 기록이 막혀 있어서 닉네임이 접속 상태 표에만 남는다 → 로그인 때 거기서 되찾음
+    async presenceNick(){try{const s=await auth();const r=await api('/rest/v1/presence?select=nickname&id=eq.'+s.user.id,{headers:bearer(s)});return r&&r[0]&&r[0].nickname||''}catch(e){return ''}},
     // 접속 신호: 이미 세션이 있는 사람만 (새 익명 계정을 만들지 않음). 표가 없으면 조용히 멈춤
     async beat(online){if(QA||!enabled||noPresence||!session||!session.access_token)return;let s;try{s=await auth()}catch(e){return}
-      const row={id:s.user.id,nickname:nick()||label()||null,online:!!online};if(typeof P.avatar==='number')row.avatar=P.avatar;
+      const row={id:s.user.id,online:!!online},nm=nick()||label();if(nm)row.nickname=nm;if(typeof P.avatar==='number')row.avatar=P.avatar;
       try{await fetch(url+'/rest/v1/presence?on_conflict=id',{method:'POST',keepalive:!online,headers:Object.assign({apikey:key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},bearer(s)),body:JSON.stringify(row)})
         .then(r=>{if(r.status===404)noPresence=true})}catch(e){}},
     // 운영진: 지금 접속 중인 사람 (서버 함수 presence_online, 없으면 null)
@@ -4540,7 +4542,7 @@ async function afterLogin(){
   store.set('sekan-progress',P);store.set(OWNER_KEY,acc);
   try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){}
   let me=null;try{me=await RANK.me()}catch(e){}
-  await RANK.setNick(me&&me.nickname||RANK.nick()||RANK.label());
+  await RANK.setNick(me&&me.nickname||RANK.nick()||await RANK.presenceNick()||RANK.label());
 }
 function lgSheet(html){const sh=openSheet(html);sh.classList.add('lgsheet');return sh}
 async function googleGo(m){
