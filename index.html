@@ -1373,7 +1373,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.7</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 6.8</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1581,7 +1581,7 @@ let paused=false;
 /* 운영진 아이디: 랭킹 제외, 모든 라운드·화면 열람 */
 const ADMIN_ID='yjeeeee0510';
 // 운영진 아이디 목록 (랭킹 제외·모든 라운드 열림). 서버 트리거 leaderboard_skip_admin에도 같이 넣어야 함
-const ADMIN_IDS=[ADMIN_ID,'dhsb1234'];
+const ADMIN_IDS=[ADMIN_ID,'dhsb1234','yjeeeee0510@gmail.com'];
 let adminLiftZ=-1;
 function isAdmin(){if(QA)return true;try{return ADMIN_IDS.includes(RANK.account())}catch(e){return false}}
 function openMax(){return isAdmin()?MAXR:P.unlocked}
@@ -3920,7 +3920,9 @@ const RANK=(function(){
   const nick=()=>store.get('sekan-nick','');
   const DOMAIN='teullin.game',toEmail=id=>String(id).toLowerCase()+'@'+DOMAIN;
   const isAcc=s=>!!(s&&s.user&&!s.user.is_anonymous&&s.user.email);
-  const account=()=>isAcc(session)?String(session.user.email).split('@')[0]:'';
+  const account=()=>{if(!isAcc(session))return '';const e=String(session.user.email).toLowerCase();return e.endsWith('@'+DOMAIN)?e.split('@')[0]:e};
+  const label=()=>{const a=account();return a.includes('@')?'':a};   // 닉네임 대신 쓸 값(이메일은 랭킹에 노출되지 않게 제외)
+  const gId=C.googleWebClientId||'';
   async function api(path,opt){
     opt=opt||{};
     const r=await fetch(url+path,{method:opt.method||'GET',body:opt.body,headers:Object.assign({apikey:key,'Content-Type':'application/json'},opt.headers||{})});
@@ -4005,6 +4007,27 @@ const RANK=(function(){
     if(!r||!r.access_token){const er=new Error('confirm');er.code='confirm';throw er}
     session=fix(r);store.set('sekan-auth',session);return {session,linked:false};
   }
+  // 구글 로그인(웹): 구글 화면에 다녀오면 주소 뒤(#)에 토큰이 붙어 돌아온다
+  function googleWeb(){location.href=url+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(location.origin+location.pathname)}
+  async function takeHash(){
+    const h=new URLSearchParams(location.hash.slice(1)),at=h.get('access_token');
+    if(!at&&!h.get('error'))return null;
+    history.replaceState(null,'',location.pathname+location.search);
+    if(!at){const er=new Error(h.get('error_description')||h.get('error'));er.code='google';throw er}
+    const user=await api('/auth/v1/user',{headers:{Authorization:'Bearer '+at}});
+    session=fix({access_token:at,refresh_token:h.get('refresh_token'),expires_in:+h.get('expires_in')||3600,expires_at:+h.get('expires_at')||0,user});
+    store.set('sekan-auth',session);return session;
+  }
+  // 구글 로그인(앱): 구글 계정 선택 창에서 받은 신분 토큰(idToken)을 서버에 보내 로그인
+  async function googleNative(){
+    const SL=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.SocialLogin;
+    if(!SL||!gId){const er=new Error('google-plugin');er.code='google';throw er}
+    await SL.initialize({google:{webClientId:gId}});
+    const r=await SL.login({provider:'google',options:{scopes:['email','profile']}});
+    const t=r&&r.result&&r.result.idToken;if(!t){const er=new Error('google-cancel');er.code='google';throw er}
+    const s2=await api('/auth/v1/token?grant_type=id_token',{method:'POST',body:JSON.stringify({provider:'google',id_token:t})});
+    session=fix(s2);store.set('sekan-auth',session);return session;
+  }
   async function logout(){
     const s=session;session=null;store.set('sekan-auth',null);
     if(s&&s.access_token)try{await api('/auth/v1/logout',{method:'POST',headers:bearer(s)})}catch(e){}
@@ -4019,12 +4042,13 @@ const RANK=(function(){
     if(/already|exists|registered/i.test(m))return '이미 있는 아이디예요. 다른 아이디를 써 주세요.';
     if(/password/i.test(m))return '비밀번호는 6자 이상으로 해 주세요.';
     if(/email/i.test(m)&&/invalid|validate|format/i.test(m))return '이 아이디는 쓸 수 없어요. 영문 소문자와 숫자로 다시 해 주세요.';
+    if(e&&e.code==='google')return /cancel/i.test(e.message||'')?'구글 로그인을 취소했어요.':'구글 로그인을 마치지 못했어요. 잠시 후 다시 해 주세요.';
     if(/signup.*disabled|not allowed/i.test(m))return '지금은 새 아이디를 만들 수 없어요.';
     if(e&&e.status===429)return '시도가 너무 많아요. 잠시 후 다시 해 주세요.';
     return explain(e);
   }
   return {
-    enabled,onClaude,configured:!!(url&&key),nick,clean,explain,account,login,signup,logout,pullProgress,pushProgress,deleteAccount,authMsg,
+    enabled,onClaude,configured:!!(url&&key),nick,clean,explain,account,label,login,signup,logout,googleWeb,googleNative,takeHash,googleReady:!!gId,pullProgress,pushProgress,deleteAccount,authMsg,
     submitQuiet(){if(!enabled||!nick())return;submit().catch(()=>store.set('sekan-rank-pending',true))},
     pending:()=>store.get('sekan-rank-pending',false),
     async setNick(n){n=clean(n);store.set('sekan-nick',n);if(!enabled)return {name:n,synced:false,reason:onClaude?'claude':'config'};try{await submit(n);return {name:n,synced:true}}catch(e){store.set('sekan-rank-pending',true);return {name:n,synced:false,reason:'error',error:e}}},
@@ -4032,7 +4056,7 @@ const RANK=(function(){
     async me(){const s=await auth();const r=await api('/rest/v1/rpc/leaderboard_me',{method:'POST',headers:bearer(s),body:'{}'});return r&&r[0]||null},
     // 접속 신호: 이미 세션이 있는 사람만 (새 익명 계정을 만들지 않음). 표가 없으면 조용히 멈춤
     async beat(online){if(QA||!enabled||noPresence||!session||!session.access_token)return;let s;try{s=await auth()}catch(e){return}
-      const row={id:s.user.id,nickname:nick()||account()||null,online:!!online};if(typeof P.avatar==='number')row.avatar=P.avatar;
+      const row={id:s.user.id,nickname:nick()||label()||null,online:!!online};if(typeof P.avatar==='number')row.avatar=P.avatar;
       try{await fetch(url+'/rest/v1/presence?on_conflict=id',{method:'POST',keepalive:!online,headers:Object.assign({apikey:key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},bearer(s)),body:JSON.stringify(row)})
         .then(r=>{if(r.status===404)noPresence=true})}catch(e){}},
     // 운영진: 지금 접속 중인 사람 (서버 함수 presence_online, 없으면 null)
@@ -4470,7 +4494,6 @@ const UPD=(function(){
   return {manual,on:()=>NATIVE.native&&NATIVE.platform==='android'&&!window.__PLAY_STORE};
 })();
 function backToIntro(){paused=false;closeSheet();const el=$('#intro');el.hidden=false;el.classList.remove('out')}
-const ID_RE=/^[a-z0-9_]{4,20}$/;
 function mergeP(a,b){
   a=a||{};b=b||{};const ra=a.rounds||{},rb=b.rounds||{};
   const o={unlocked:Math.min(MAXR,Math.max(a.unlocked||1,b.unlocked||1)),revealed:Math.max(a.revealed||0,b.revealed||0),rounds:{}};
@@ -4517,19 +4540,40 @@ async function afterLogin(){
   store.set('sekan-progress',P);store.set(OWNER_KEY,acc);
   try{await RANK.pushProgress(P);store.set('sekan-sync-pending',false)}catch(e){}
   let me=null;try{me=await RANK.me()}catch(e){}
-  await RANK.setNick(me&&me.nickname||RANK.nick()||RANK.account());
+  await RANK.setNick(me&&me.nickname||RANK.nick()||RANK.label());
 }
 function lgSheet(html){const sh=openSheet(html);sh.classList.add('lgsheet');return sh}
+async function googleGo(m){
+  try{
+    if(NATIVE.native){await RANK.googleNative();OTHERS.reset();await afterLogin();NATIVE.buzz('win');enterGame();FX.text(`${esc(RANK.nick()||'친구')} 님 반가워요!`,window.innerWidth/2,window.innerHeight*.3,{size:26,color:'#ffd43b'})}
+    else RANK.googleWeb();
+  }catch(e){if(m)m.textContent=RANK.authMsg(e);NATIVE.buzz('bad')}
+}
 function openLogin(msg){
+  const ok=RANK.googleReady;
   const sh=lgSheet(`<div class="lg">
     <div class="lg-brand">틀린로직맞추기</div>
     <h3>로그인</h3>
+    <p class="formmsg" id="lgMsg" aria-live="polite">${msg?esc(msg):(ok?'':'구글 로그인을 아직 준비 중이에요.')}</p>
+    <button class="btn primary lg-big" id="lgGoogle" type="button"${ok?'':' disabled'}>Google로 로그인</button>
+    <button class="linkbtn lg-guest" id="lgOld" type="button">기존 아이디로 로그인</button>
+    <button class="linkbtn lg-guest" id="lgGuest" type="button">로그인 없이 하기 (랭킹·기기 간 이어하기 안 됨)</button>
+  </div>`);
+  const m=sh.querySelector('#lgMsg');
+  sh.querySelector('#lgGoogle').addEventListener('click',()=>{NATIVE.buzz('tick');store.get('sekan-consent',null)?googleGo(m):openPrivacy()});
+  sh.querySelector('#lgOld').addEventListener('click',()=>{NATIVE.buzz('tick');openOldLogin()});
+  sh.querySelector('#lgGuest').addEventListener('click',()=>{NATIVE.buzz('tick');enterGame()});
+}
+// 구글 로그인 도입 전에 만든 아이디 계정용 (새 아이디는 더 만들 수 없음)
+function openOldLogin(msg){
+  const sh=lgSheet(`<div class="lg">
+    <div class="lg-brand">틀린로직맞추기</div>
+    <h3>기존 아이디로 로그인</h3>
     <label>아이디<input class="nick-in" id="lgId" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20" placeholder="아이디"></label>
     <label>비밀번호<input class="nick-in" id="lgPw" type="password" autocomplete="current-password" maxlength="72" placeholder="비밀번호"></label>
     <p class="formmsg" id="lgMsg" aria-live="polite">${msg?esc(msg):''}</p>
     <button class="btn primary lg-big" id="lgGo" type="button">로그인</button>
-    <button class="btn lg-big lg-new" id="lgNew" type="button">아이디 생성</button>
-    <button class="linkbtn lg-guest" id="lgGuest" type="button">로그인 없이 하기 (랭킹·기기 간 이어하기 안 됨)</button>
+    <button class="linkbtn lg-guest" id="lgBack" type="button">구글 로그인 화면으로</button>
   </div>`);
   const id=sh.querySelector('#lgId'),pw=sh.querySelector('#lgPw'),m=sh.querySelector('#lgMsg'),go=sh.querySelector('#lgGo');
   setTimeout(()=>{try{id.focus()}catch(e){}},60);
@@ -4543,56 +4587,27 @@ function openLogin(msg){
   go.addEventListener('click',run);
   pw.addEventListener('keydown',e=>{if(e.key==='Enter')run()});
   id.addEventListener('keydown',e=>{if(e.key==='Enter')pw.focus()});
-  sh.querySelector('#lgNew').addEventListener('click',()=>{NATIVE.buzz('tick');openPrivacy()});
-  sh.querySelector('#lgGuest').addEventListener('click',()=>{NATIVE.buzz('tick');enterGame()});
+  sh.querySelector('#lgBack').addEventListener('click',()=>openLogin());
 }
 function openPrivacy(){
   const sh=lgSheet(`<div class="lg">
-    <div class="eyebrow">아이디 생성 · 1/2</div>
+    <div class="eyebrow">Google 로그인</div>
     <h3>개인정보 수집·이용 안내</h3>
     <div class="privacy">
       <dl>
-        <dt>수집 항목</dt><dd>아이디, 비밀번호, 닉네임, 게임 기록(라운드·별·점수·클리어 횟수·시간)</dd>
+        <dt>수집 항목</dt><dd>구글 계정 이메일, 닉네임, 게임 기록(라운드·별·점수·클리어 횟수·시간)</dd>
         <dt>이용 목적</dt><dd>로그인, 랭킹 표시, 여러 기기에서 기록 이어하기</dd>
         <dt>보관 기간</dt><dd>회원 탈퇴 때까지 보관하고, 탈퇴하면 바로 지워요.</dd>
-        <dt>공개 범위</dt><dd>닉네임과 게임 기록은 랭킹에 공개돼요. 닉네임은 처음에 아이디와 같고, 설정에서 바꿀 수 있어요.</dd>
-        <dt>저장 위치</dt><dd>클라우드 데이터베이스(Supabase)에 저장돼요. 비밀번호는 암호화되어 아무도 볼 수 없어요.</dd>
+        <dt>공개 범위</dt><dd>닉네임과 게임 기록은 랭킹에 공개돼요. 이메일은 공개되지 않아요. 닉네임은 설정에서 바꿀 수 있어요.</dd>
+        <dt>저장 위치</dt><dd>클라우드 데이터베이스(Supabase)에 저장돼요. 구글 비밀번호는 이 게임이 받지 않아요.</dd>
       </dl>
       <p>동의하지 않으셔도 로그인 없이 게임을 할 수 있어요. 이때는 랭킹 참여와 다른 기기에서 이어하기가 안 돼요.</p>
     </div>
+    <p class="formmsg" id="pvMsg" aria-live="polite"></p>
     <div class="row"><button class="btn" id="pvNo" type="button">동의 안 함</button><button class="btn primary" id="pvOk" type="button">동의하고 계속</button></div>
   </div>`);
   sh.querySelector('#pvNo').addEventListener('click',()=>openLogin());
-  sh.querySelector('#pvOk').addEventListener('click',()=>{NATIVE.buzz('tick');store.set('sekan-consent',{v:1,at:Date.now()});openSignup()});
-}
-function openSignup(){
-  const sh=lgSheet(`<div class="lg">
-    <div class="eyebrow">아이디 생성 · 2/2</div>
-    <h3>아이디 만들기</h3>
-    <label>아이디<input class="nick-in" id="suId" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20" placeholder="영문 소문자·숫자·_ 4~20자"></label>
-    <label>비밀번호<input class="nick-in" id="suPw" type="password" autocomplete="new-password" maxlength="72" placeholder="6자 이상"></label>
-    <p class="formmsg" id="suMsg" aria-live="polite"></p>
-    <button class="btn primary lg-big" id="suGo" type="button">아이디 만들기</button>
-    <button class="linkbtn lg-guest" id="suBack" type="button">로그인 화면으로</button>
-  </div>`);
-  const id=sh.querySelector('#suId'),pw=sh.querySelector('#suPw'),m=sh.querySelector('#suMsg'),go=sh.querySelector('#suGo');
-  setTimeout(()=>{try{id.focus()}catch(e){}},60);
-  id.addEventListener('input',()=>{const v=id.value.toLowerCase().replace(/[^a-z0-9_]/g,'');if(v!==id.value)id.value=v});
-  const run=async()=>{
-    const v=id.value.trim();
-    if(!ID_RE.test(v)){m.textContent='아이디는 영문 소문자, 숫자, _ 로 4~20자예요.';return}
-    if(pw.value.length<6){m.textContent='비밀번호는 6자 이상으로 해 주세요.';return}
-    go.disabled=true;go.textContent='만드는 중…';m.textContent='';
-    try{
-      const r=await RANK.signup(v,pw.value);
-      if(!RANK.nick())store.set('sekan-nick',v);
-      await afterLogin();NATIVE.buzz('win');enterGame();
-      FX.confetti(60);FX.text(r.linked?'아이디가 생겼어요! 기록도 그대로 옮겼어요':'아이디가 생겼어요!',window.innerWidth/2,window.innerHeight*.3,{size:24,color:'#ffd43b'});
-    }catch(e){m.textContent=RANK.authMsg(e);go.disabled=false;go.textContent='아이디 만들기';NATIVE.buzz('bad')}
-  };
-  go.addEventListener('click',run);
-  pw.addEventListener('keydown',e=>{if(e.key==='Enter')run()});
-  sh.querySelector('#suBack').addEventListener('click',()=>openLogin());
+  sh.querySelector('#pvOk').addEventListener('click',()=>{NATIVE.buzz('tick');store.set('sekan-consent',{v:2,at:Date.now()});googleGo(sh.querySelector('#pvMsg'))});
 }
 async function doLogout(){
   const acc=RANK.account()||'';
@@ -4636,7 +4651,7 @@ function openRoundSheet(n){
 function myStars(){return Object.values(P.rounds).reduce((a,x)=>a+(x.stars||1),0)}
 function myAvatar(){if(typeof P.avatar==='number'&&P.avatar>=0&&P.avatar<12)return P.avatar;const n=RANK.nick();return n?nickHash(n):ZODIAC.idx(P.unlocked)}
 function profFace(){return ZODIAC.face(myAvatar())}
-function profName(){return RANK.nick()||RANK.account()||'게스트'}
+function profName(){return RANK.nick()||RANK.label()||'게스트'}
 function profInner(){
   return `<span class="pf-av${frCls()}">${profFace()}</span><span class="pf-tx"><span class="pf-nm">${isAdmin()?'<span class="adm-badge">운영진</span>':''}${ACH.badge(P.title)}${esc(profName())}</span>`+
     `<span class="pf-st"><span class="pf-star">★</span><b>${myStars().toLocaleString()}</b><span class="pf-dot"></span>라운드 <b>${P.unlocked}</b></span></span>`;
@@ -4816,7 +4831,7 @@ function openProfile(){
   const e=pfPlace(`<div class="pf-top"><span class="pf-sp"></span><h2>내 프로필</h2><button type="button" class="pf-x" id="pfX" aria-label="닫기">✕</button></div>
     ${stageHTML(av,sel,inner,'big')}
     <div class="pf-name"><b style="${COS.on('tag').css}">${esc(profName())}</b><button type="button" class="pf-nick" id="pfNick" aria-label="닉네임 바꾸기">✎</button>${P.title?`<span class="pf-ttl">${esc(P.title)}</span>`:''}${isAdmin()?'<span class="adm-badge">운영진</span>':''}</div>
-    <div class="pf-sub">${ZODIAC.NAMES[av]} · ${ZODIAC.KINDS[av]}${RANK.account()?` · 아이디 ${esc(RANK.account())}`:''}</div>
+    <div class="pf-sub">${ZODIAC.NAMES[av]} · ${ZODIAC.KINDS[av]}${RANK.account()?(RANK.label()?` · 아이디 ${esc(RANK.label())}`:' · 구글 로그인'):''}</div>
     <div class="pf-grid" id="pfGrid">${infoCells(null,null)}</div>`,'내 프로필');
   e.querySelector('#pfX').addEventListener('click',()=>{NATIVE.buzz('tick');pfClose()});
   e.querySelector('#pfAv').addEventListener('click',()=>{NATIVE.buzz('tick');openAvatar()});
@@ -4944,6 +4959,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['6.8','2026-11-14','구글 로그인',['로그인이 Google 로그인으로 바뀌었어요 (웹·앱 모두)','예전에 만든 아이디는 "기존 아이디로 로그인"으로 계속 쓸 수 있어요','로그인 없이 하던 기록은 구글로 로그인하면 그대로 이어져요','구글 이메일은 랭킹에 보이지 않아요']],
   ['6.7','2026-11-14','새 그림 대량 교체',['지역 이동 배를 물결 없는 새 배로, 앞 파도 띠·뱃머리 물보라·물방울을 새 그림으로 바꿨어요','꾸미기 받침 9종(구름·잔디·그루터기·얼음·쿠키·마카롱·보석·별무리·황금 왕좌)과 배경 9장이 그림으로 바뀌었어요','동행 친구 66쌍이 두 친구가 같이 서 있는 그림으로 바뀌었어요','대표 배지 16종 그림, 과자 나라 11·12번째 칸(레몬 캔디·소다 젤리) 새 그림']],
   ['6.6','2026-11-12','프로필 카드·꾸미기·과자 나라 600',['내 프로필이 큰 캐릭터 카드로: 순위·최고 라운드·별·총점·과자 나라, 업적·꾸미기 버튼','꾸미기 모드: 배경·받침·이름표·효과·동작·동행 친구는 코인으로(무료 기본 있음), 테두리·칭호·대표 배지 3칸은 업적으로','랭킹·지도 목록·과자 랭킹에서 다른 사람 줄을 누르면 그 사람의 프로필 카드(서버 SQL 필요, 없어도 기본 모습으로 보임)','하트·힌트·쿠키 하트 최대 5개, 클리어 코인 별 1·2·3개 = 10·20·40, 실수 방패(200코인): 실수 5번째를 한 번 막아 줘요','퍼즐: 처음부터 제자리인 조각 없음·맞는 자리에 두면 고정·최대 7×7, 543라운드부터 12라운드마다 회전 라운드(⟳, 보너스 50코인), 후반엔 하늘·바다처럼 비슷한 조각이 많은 그림이 더 자주','301~330 로직은 10×10 유지(12×12는 331부터)·틀린그림 덜 급하게, 로직 판 칸을 더 크게(단서 폭 줄임·화면 가장자리까지)','지역 이동 배: 파도가 배 아랫부분을 감싸고 꼬리 물결·물보라, 위아래·기울기를 따로 흔들림','과자 나라 600라운드: 301~450 11×11 별사탕 하늘, 451~600 12×12 구름 사탕섬(본 게임 별빛 하늘·하늘섬을 열면 열림), 업적 단계 450·600 추가']],
   ['6.5','2026-11-06','QA 반영',['틀린그림: ‘원본’·‘다른 그림’ 글씨 없애고 두 그림을 크게','로직·퍼즐 판을 위로 올려 화면을 꽉 차게','네모네모 로직 ‘한 줄 완성!’이 숫자·판을 안 가리게','과자 나라 숨은 친구 얼굴이 왼쪽부터 제대로 나오게 고침','과자 조작 안내는 처음 몇 번만']],
@@ -5020,7 +5036,7 @@ function openAdmin(){
     <p class="lead">운영진 아이디는 랭킹에 올라가지 않고, 1~${MAXR}라운드가 모두 열려 있어요. 아래 버튼으로 각 화면을 바로 볼 수 있어요.</p>
     <div class="adm-list">
       <b>화면</b>
-      <div class="adm-row">${g('intro','시작 화면')}${g('login','로그인')}${g('privacy','개인정보 동의')}${g('signup','아이디 만들기')}${g('nick','닉네임')}${g('profile','프로필')}${g('avatar','프로필 사진')}${g('shop','상점')}${g('rank','랭킹')}${g('round','라운드 시작 창')}${g('patch','패치 노트')}${g('online','접속 중인 사람')}</div>
+      <div class="adm-row">${g('intro','시작 화면')}${g('login','로그인')}${g('privacy','개인정보 동의')}${g('nick','닉네임')}${g('profile','프로필')}${g('avatar','프로필 사진')}${g('shop','상점')}${g('rank','랭킹')}${g('round','라운드 시작 창')}${g('patch','패치 노트')}${g('online','접속 중인 사람')}</div>
       <b>단계별 첫 라운드로 바로 시작</b>
       <div class="adm-row">${ZONES.map((Z,z)=>[0,1,2].map(t=>{const n=zLo(z)+t;return g('play'+n,`${Z.lvl} · ${STAGES[t].name}`)}).join('')).join('')}</div>
       <b>단계별 마지막 라운드로 바로 시작</b>
@@ -5039,7 +5055,6 @@ function openAdmin(){
     if(a==='intro'){backToIntro();return}
     if(a==='login'){openLogin();return}
     if(a==='privacy'){openPrivacy();return}
-    if(a==='signup'){openSignup();return}
     if(a==='nick'){openNick(false);return}
     if(a==='profile'){openProfile();return}
     if(a==='avatar'){openAvatar();return}
@@ -5205,6 +5220,7 @@ function openSettings(){
   // 시작 화면이 떠 있는 동안 그림을 미리 불러 둔다
   ensureArt().catch(()=>{});
   $('#introWarn').hidden=true;
+  if(/access_token=|error=/.test(location.hash))RANK.takeHash().then(async r=>{if(!r)return;OTHERS.reset();await afterLogin();enterGame();FX.text(`${esc(RANK.nick()||'친구')} 님 반가워요!`,window.innerWidth/2,window.innerHeight*.3,{size:26,color:'#ffd43b'})}).catch(e=>openLogin(RANK.authMsg(e)));
   $('#startBtn').addEventListener('click',()=>{
     NATIVE.buzz('ok');
     if(!RANK.enabled||RANK.account())enterGame();else openLogin();
