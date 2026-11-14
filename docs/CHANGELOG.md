@@ -1,0 +1,8 @@
+# 변경 이력 (CHANGELOG)
+대표가 승인한 기존 규칙 변경의 전·후를 남긴다.
+
+## 2026-11-14
+### C-001 · 운영진 구성 (D-004, 승인 A-003)
+- 변경 전: 운영진 = 아이디 `yjeeeee0510`, `dhsb1234` (`ADMIN_IDS`, 서버 트리거는 두 아이디의 이메일 목록)
+- 변경 후(확정, **아직 구현 전**): 구글 이메일 `yjeeeee0510@gmail.com` 1개만 운영진. `dhsb1234`는 구글 이메일 운영진에서 제외.
+- 구현 시 영향: `ADMIN_IDS`·`isAdmin` 판별, 서버 `leaderboard_skip_admin`·`presence_online`·`admin_set_password` 이메일 목록, 운영진 전용 우편·발송 함수. 운영진이던 `dhsb1234` 계정은 구현 후 일반 사용자로 취급.
