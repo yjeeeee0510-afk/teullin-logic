@@ -53,3 +53,4 @@
 - 과자 칸 레몬·소다를 새 그림으로. 흰 바탕이라 바깥 윤곽만 따서 안쪽을 채움.
 - 서버 SQL 변경 없음(꾸미기 글자에 소품 칸 안 씀).
 - **6.7 Play 스토어 AAB는 아직 못 만듦(2026-11-14)**: 이 세션 환경은 `dl.google.com` 등이 막혀 Android SDK를 못 받고, 서명 키(`teullinlogic-release.keystore`·`keystore.properties`)도 저장소에 없음. 개인 환경 `teullin-logic`(SDK·Gradle 주소 허용)을 만들어 둠 → 새 세션을 이 환경으로 시작하고 키 파일·비밀번호를 받으면 `python3 tools/app/release.py --play`(versionCode 67, `dist/teullinlogic-play.aab`), 사이드로드 APK는 `python3 tools/app/release.py` 후 커밋.
+- **서명 키 위치(2026-11-14 확인)**: 사용자 구글 드라이브 내 드라이브 최상위 `앱서명키_보관용.zip`(키 파일 `teullinlogic-release.keystore` + `서명키_비밀번호.txt`). 키 저장소·키 비밀번호는 같고 별칭 `teullinlogic`, keytool로 열림 확인. 새 세션은 Drive 커넥터로 내려받아(`download_file_content`가 파일로 저장) 새 빈 폴더에 풀고 `app/android/keystore.properties`(gitignore)를 만들어 쓰고, 끝나면 지운다. 비밀번호는 문서·커밋·대화에 쓰지 않는다.
