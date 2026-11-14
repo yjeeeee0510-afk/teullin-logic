@@ -978,6 +978,7 @@ body.pf-open #fx{z-index:60}
 .adm-list>b{font-size:13px;color:var(--muted);margin-top:4px}
 .adm-row{display:flex;flex-wrap:wrap;gap:6px}
 .mail-ico{font-size:20px;line-height:1}
+.adbtn{width:100%;margin:8px 0 0}.shop-ads{margin:8px 0}
 .shop-special{margin-top:12px;padding-top:8px;border-top:2px dashed #e3e8f0}.shop-sp-h{font-weight:800;margin:4px 0}.shop-sp-h small{color:#7a8699;font-weight:600}
 .shop-item.sp.dim{opacity:.75}.shop-item.sp .si-buy:disabled{background:#e3e8f0;color:#7a8699;border-color:#cfd6e0;box-shadow:none;cursor:default}.shop-item.sp .si-ico{font-size:22px}
 .mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
@@ -1386,7 +1387,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.0</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.1</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -1437,7 +1438,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <h3 id="mTitle"></h3>
     <div class="stars" id="mStars" aria-label="별점"></div>
     <dl id="mStats"></dl>
-    <div class="mbtns"><button class="btn primary" id="mNext" type="button"></button><div class="mrow"><button class="btn" id="mRetry" type="button">↻ 재도전</button><button class="btn" id="mMenu" type="button" hidden>라운드 선택</button></div></div>
+    <div class="mbtns"><button class="btn adbtn" id="mAd" type="button" hidden></button><button class="btn primary" id="mNext" type="button"></button><div class="mrow"><button class="btn" id="mRetry" type="button">↻ 재도전</button><button class="btn" id="mMenu" type="button" hidden>라운드 선택</button></div></div>
   </div>
 </div>
 
@@ -2806,7 +2807,7 @@ function addMiss(){
 function failStage(){
   if(!running||!S)return;
   elapsedFrozen=performance.now()-t0;running=false;
-  const round=S.round,lost=!!S.held;
+  const round=S.round,lost=!!S.held,S0=S,adOk=ADS.can('cont')&&!S0.adc;   // 이어하기를 위해 상태를 들고 있음
   S=null;save();ACH.onFail(round);updWalletUI();
   setTimeout(()=>{
     NATIVE.buzz('bad');SFX.play('fail');
@@ -2816,12 +2817,19 @@ function failStage(){
       <p class="lead">실수가 ${MISS_MAX}번이 되었어요.</p>
       ${lost?`<div class="fail-amt">${ICON.heart}<b>−1</b></div>`:''}
       <p class="fail-left">남은 하트 <b data-hearts>${W().hearts}</b>개 · <span data-heart-next-long></span></p>
+      ${adOk?`<button class="btn primary adbtn" id="flAd" type="button">▶ 광고 보고 이어하기 (오늘 ${ADS.left('cont')}회 남음)</button>`:''}
       <div class="row"><button class="btn" id="flMap" type="button">라운드 선택으로</button><button class="btn primary" id="flRe" type="button">다시 도전</button></div></div>`);
     sh.classList.add('failsheet');
     const toMap=()=>{closeSheet();showMenu()};
     sh.addEventListener('click',e=>{if(e.target===sh)toMap()});
     sh.querySelector('#flMap').addEventListener('click',toMap);
     sh.querySelector('#flRe').addEventListener('click',()=>{closeSheet();startRound(round)});
+    const ab=sh.querySelector('#flAd');if(ab)ab.addEventListener('click',async()=>{
+      ab.disabled=true;if(!(await ADS.show('cont'))){ab.disabled=false;return}
+      closeSheet();S=S0;S.adc=1;misses=MISS_MAX-1;S.miss=misses;save();
+      const lg=$('#lgMiss');if(lg)lg.textContent=`실수 ${misses} / ${MISS_MAX}`;const sm=$('#spotMiss');if(sm)sm.textContent=`실수 ${misses} / ${MISS_MAX}`;renderLives(misses,MISS_MAX);
+      running=true;t0=performance.now()-elapsedFrozen;NATIVE.buzz('ok');ADS.say('이어서 도전해요! 실수 −1');
+    });
     updWalletUI();
   },FX.RM?150:650);
 }
@@ -2872,6 +2880,9 @@ function clearStage(){
   }
   renderStats();
   $('#mStats').innerHTML=`<dt>걸린 시간</dt><dd>${fmt(elapsedFrozen)}</dd><dt>기본 점수</dt><dd>+${base}</dd><dt>시간 보너스</dt><dd>+${bonus}</dd>${comboPts?`<dt>콤보 보너스</dt><dd>+${comboPts}</dd>`:''}${pen?`<dt>실수·힌트</dt><dd>−${pen}</dd>`:''}<dt>얻은 점수</dt><dd class="big">+${pts}</dd>${extra}`;
+  {const ab=$('#mAd'),dbl=coinSfx-(chalWon&&!isAdmin()?CHAL_BONUS:0);   // 도전 보너스는 2배에서 뺌
+   if(ab){ab.hidden=!(dbl>0&&ADS.can('double'));ab.disabled=false;ab.textContent=`▶ 광고 보고 코인 2배 (+${dbl})`;
+     ab.onclick=async()=>{ab.disabled=true;if(await ADS.show('double')){W().coins+=dbl;walletChanged();ab.hidden=true;ADS.say(`코인 +${dbl}`);const cd=document.querySelector('#mStats .coin-dd');if(cd)cd.insertAdjacentHTML('beforeend',' <small>(광고 +'+dbl+')</small>')}else ab.disabled=false}}}
   const STAR=UI('icoStar','st-on')+UI('icoStarEmpty','st-off');
   $('#mStars').innerHTML=[0,1,2].map(k=>`<span class="s${k+1} ${k<nStars?'on':'off'}" style="--d:${0.25+k*0.22}s">${STAR}</span>`).join('');
   FX.stamp(wasLast?'라운드 클리어!':'클리어!',wasLast?'round':'');SFX.play(chalWon?'chalClear':'clear');
@@ -3596,9 +3607,11 @@ const CANDY=(function(){
     NATIVE.buzz('bad');SFX.play('empty');regen();
     const sh=openSheet(`<div class="nh"><div class="nh-ico">${cookieIco(true,'big')}</div><h3>쿠키 하트가 없어요</h3>
       <p class="lead">쿠키 하트는 ${CK_EVERY/60000}분마다 1개씩 구워져요.<br><b data-cookie-next-long></b></p>
+      ${ADS.can('heart')?`<button class="btn primary adbtn" id="ncAd" type="button">▶ 광고 보고 쿠키 하트 1개 (오늘 ${ADS.left('heart')}회 남음)</button>`:''}
       <div class="row"><button class="btn" id="ncNo" type="button">닫기</button><button class="btn primary" id="ncShop" type="button">상점에서 사기</button></div></div>`);
     sh.querySelector('#ncNo').addEventListener('click',closeSheet);
-    sh.querySelector('#ncShop').addEventListener('click',shop);ui();
+    sh.querySelector('#ncShop').addEventListener('click',shop);
+    const cad=sh.querySelector('#ncAd');if(cad)cad.addEventListener('click',async()=>{cad.disabled=true;if(await ADS.claim('cookie'))closeSheet();else cad.disabled=false});ui();
   }
 
   /* ---------- 퍼즐 판 ---------- */
@@ -3770,6 +3783,8 @@ const CANDY=(function(){
         <dl class="cd-dl"><dt>걸린 시간</dt><dd>${fmtTime(secs)}</dd><dt>실수 · 힌트</dt><dd>${g.miss} · ${g.hints}</dd>${rows}<dt>받은 코인</dt><dd class="coin-dd">${ICON.coin}${coin?`+${coin}`:'0'}</dd></dl>
         <div class="mbtns">${next?`<button class="btn primary" id="cdNext" type="button">라운드 ${next} 도전</button>`:''}<div class="mrow"><button class="btn" id="cdRe" type="button">↻ 재도전</button><button class="btn" id="cdMap" type="button">과자 마을로</button></div></div></div>`);
       sh.classList.add('cdsheet');
+      if(coin>0&&ADS.can('double')){sh.querySelector('.mbtns').insertAdjacentHTML('afterbegin',`<button class="btn adbtn" id="cdAd" type="button">▶ 광고 보고 코인 2배 (+${coin})</button>`);
+        const ab=sh.querySelector('#cdAd');ab.addEventListener('click',async()=>{ab.disabled=true;if(await ADS.show('double')){W().coins+=coin;walletChanged();ab.remove();ADS.say(`코인 +${coin}`)}else ab.disabled=false})}
       G=null;
       const toMap=()=>{closeSheet();showMap()};
       sh.addEventListener('click',e=>{if(e.target===sh)toMap()});
@@ -3782,18 +3797,23 @@ const CANDY=(function(){
   function fail(){
     if(!running)return;
     elapsedFrozen=performance.now()-t0;running=false;
-    const g=G,lost=g.held;g.held=false;G=null;saveP();
+    const g=G,lost=g.held,adOk=ADS.can('cont')&&!g.adc;g.held=false;G=null;saveP();
     setTimeout(()=>{
       NATIVE.buzz('bad');SFX.play('fail');
       const sh=openSheet(`<div class="fail"><div class="fail-heart">${cookieIco(true,'big')}</div><h3>실패!</h3>
         <p class="lead">실수가 ${CMISS}번이 되었어요.${g.daily?'<br>오늘의 과자는 몇 번이든 다시 풀 수 있어요.':''}</p>
         ${lost?`<div class="fail-amt">${cookieIco(false)}<b>−1</b></div><p class="fail-left">남은 쿠키 <b data-cookies>${C().hearts}</b>개 · <span data-cookie-next-long></span></p>`:''}
+        ${adOk?`<button class="btn primary adbtn" id="cfAd" type="button">▶ 광고 보고 이어하기 (오늘 ${ADS.left('cont')}회 남음)</button>`:''}
         <div class="row"><button class="btn" id="cfMap" type="button">과자 마을로</button><button class="btn primary" id="cfRe" type="button">다시 도전</button></div></div>`);
       sh.classList.add('failsheet');
       const toMap=()=>{closeSheet();showMap()};
       sh.addEventListener('click',e=>{if(e.target===sh)toMap()});
       sh.querySelector('#cfMap').addEventListener('click',toMap);
       sh.querySelector('#cfRe').addEventListener('click',()=>{closeSheet();g.daily?start(0,true):start(g.n)});
+      const ab=sh.querySelector('#cfAd');if(ab)ab.addEventListener('click',async()=>{
+        ab.disabled=true;if(!(await ADS.show('cont'))){ab.disabled=false;return}
+        closeSheet();G=g;g.adc=1;g.held=lost;g.miss=CMISS-1;draw();running=true;t0=performance.now()-elapsedFrozen;ui();NATIVE.buzz('ok');ADS.say('이어서 도전해요! 실수 −1');
+      });
       ui();
     },FX.RM?150:650);
   }
@@ -4337,9 +4357,11 @@ function noHeart(){
     <div class="nh-ico">${ICON.heart}</div>
     <h3>하트가 없어요</h3>
     <p class="lead">하트는 ${HEART_EVERY/60000}분마다 1개씩 채워져요.<br><b data-heart-next-long></b></p>
+    ${ADS.can('heart')?`<button class="btn primary adbtn" id="nhAd" type="button">▶ 광고 보고 하트 1개 (오늘 ${ADS.left('heart')}회 남음)</button>`:''}
     <div class="row"><button class="btn" id="nhNo" type="button">닫기</button><button class="btn primary" id="nhShop" type="button">상점에서 사기</button></div></div>`);
   sh.querySelector('#nhNo').addEventListener('click',closeSheet);
   sh.querySelector('#nhShop').addEventListener('click',()=>openShop());
+  const nad=sh.querySelector('#nhAd');if(nad)nad.addEventListener('click',async()=>{nad.disabled=true;if(await ADS.claim('heart'))closeSheet();else nad.disabled=false});
   updWalletUI();
 }
 function fmtMS(ms){const t=Math.ceil(ms/1000);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
@@ -4418,6 +4440,7 @@ function openShop(msg){
       <div class="si-txt"><b>실수 방패 1개</b><span>실수가 ${MISS_MAX}번이 되면 자동으로 1개 쓰고 계속해요 · 본 게임·과자 나라 공통</span></div>
       <button class="btn primary si-buy" id="shShield" type="button">${ICON.coin}${SHIELD_PRICE}</button>
     </div>
+    ${ADS.shopHTML()}
     ${PAY.shopHTML()}
     <p class="formmsg shop-msg" id="shMsg" aria-live="polite">${msg?esc(msg):''}</p>
     <p class="rank-note">라운드를 깨면 별 1개 ${STAR_COIN[1]}코인, 2개 ${STAR_COIN[2]}코인, 3개 ${STAR_COIN[3]}코인을 받아요. 같은 라운드를 더 좋은 별로 다시 깨면 모자란 만큼만 더 받아요. 하트는 ${HEART_EVERY/60000}분마다 1개씩(최대 ${HEART_MAX}개), 힌트는 ${HINT_EVERY/60000}분마다 1개씩(최대 ${HINT_MAX}개) 무료로 채워져요.</p>
@@ -4535,6 +4558,7 @@ function mergeP(a,b){
   const av=(a.avatarAt||0)>=(b.avatarAt||0)?a:b;
   {const fa=(a.frameAt||0)>=(b.frameAt||0)?a:b;if(fa.frame){o.frame=fa.frame;o.frameAt=fa.frameAt||0}}
   {const cm=COS.merge(a,b);if(cm)o.cos=cm}
+  {const am=ADS.merge(a,b);if(am)o.ads=am}
   if(a.hc66||b.hc66)o.hc66=1;
   if(a.mirrorSeen||b.mirrorSeen)o.mirrorSeen=1;if(a.rotSeen||b.rotSeen)o.rotSeen=1;
   if(typeof av.avatar==='number'){o.avatar=av.avatar;o.avatarAt=av.avatarAt||0}
@@ -4982,6 +5006,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['7.1','2026-11-14','광고 준비',['나중에 광고를 보고 하트·힌트를 더 받을 수 있도록 준비하고 있어요 (지금은 광고가 없어요)']],
   ['7.0','2026-11-14','특별 상점 준비',['상점에 "특별 상점" 자리가 생겼어요. 지금은 준비 중이라 살 수 없어요','프로모션 때 코인 묶음·꾸미기 패키지·스타터 팩이 열릴 예정이에요','지금 있는 꾸미기는 모두 그대로 코인으로 살 수 있어요']],
   ['6.9','2026-11-14','우편함',['우편함이 생겼어요! 운영진과 시스템이 보내는 우편을 받을 수 있어요 (로그인한 사람만)','우편으로 받은 하트·힌트·쿠키 하트는 5개를 넘어도 보관돼요','우편은 받은 날부터 30일 동안 보관돼요','운영진 모드 스위치와 우편 보내기 도구가 생겼어요 (운영진 전용)']],
   ['6.8','2026-11-14','구글 로그인',['로그인이 Google 로그인으로 바뀌었어요 (웹·앱 모두)','예전에 만든 아이디는 "기존 아이디로 로그인"으로 계속 쓸 수 있어요','로그인 없이 하던 기록은 구글로 로그인하면 그대로 이어져요','구글 이메일은 랭킹에 보이지 않아요']],
@@ -5323,6 +5348,63 @@ const PAY=(function(){
   document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pay]');if(b&&!b.disabled)buy(b.dataset.pay)});
   setTimeout(load,2500);
   return {load,sync,enabled,shopHTML,flag:k=>!!flags[k]};
+})();
+
+/* ---------- 보상형 광고 (7.1): 스위치가 꺼진 채로 배포 · 프로모션 때 켠다 ---------- */
+const ADS=(function(){
+  // 하루 한도(O-007 제안값). 하트와 쿠키 하트는 합산. 기기 날짜 기준 자정에 초기화, 계정에 합쳐 저장.
+  const LIMIT={heart:5,hint:3,cont:3,double:5},KEY={cookie:'heart'};
+  let busy=false;
+  const say=t=>FX.text(t,window.innerWidth/2,window.innerHeight*.3,{size:20,color:'#ffd43b'});
+  const day=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+  function A(){const a=(P.ads&&typeof P.ads==='object')?P.ads:(P.ads={});if(a.day!==day()){a.day=day();a.n={}}if(!a.n)a.n={};return a}
+  const lk=k=>KEY[k]||k;
+  const left=k=>Math.max(0,(LIMIT[lk(k)]||0)-(A().n[lk(k)]||0));
+  // 광고 공급자는 '켜는 패치'에서 들어온다(window.Capacitor.Plugins.RewardedAds.show({kind}) → {rewarded:boolean}). 그 전에는 없음.
+  const provider=()=>{const pl=(window.Capacitor&&window.Capacitor.Plugins)||{};return pl.RewardedAds||null};
+  // 광고는 구글 플레이 앱에서만(D-001). 웹·사이드로드·테스트 모드·운영진에게는 안 보인다.
+  const platformOk=()=>!!(window.__PLAY_STORE&&NATIVE.native&&NATIVE.platform==='android'&&!QA&&!isStaff());
+  const ready=()=>!!(PAY.flag('ads')&&platformOk()&&provider());
+  const can=k=>ready()&&left(k)>0&&!busy;
+  // 광고를 보여 주고, 끝까지 봤을 때만 true (횟수는 이때만 올라감)
+  async function show(k){
+    if(!can(k))return false;busy=true;
+    try{
+      const r=await provider().show({kind:lk(k)});
+      if(r&&r.rewarded){const a=A();a.n[lk(k)]=(a.n[lk(k)]||0)+1;a.at=Date.now();saveP();return true}
+      say('광고를 끝까지 봐야 보상을 받아요');return false;
+    }catch(e){say('광고를 불러오지 못했어요. 잠시 후 다시 해 주세요');return false}
+    finally{busy=false}
+  }
+  // 하트·쿠키 하트·힌트 1개 받기
+  async function claim(k){
+    if(!(await show(k)))return false;
+    const w=W();
+    if(k==='heart'){w.hearts+=1;if(w.hearts>=HEART_MAX)w.heartAt=Date.now()}
+    else if(k==='cookie')CANDY.addCookies(1);
+    else if(k==='hint')w.hints+=1;
+    walletChanged();SFX.play('buy');NATIVE.buzz('win');
+    say(k==='hint'?'힌트 +1':k==='cookie'?'쿠키 하트 +1':'하트 +1');return true;
+  }
+  function shopInner(){
+    const b=[];
+    if(can('heart'))b.push(`<button class="btn primary adbtn" type="button" data-ad="heart">▶ 광고 보고 하트 1개 (오늘 ${left('heart')}회 남음)</button>`);
+    if(can('hint'))b.push(`<button class="btn primary adbtn" type="button" data-ad="hint">▶ 광고 보고 힌트 1개 (오늘 ${left('hint')}회 남음)</button>`);
+    return b.join('');
+  }
+  const shopHTML=()=>{const h=shopInner();return h?`<div class="shop-ads">${h}</div>`:''};
+  document.addEventListener('click',async e=>{
+    const b=e.target.closest&&e.target.closest('[data-ad]');if(!b||b.disabled)return;
+    b.disabled=true;await claim(b.dataset.ad);
+    const box=document.querySelector('.shop-ads');if(box)box.outerHTML=shopHTML();updWalletUI();
+  });
+  // 기기 간 합치기: 같은 날이면 종류별로 큰 쪽, 날짜가 다르면 최근 날짜
+  function merge(a,b){
+    const x=a&&a.ads,y=b&&b.ads;if(!x&&!y)return null;if(!x)return y;if(!y)return x;
+    if(x.day===y.day){const n={};for(const k of new Set([...Object.keys(x.n||{}),...Object.keys(y.n||{})]))n[k]=Math.max((x.n||{})[k]||0,(y.n||{})[k]||0);return {day:x.day,n,at:Math.max(x.at||0,y.at||0)}}
+    return String(x.day)>String(y.day)?x:y;
+  }
+  return {can,left,show,claim,say,shopHTML,merge};
 })();
 
 /* ---------- 접속 신호 (운영진 '접속 중인 사람' 창용) ---------- */
