@@ -8,6 +8,8 @@ python3 tools/app/release.py            # sideload: APK → download/teullinlogi
 python3 tools/app/release.py --play     # play:     AAB → dist/teullinlogic-play.aab (커밋 안 함, 콘솔에 업로드)
   (ANDROID_HOME 필요, 서명 키 app/android/keystore.properties)
   --skip-build 로 빌드 건너뛰고 뒷정리만.
+  --play 에서만: --version=7.5 --code=75 로 AAB 버전을 직접 정함(기본은 index.html 패치 번호, versionCode=패치×10).
+    예) python3 tools/app/release.py --play --version=7.4 --code=75   (구글 플레이는 versionCode가 이전보다 커야 함)
 """
 import os, re, json, shutil, subprocess, sys
 PLAY = '--play' in sys.argv
@@ -18,13 +20,18 @@ m = re.search(r'id="introVer"[^>]*>패치 (\d+)\.(\d)', html)
 ver = f'{m.group(1)}.{m.group(2)}'; code = int(m.group(1)) * 10 + int(m.group(2))
 pn = re.search(r"\[\s*'%s'\s*,\s*'([^']*)'\s*,\s*'([^']*)'\s*,\s*\[(.*?)\]\s*\]" % re.escape(ver), html, re.S)
 date, title, notes = (pn.group(1), pn.group(2), re.findall(r"'([^']*)'", pn.group(3))) if pn else ('', '', [])
+opt = lambda k: next((a.split('=', 1)[1] for a in sys.argv if a.startswith(k + '=')), None)
+gprops = ''
+if PLAY:
+    if opt('--version'): ver = opt('--version'); gprops += f' -PappVersionName={ver}'
+    if opt('--code'): code = int(opt('--code')); gprops += f' -PappVersionCode={code}'
 run = lambda c, d, env=None: subprocess.run(c, cwd=d, shell=True, check=True, env=env)
 
 if PLAY:
     if '--skip-build' not in sys.argv:
         run('node copy-web.mjs', APP, {**os.environ, 'PLAY': '1'})   # 구글 플레이 판 표시 주입
         run('npx cap sync android', APP)
-        run('./gradlew -q bundlePlayRelease', os.path.join(APP, 'android'))
+        run(f'./gradlew -q bundlePlayRelease{gprops}', os.path.join(APP, 'android'))
     aab = os.path.join(APP, 'android', 'app', 'build', 'outputs', 'bundle', 'playRelease', 'app-play-release.aab')
     os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
     dst = os.path.join(ROOT, 'dist', 'teullinlogic-play.aab'); shutil.copy(aab, dst)

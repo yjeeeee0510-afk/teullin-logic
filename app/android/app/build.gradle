@@ -9,6 +9,9 @@ def patch = (new File(rootProject.projectDir, '../../index.html').text =~ /id="i
 def found = patch.find()
 def pv = found ? "${patch.group(1)}.${patch.group(2)}" : "1.0"
 def pc = found ? (patch.group(1).toInteger() * 10 + patch.group(2).toInteger()) : 1
+// 버전을 직접 정하고 싶을 때(구글 플레이 업로드용 등): ./gradlew -PappVersionName=7.5 -PappVersionCode=75 bundlePlayRelease
+if (project.hasProperty('appVersionName')) pv = project.property('appVersionName')
+if (project.hasProperty('appVersionCode')) pc = project.property('appVersionCode').toInteger()
 
 android {
     namespace = "com.jungdok.teullinlogic"
