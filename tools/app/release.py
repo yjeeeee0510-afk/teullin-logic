@@ -33,6 +33,15 @@ if PLAY:
         run('npx cap sync android', APP)
         run(f'./gradlew -q bundlePlayRelease{gprops}', os.path.join(APP, 'android'))
     aab = os.path.join(APP, 'android', 'app', 'build', 'outputs', 'bundle', 'playRelease', 'app-play-release.aab')
+    # 7.5 광고 검사: 어댑터가 들어갔는지·광고 ID 권한과 AdMob 앱 ID가 매니페스트에 있는지·테스트 ID 여부
+    import zipfile
+    ww = open(os.path.join(APP, 'android', 'app', 'src', 'main', 'assets', 'public', 'index.html'), encoding='utf-8').read()
+    mm = zipfile.ZipFile(aab).read('base/manifest/AndroidManifest.xml')
+    adcfg = json.load(open(os.path.join(APP, 'ads-config.json'), encoding='utf-8'))
+    bad = [n for n, ok in [('광고 어댑터(RewardedAds)', 'Plugins.RewardedAds' in ww), ('AD_ID 권한', b'com.google.android.gms.permission.AD_ID' in mm),
+                           ('AdMob 앱 ID(APPLICATION_ID)', b'com.google.android.gms.ads.APPLICATION_ID' in mm)] if not ok]
+    if bad: sys.exit('광고 검사 실패(빌드 중단): ' + ', '.join(bad) + ' 없음')
+    print('광고 검사 통과 — ' + ('테스트 광고 ID로 빌드(실제 광고 아님)' if adcfg.get('testing') else '출시용 광고 ID로 빌드'))
     os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
     dst = os.path.join(ROOT, 'dist', 'teullinlogic-play.aab'); shutil.copy(aab, dst)
     size = f'{os.path.getsize(dst) / 1048576:.1f}MB'

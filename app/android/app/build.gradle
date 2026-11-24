@@ -10,6 +10,8 @@ def found = patch.find()
 def pv = found ? "${patch.group(1)}.${patch.group(2)}" : "1.0"
 def pc = found ? (patch.group(1).toInteger() * 10 + patch.group(2).toInteger()) : 1
 // 버전을 직접 정하고 싶을 때(구글 플레이 업로드용 등): ./gradlew -PappVersionName=7.5 -PappVersionCode=75 bundlePlayRelease
+// AdMob 앱 ID: app/ads-config.json 의 appId (매니페스트 ${adMobAppId}). 바꾸면 광고 앱 ID가 바뀐다.
+def adsCfg = new groovy.json.JsonSlurper().parse(new File(rootProject.projectDir, '../ads-config.json'))
 if (project.hasProperty('appVersionName')) pv = project.property('appVersionName')
 if (project.hasProperty('appVersionCode')) pc = project.property('appVersionCode').toInteger()
 
@@ -38,6 +40,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode pc
+        manifestPlaceholders = [adMobAppId: adsCfg.appId]
         versionName pv
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
