@@ -196,8 +196,8 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .pwr-l{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:var(--muted);margin:8px 0}
 .me-card{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;background:var(--mark);color:var(--mark-ink);border:1.5px solid var(--ink);border-radius:14px;padding:10px 14px}
 .me-card .rk{grid-row:span 2;font-family:var(--f-display);font-size:30px;line-height:1}
-.me-card .nm{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.me-card .st{font-family:var(--f-mono);font-size:12px}
+.me-card .nm{grid-column:2/-1;font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me-card .st{grid-column:2/-1;font-family:var(--f-mono);font-size:11px}
 .me-card .btn{grid-row:span 2;padding:5px 10px;font-size:13px;background:#fff;color:var(--mark-ink)}
 .rlist{list-style:none;margin:0;padding:0;overflow-y:auto;overscroll-behavior:contain;max-height:min(52vh,460px);display:flex;flex-direction:column;gap:4px}
 .rlist li{display:grid;grid-template-columns:34px 30px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;background:var(--soft)}
@@ -5054,7 +5054,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
-  ['7.9','2026-11-24','랭킹 이름이 더 잘 보여요',['랭킹 목록에서 클리어 횟수·평균 시간 줄을 없애고 닉네임이 더 길게 보이도록 했어요']],
+  ['7.9','2026-11-24','랭킹 이름이 더 잘 보여요',['랭킹 목록에서 클리어 횟수·평균 시간 줄을 없애고 닉네임이 더 길게 보이도록 했어요','맨 위 "내 순위" 카드에서도 닉네임이 잘리지 않게 했어요']],
   ['7.8','2026-11-24','실제 광고 연결',['구글 플레이 앱의 광고가 실제 광고로 바뀌었어요 (하트·힌트·이어하기·코인 2배, 직접 버튼을 눌러 볼 때만 나와요)']],
   ['7.7','2026-11-24','구글 로그인 필수·기존 아이디 연동·광고 연결 고침',['이제 구글 계정으로 로그인해야 게임을 시작할 수 있어요','로그인 없이 하기 버튼을 없앴어요','예전 아이디로 하던 사람은 구글로 로그인한 뒤 기록을 옮겨 올 수 있어요 (옮긴 뒤 기존 아이디는 로그인 불가)','닉네임이 로그아웃·기기를 바꿔도 그대로 유지돼요','구글 플레이 앱에서 광고 버튼을 눌러도 광고가 안 나오던 문제를 고쳤어요']],
   ['7.6','2026-11-24','광고 안내 고침',['광고가 안 나올 때 이유가 화면에 보이도록 고쳤어요','메뉴 창 위에서도 광고 안내 글이 보여요']],
