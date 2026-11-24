@@ -1385,7 +1385,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.6</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.7</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -4606,12 +4606,10 @@ function openLogin(msg){
     <p class="formmsg" id="lgMsg" aria-live="polite">${msg?esc(msg):(ok?'':'구글 로그인을 아직 준비 중이에요.')}</p>
     <button class="btn primary lg-big" id="lgGoogle" type="button"${ok?'':' disabled'}>Google로 로그인</button>
     <button class="linkbtn lg-guest" id="lgOld" type="button">기존 아이디로 로그인</button>
-    <button class="linkbtn lg-guest" id="lgGuest" type="button">로그인 없이 하기 (랭킹·기기 간 이어하기 안 됨)</button>
   </div>`);
   const m=sh.querySelector('#lgMsg');
   sh.querySelector('#lgGoogle').addEventListener('click',()=>{NATIVE.buzz('tick');store.get('sekan-consent',null)?googleGo(m):openPrivacy()});
   sh.querySelector('#lgOld').addEventListener('click',()=>{NATIVE.buzz('tick');openOldLogin()});
-  sh.querySelector('#lgGuest').addEventListener('click',()=>{NATIVE.buzz('tick');enterGame()});
 }
 // 구글 로그인 도입 전에 만든 아이디 계정용 (새 아이디는 더 만들 수 없음)
 function openOldLogin(msg){
@@ -4650,7 +4648,7 @@ function openPrivacy(){
         <dt>공개 범위</dt><dd>닉네임과 게임 기록은 랭킹에 공개돼요. 이메일은 공개되지 않아요. 닉네임은 설정에서 바꿀 수 있어요.</dd>
         <dt>저장 위치</dt><dd>클라우드 데이터베이스(Supabase)에 저장돼요. 구글 비밀번호는 이 게임이 받지 않아요.</dd>
       </dl>
-      <p>동의하지 않으셔도 로그인 없이 게임을 할 수 있어요. 이때는 랭킹 참여와 다른 기기에서 이어하기가 안 돼요.</p>
+      <p>로그인해야 게임을 할 수 있어요. 동의하지 않으시면 로그인할 수 없어요.</p>
     </div>
     <p class="formmsg" id="pvMsg" aria-live="polite"></p>
     <div class="row"><button class="btn" id="pvNo" type="button">동의 안 함</button><button class="btn primary" id="pvOk" type="button">동의하고 계속</button></div>
@@ -5008,6 +5006,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['7.7','2026-11-24','로그인 필수·광고 연결 고침',['이제 구글(또는 기존 아이디)로 로그인해야 게임을 시작할 수 있어요','로그인 없이 하기 버튼을 없앴어요','구글 플레이 앱에서 광고 버튼을 눌러도 광고가 안 나오던 문제를 고쳤어요']],
   ['7.6','2026-11-24','광고 안내 고침',['광고가 안 나올 때 이유가 화면에 보이도록 고쳤어요','메뉴 창 위에서도 광고 안내 글이 보여요']],
   ['7.5','2026-11-24','광고 연결 준비',['구글 플레이 앱에서 보상형 광고(하트·힌트·이어하기·코인 2배)를 볼 수 있도록 연결했어요','광고는 직접 버튼을 눌러 볼 때만 나오고, 지금은 켜기 전이라 보이지 않아요','웹 버전과 직접 내려받은 앱에는 광고가 나오지 않아요']],
   ['7.4','2026-11-23','결제 준비 화면 정리',['상점의 "특별 상점(준비 중)" 칸을 없앴어요','코인 묶음·꾸미기 패키지·스타터 팩 판매는 하지 않아요','지금 있는 꾸미기와 아이템은 모두 그대로 코인으로 살 수 있어요']],
@@ -5508,7 +5507,7 @@ function openSettings(){
   if(/access_token=|error=/.test(location.hash))RANK.takeHash().then(async r=>{if(!r)return;OTHERS.reset();await afterLogin();enterGame();FX.text(`${esc(RANK.nick()||'친구')} 님 반가워요!`,window.innerWidth/2,window.innerHeight*.3,{size:26,color:'#ffd43b'})}).catch(e=>openLogin(RANK.authMsg(e)));
   $('#startBtn').addEventListener('click',()=>{
     NATIVE.buzz('ok');
-    if(!RANK.enabled||RANK.account())enterGame();else openLogin();
+    if(!RANK.enabled||QA||RANK.account())enterGame();else openLogin();
   });
 })();
 })();
