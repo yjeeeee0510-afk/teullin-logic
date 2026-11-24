@@ -34,18 +34,18 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
+        <!-- AdMob 앱 ID (app/ads-config.json appId, build.gradle manifestPlaceholders). 없으면 광고 SDK가 앱 시작 때 멈춘다. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${adMobAppId}" />
     </application>
 
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- 광고를 쓰지 않으므로 라이브러리가 끌고 오는 광고 ID·광고 서비스 권한을 뺀다(Play 광고 ID 선언: 사용 안 함). 광고를 켜는 패치(O-014)에서 AD_ID를 다시 넣는다. -->
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_CUSTOM_AUDIENCE" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_TOPICS" tools:node="remove" />
+    <!-- 광고 ID·광고 서비스 권한: 구글 플레이 판(play)은 보상형 광고(AdMob)를 쓰므로 허용한다(O-015, 7.5).
+         광고가 없는 sideload 판에서는 src/sideload/AndroidManifest.xml 이 이 권한들을 뺀다. -->
     <!-- REQUEST_INSTALL_PACKAGES(새 버전 APK 자체 설치)는 sideload 플레이버에만 둔다.
          play 플레이버(구글 플레이)에서는 넣지 않는다 → src/sideload/AndroidManifest.xml -->
 </manifest>

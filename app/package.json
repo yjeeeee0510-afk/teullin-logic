@@ -8,6 +8,7 @@
     "sync": "node copy-web.mjs && npx cap sync android"
   },
   "dependencies": {
+    "@capacitor-community/admob": "8.4.2",
     "@capacitor/android": "8.0.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/core": "8.0.0",

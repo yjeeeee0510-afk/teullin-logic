@@ -8,6 +8,8 @@ python3 tools/app/release.py            # sideload: APK → download/teullinlogi
 python3 tools/app/release.py --play     # play:     AAB → dist/teullinlogic-play.aab (커밋 안 함, 콘솔에 업로드)
   (ANDROID_HOME 필요, 서명 키 app/android/keystore.properties)
   --skip-build 로 빌드 건너뛰고 뒷정리만.
+  --play 에서만: --version=7.5 --code=75 로 AAB 버전을 직접 정함(기본은 index.html 패치 번호, versionCode=패치×10).
+    예) python3 tools/app/release.py --play --version=7.4 --code=75   (구글 플레이는 versionCode가 이전보다 커야 함)
 """
 import os, re, json, shutil, subprocess, sys
 PLAY = '--play' in sys.argv
@@ -18,14 +20,28 @@ m = re.search(r'id="introVer"[^>]*>패치 (\d+)\.(\d)', html)
 ver = f'{m.group(1)}.{m.group(2)}'; code = int(m.group(1)) * 10 + int(m.group(2))
 pn = re.search(r"\[\s*'%s'\s*,\s*'([^']*)'\s*,\s*'([^']*)'\s*,\s*\[(.*?)\]\s*\]" % re.escape(ver), html, re.S)
 date, title, notes = (pn.group(1), pn.group(2), re.findall(r"'([^']*)'", pn.group(3))) if pn else ('', '', [])
+opt = lambda k: next((a.split('=', 1)[1] for a in sys.argv if a.startswith(k + '=')), None)
+gprops = ''
+if PLAY:
+    if opt('--version'): ver = opt('--version'); gprops += f' -PappVersionName={ver}'
+    if opt('--code'): code = int(opt('--code')); gprops += f' -PappVersionCode={code}'
 run = lambda c, d, env=None: subprocess.run(c, cwd=d, shell=True, check=True, env=env)
 
 if PLAY:
     if '--skip-build' not in sys.argv:
         run('node copy-web.mjs', APP, {**os.environ, 'PLAY': '1'})   # 구글 플레이 판 표시 주입
         run('npx cap sync android', APP)
-        run('./gradlew -q bundlePlayRelease', os.path.join(APP, 'android'))
+        run(f'./gradlew -q bundlePlayRelease{gprops}', os.path.join(APP, 'android'))
     aab = os.path.join(APP, 'android', 'app', 'build', 'outputs', 'bundle', 'playRelease', 'app-play-release.aab')
+    # 7.5 광고 검사: 어댑터가 들어갔는지·광고 ID 권한과 AdMob 앱 ID가 매니페스트에 있는지·테스트 ID 여부
+    import zipfile
+    ww = open(os.path.join(APP, 'android', 'app', 'src', 'main', 'assets', 'public', 'index.html'), encoding='utf-8').read()
+    mm = zipfile.ZipFile(aab).read('base/manifest/AndroidManifest.xml')
+    adcfg = json.load(open(os.path.join(APP, 'ads-config.json'), encoding='utf-8'))
+    bad = [n for n, ok in [('광고 어댑터(RewardedAds)', 'Plugins.RewardedAds' in ww), ('AD_ID 권한', b'com.google.android.gms.permission.AD_ID' in mm),
+                           ('AdMob 앱 ID(APPLICATION_ID)', b'com.google.android.gms.ads.APPLICATION_ID' in mm)] if not ok]
+    if bad: sys.exit('광고 검사 실패(빌드 중단): ' + ', '.join(bad) + ' 없음')
+    print('광고 검사 통과 — ' + ('테스트 광고 ID로 빌드(실제 광고 아님)' if adcfg.get('testing') else '출시용 광고 ID로 빌드'))
     os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
     dst = os.path.join(ROOT, 'dist', 'teullinlogic-play.aab'); shutil.copy(aab, dst)
     size = f'{os.path.getsize(dst) / 1048576:.1f}MB'
