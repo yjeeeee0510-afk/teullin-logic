@@ -15,29 +15,30 @@
     var kind=(opt&&opt.kind)||'heart',id=CFG.rewarded[kind]||CFG.rewarded.heart;
     if(busy)return Promise.resolve({rewarded:false,error:'busy'});
     busy=true;
-    return init().then(function(){
+    function msg(e){try{if(!e)return '';var m=e.message||e.errorMessage||'';var c=(e.code!==undefined?e.code:(e.errorCode!==undefined?e.errorCode:''));return String(c!==''?(c+' '+m):m).slice(0,80)}catch(x){return ''}}
+    return init().catch(function(e){busy=false;throw {stage:'초기화',msg:msg(e)}}).then(function(){
       var A=admob();
       return new Promise(function(resolve){
-        var rewarded=false,done=false,subs=[];
-        function finish(r){
+        var rewarded=false,done=false,subs=[],stage='준비';
+        function finish(r,why,m){
           if(done)return;done=true;busy=false;
           subs.forEach(function(s){try{s.remove()}catch(e){}});
-          resolve({rewarded:r});
+          resolve(r?{rewarded:true}:{rewarded:false,stage:why||stage,msg:m||''});
         }
         function on(ev,fn){return A.addListener(ev,fn).then(function(h){subs.push(h)})}
         Promise.all([
           on('onRewardedVideoAdReward',function(){rewarded=true}),
-          on('onRewardedVideoAdDismissed',function(){finish(rewarded)}),
-          on('onRewardedVideoAdFailedToLoad',function(){finish(false)}),
-          on('onRewardedVideoAdFailedToShow',function(){finish(false)})
+          on('onRewardedVideoAdDismissed',function(){finish(rewarded,'시청 중단')}),
+          on('onRewardedVideoAdFailedToLoad',function(e){finish(false,'불러오기',msg(e))}),
+          on('onRewardedVideoAdFailedToShow',function(e){finish(false,'표시',msg(e))})
         ]).then(function(){
-          return A.prepareRewardVideoAd({adId:id,isTesting:!!CFG.testing});
+          stage='불러오기';return A.prepareRewardVideoAd({adId:id,isTesting:!!CFG.testing});
         }).then(function(){
-          return A.showRewardVideoAd();
-        }).catch(function(){finish(false)});
-        setTimeout(function(){finish(rewarded)},180000);   // 3분 안에 안 끝나면 정리(보상은 받았을 때만)
+          stage='표시';return A.showRewardVideoAd();
+        }).catch(function(e){finish(false,stage,msg(e))});
+        setTimeout(function(){finish(rewarded,'시간 초과')},180000);   // 3분 안에 안 끝나면 정리(보상은 받았을 때만)
       });
-    }).catch(function(){busy=false;return {rewarded:false}});
+    }).catch(function(e){busy=false;return {rewarded:false,stage:(e&&e.stage)||'초기화',msg:(e&&e.msg)||''}});
   }
   C.Plugins.RewardedAds={show:show};
 })();
