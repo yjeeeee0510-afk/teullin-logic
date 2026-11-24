@@ -1385,7 +1385,7 @@ window.addEventListener('error',function(e){var w=document.getElementById('intro
     <p class="intro-warn" id="introWarn">게임이 아직 실행되지 않았어요. 미리보기 화면(파일 앱·카카오톡 등)에서는 게임이 동작하지 않으니 Safari나 Chrome 브라우저로 열어 주세요.</p>
   </div>
   <span class="intro-made" id="introMade">Made by 중독 게임사</span>
-  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.5</span>
+  <span class="intro-ver" id="introVer" aria-label="패치 버전">패치 7.6</span>
 </div>
 <div class="wrap">
   <header class="top">
@@ -5008,6 +5008,7 @@ function openAvatar(){
 
 /* ---------- 패치 노트 (운영진만 봄) — 패치 번호를 올릴 때 맨 위에 한 줄 추가 ---------- */
 const PATCH_NOTES=[
+  ['7.6','2026-11-24','광고 안내 고침',['광고가 안 나올 때 이유가 화면에 보이도록 고쳤어요','메뉴 창 위에서도 광고 안내 글이 보여요']],
   ['7.5','2026-11-24','광고 연결 준비',['구글 플레이 앱에서 보상형 광고(하트·힌트·이어하기·코인 2배)를 볼 수 있도록 연결했어요','광고는 직접 버튼을 눌러 볼 때만 나오고, 지금은 켜기 전이라 보이지 않아요','웹 버전과 직접 내려받은 앱에는 광고가 나오지 않아요']],
   ['7.4','2026-11-23','결제 준비 화면 정리',['상점의 "특별 상점(준비 중)" 칸을 없앴어요','코인 묶음·꾸미기 패키지·스타터 팩 판매는 하지 않아요','지금 있는 꾸미기와 아이템은 모두 그대로 코인으로 살 수 있어요']],
   ['7.3','2026-11-14','구글 로그인 수정',['앱에서 구글 로그인이 되지 않던 문제를 고쳤어요']],
@@ -5174,6 +5175,9 @@ const MAIL=(function(){
   const chips=m=>[m.coins?`<span>${ICON.coin}${Number(m.coins).toLocaleString()}</span>`:'',m.hints?`<span>${ICON.bulb}${m.hints}</span>`:'',m.hearts?`<span>${ICON.heart}${m.hearts}</span>`:'',m.cookies?`<span>🍪${m.cookies}</span>`:''].join('');
   const ready=()=>!!(RANK.enabled&&RANK.account());
   const say=t=>FX.text(t,window.innerWidth/2,window.innerHeight*.3,{size:20,color:'#ffd43b'});
+  // 메뉴 창(#sheet)이 열려 있으면 효과 층(#fx)이 숨겨져 안내가 안 보이므로, 창 위에 뜨는 안내 줄로 보여 준다(7.6)
+  function note(t){try{let n=document.getElementById('adNote');if(!n){n=document.createElement('div');n.id='adNote';n.style.cssText='position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:88vw;padding:10px 16px;border-radius:12px;background:rgba(30,30,40,.94);color:#ffd43b;font-weight:700;font-size:14px;line-height:1.4;text-align:center;z-index:400;pointer-events:none;transition:opacity .25s';document.body.appendChild(n)}
+    n.textContent=t;n.style.opacity='1';clearTimeout(note.t);note.t=setTimeout(()=>{n.style.opacity='0'},3800)}catch(e){say(t)}}
   function dot(){const b=document.getElementById('mailBtn');if(b)b.classList.toggle('has',unread()>0)}
   function mount(){
     if(!ok)return;const a=document.getElementById('achBtn');if(!a||document.getElementById('mailBtn'))return;
@@ -5324,6 +5328,9 @@ const ADS=(function(){
   const LIMIT={heart:5,hint:3,cont:3,double:5},KEY={cookie:'heart'};
   let busy=false;
   const say=t=>FX.text(t,window.innerWidth/2,window.innerHeight*.3,{size:20,color:'#ffd43b'});
+  // 메뉴 창(#sheet)이 열려 있으면 효과 층(#fx)이 숨겨져 안내가 안 보이므로, 창 위에 뜨는 안내 줄로 보여 준다(7.6)
+  function note(t){try{let n=document.getElementById('adNote');if(!n){n=document.createElement('div');n.id='adNote';n.style.cssText='position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:88vw;padding:10px 16px;border-radius:12px;background:rgba(30,30,40,.94);color:#ffd43b;font-weight:700;font-size:14px;line-height:1.4;text-align:center;z-index:400;pointer-events:none;transition:opacity .25s';document.body.appendChild(n)}
+    n.textContent=t;n.style.opacity='1';clearTimeout(note.t);note.t=setTimeout(()=>{n.style.opacity='0'},3800)}catch(e){say(t)}}
   const day=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
   function A(){const a=(P.ads&&typeof P.ads==='object')?P.ads:(P.ads={});if(a.day!==day()){a.day=day();a.n={}}if(!a.n)a.n={};return a}
   const lk=k=>KEY[k]||k;
@@ -5340,8 +5347,8 @@ const ADS=(function(){
     try{
       const r=await provider().show({kind:lk(k)});
       if(r&&r.rewarded){const a=A();a.n[lk(k)]=(a.n[lk(k)]||0)+1;a.at=Date.now();saveP();return true}
-      say('광고를 끝까지 봐야 보상을 받아요');return false;
-    }catch(e){say('광고를 불러오지 못했어요. 잠시 후 다시 해 주세요');return false}
+      note(r&&r.stage==='시청 중단'?'광고를 끝까지 봐야 보상을 받아요':`광고를 불러오지 못했어요 (${(r&&r.stage)||'알 수 없음'}${r&&r.msg?': '+r.msg:''})`);return false;
+    }catch(e){note('광고를 불러오지 못했어요. 잠시 후 다시 해 주세요');return false}
     finally{busy=false}
   }
   // 하트·쿠키 하트·힌트 1개 받기
